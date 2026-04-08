@@ -1,0 +1,431 @@
+[
+  {
+    "name": "Pretty Little Baby",
+    "artist": "Connie Francis",
+    "year": 1962,
+    "genre": "Pop",
+    "duration": 148,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 8   },
+      { "type": "verse",  "start": 8,   "end": 30  },
+      { "type": "chorus", "start": 30,  "end": 50  },
+      { "type": "verse",  "start": 50,  "end": 72  },
+      { "type": "chorus", "start": 72,  "end": 92  },
+      { "type": "verse",  "start": 92,  "end": 114 },
+      { "type": "chorus", "start": 114, "end": 134 },
+      { "type": "outro",  "start": 134, "end": 148 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Hold My Hand",
+    "artist": "Jess Glynne",
+    "year": 2015,
+    "genre": "Dancehall",
+    "duration": 215,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 12  },
+      { "type": "verse",     "start": 12,  "end": 40  },
+      { "type": "prechorus", "start": 40,  "end": 55  },
+      { "type": "chorus",    "start": 55,  "end": 80  },
+      { "type": "verse",     "start": 80,  "end": 108 },
+      { "type": "prechorus", "start": 108, "end": 120 },
+      { "type": "chorus",    "start": 120, "end": 145 },
+      { "type": "bridge",    "start": 145, "end": 168 },
+      { "type": "chorus",    "start": 168, "end": 200 },
+      { "type": "outro",     "start": 200, "end": 215 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Rock That Body",
+    "artist": "Black Eyed Peas",
+    "year": 2009,
+    "genre": "Electropop",
+    "duration": 234,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 15  },
+      { "type": "verse",     "start": 15,  "end": 45  },
+      { "type": "prechorus", "start": 45,  "end": 60  },
+      { "type": "chorus",    "start": 60,  "end": 85  },
+      { "type": "verse",     "start": 85,  "end": 115 },
+      { "type": "prechorus", "start": 115, "end": 128 },
+      { "type": "chorus",    "start": 128, "end": 153 },
+      { "type": "bridge",    "start": 153, "end": 185 },
+      { "type": "chorus",    "start": 185, "end": 215 },
+      { "type": "outro",     "start": 215, "end": 234 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Azul",
+    "artist": "J Balvin",
+    "year": 2020,
+    "genre": "Reggaeton",
+    "duration": 198,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 16  },
+      { "type": "verse",  "start": 16,  "end": 48  },
+      { "type": "chorus", "start": 48,  "end": 72  },
+      { "type": "verse",  "start": 72,  "end": 104 },
+      { "type": "chorus", "start": 104, "end": 128 },
+      { "type": "bridge", "start": 128, "end": 158 },
+      { "type": "chorus", "start": 158, "end": 182 },
+      { "type": "outro",  "start": 182, "end": 198 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Dame Un Grrr",
+    "artist": "Fantomel and Kate Linn",
+    "year": 2025,
+    "genre": "Pop",
+    "duration": 185,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 10  },
+      { "type": "verse",     "start": 10,  "end": 38  },
+      { "type": "prechorus", "start": 38,  "end": 52  },
+      { "type": "chorus",    "start": 52,  "end": 76  },
+      { "type": "verse",     "start": 76,  "end": 104 },
+      { "type": "prechorus", "start": 104, "end": 116 },
+      { "type": "chorus",    "start": 116, "end": 140 },
+      { "type": "bridge",    "start": 140, "end": 162 },
+      { "type": "chorus",    "start": 162, "end": 185 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "APT.",
+    "artist": "ROSÉ & Bruno Mars",
+    "year": 2024,
+    "genre": "Pop",
+    "duration": 202,
+    "avgViews": 72,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 14  },
+      { "type": "verse",     "start": 14,  "end": 35  },
+      { "type": "prechorus", "start": 35,  "end": 52  },
+      { "type": "chorus",    "start": 52,  "end": 70  },
+      { "type": "verse",     "start": 70,  "end": 88  },
+      { "type": "prechorus", "start": 88,  "end": 101 },
+      { "type": "chorus",    "start": 101, "end": 119 },
+      { "type": "bridge",    "start": 119, "end": 163 },
+      { "type": "chorus",    "start": 163, "end": 202 }
+    ],
+    "clips": [
+      { "start": 14,  "end": 32,  "instances": 4 },
+      { "start": 101, "end": 119, "instances": 1 }
+    ]
+  },
+  {
+    "name": "Te Quería Ver",
+    "artist": "Alemán & Neton Vega",
+    "year": 2025,
+    "genre": "Reggaeton",
+    "duration": 192,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 12  },
+      { "type": "verse",  "start": 12,  "end": 44  },
+      { "type": "chorus", "start": 44,  "end": 68  },
+      { "type": "verse",  "start": 68,  "end": 100 },
+      { "type": "chorus", "start": 100, "end": 124 },
+      { "type": "bridge", "start": 124, "end": 152 },
+      { "type": "chorus", "start": 152, "end": 176 },
+      { "type": "outro",  "start": 176, "end": 192 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Stecu Stecu",
+    "artist": "Faris Adam",
+    "year": 2025,
+    "genre": "Pop",
+    "duration": 178,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 10  },
+      { "type": "verse",     "start": 10,  "end": 36  },
+      { "type": "prechorus", "start": 36,  "end": 50  },
+      { "type": "chorus",    "start": 50,  "end": 72  },
+      { "type": "verse",     "start": 72,  "end": 98  },
+      { "type": "prechorus", "start": 98,  "end": 110 },
+      { "type": "chorus",    "start": 110, "end": 132 },
+      { "type": "outro",     "start": 132, "end": 178 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Anxiety",
+    "artist": "Doechii",
+    "year": 2025,
+    "genre": "Pop Rap",
+    "duration": 208,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 14  },
+      { "type": "verse",  "start": 14,  "end": 52  },
+      { "type": "chorus", "start": 52,  "end": 74  },
+      { "type": "verse",  "start": 74,  "end": 112 },
+      { "type": "chorus", "start": 112, "end": 134 },
+      { "type": "bridge", "start": 134, "end": 168 },
+      { "type": "chorus", "start": 168, "end": 190 },
+      { "type": "outro",  "start": 190, "end": 208 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Sailor Song",
+    "artist": "Gigi Perez",
+    "year": 2024,
+    "genre": "Indie Folk",
+    "duration": 196,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 12  },
+      { "type": "verse",  "start": 12,  "end": 48  },
+      { "type": "chorus", "start": 48,  "end": 70  },
+      { "type": "verse",  "start": 70,  "end": 106 },
+      { "type": "chorus", "start": 106, "end": 128 },
+      { "type": "bridge", "start": 128, "end": 158 },
+      { "type": "chorus", "start": 158, "end": 180 },
+      { "type": "outro",  "start": 180, "end": 196 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Shake it To The Max (FLY) (Remix)",
+    "artist": "MOLIY, Silent Addy, Skillibeng, Shensea",
+    "year": 2024,
+    "genre": "Hip-Hop",
+    "duration": 212,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 10  },
+      { "type": "verse",  "start": 10,  "end": 46  },
+      { "type": "chorus", "start": 46,  "end": 68  },
+      { "type": "verse",  "start": 68,  "end": 104 },
+      { "type": "chorus", "start": 104, "end": 126 },
+      { "type": "verse",  "start": 126, "end": 162 },
+      { "type": "chorus", "start": 162, "end": 184 },
+      { "type": "outro",  "start": 184, "end": 212 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "ocean eyes",
+    "artist": "Billie Eilish",
+    "year": 2017,
+    "genre": "Contemporary R&B",
+    "duration": 200,
+    "avgViews": 55,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 14  },
+      { "type": "verse",  "start": 14,  "end": 42  },
+      { "type": "chorus", "start": 42,  "end": 69  },
+      { "type": "verse",  "start": 69,  "end": 97  },
+      { "type": "chorus", "start": 97,  "end": 124 },
+      { "type": "bridge", "start": 124, "end": 154 },
+      { "type": "chorus", "start": 154, "end": 182 },
+      { "type": "outro",  "start": 182, "end": 200 }
+    ],
+    "clips": [
+      { "start": 42, "end": 59, "instances": 3 }
+    ]
+  },
+  {
+    "name": "No One Noticed",
+    "artist": "The Marias",
+    "year": 2024,
+    "genre": "Alternative/Indie",
+    "duration": 236,
+    "avgViews": 38,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 18  },
+      { "type": "verse",  "start": 18,  "end": 60  },
+      { "type": "chorus", "start": 60,  "end": 88  },
+      { "type": "verse",  "start": 88,  "end": 130 },
+      { "type": "bridge", "start": 130, "end": 168 },
+      { "type": "chorus", "start": 168, "end": 198 },
+      { "type": "outro",  "start": 198, "end": 236 }
+    ],
+    "clips": [
+      { "start": 129, "end": 148, "instances": 4 },
+      { "start": 198, "end": 208, "instances": 2 }
+    ]
+  },
+  {
+    "name": "back to friends",
+    "artist": "sombr",
+    "year": 2025,
+    "genre": "Alternative/Indie",
+    "duration": 199,
+    "avgViews": 29,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 12  },
+      { "type": "verse",     "start": 12,  "end": 44  },
+      { "type": "prechorus", "start": 44,  "end": 60  },
+      { "type": "chorus",    "start": 60,  "end": 82  },
+      { "type": "verse",     "start": 82,  "end": 114 },
+      { "type": "prechorus", "start": 114, "end": 128 },
+      { "type": "chorus",    "start": 128, "end": 150 },
+      { "type": "outro",     "start": 150, "end": 199 }
+    ],
+    "clips": [
+      { "start": 44,  "end": 60,  "instances": 2 },
+      { "start": 114, "end": 128, "instances": 4 }
+    ]
+  },
+  {
+    "name": "Sparks",
+    "artist": "Coldplay",
+    "year": 2000,
+    "genre": "Alternative Rock",
+    "duration": 226,
+    "avgViews": 61,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 20  },
+      { "type": "verse",  "start": 20,  "end": 65  },
+      { "type": "chorus", "start": 65,  "end": 95  },
+      { "type": "verse",  "start": 95,  "end": 140 },
+      { "type": "chorus", "start": 140, "end": 170 },
+      { "type": "bridge", "start": 170, "end": 200 },
+      { "type": "outro",  "start": 200, "end": 226 }
+    ],
+    "clips": [
+      { "start": 33,  "end": 54,  "instances": 4 },
+      { "start": 115, "end": 132, "instances": 1 }
+    ]
+  },
+  {
+    "name": "That's So True",
+    "artist": "Gracie Abrams",
+    "year": 2024,
+    "genre": "Folk-pop",
+    "duration": 193,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 10  },
+      { "type": "verse",     "start": 10,  "end": 42  },
+      { "type": "prechorus", "start": 42,  "end": 56  },
+      { "type": "chorus",    "start": 56,  "end": 80  },
+      { "type": "verse",     "start": 80,  "end": 112 },
+      { "type": "prechorus", "start": 112, "end": 124 },
+      { "type": "chorus",    "start": 124, "end": 148 },
+      { "type": "bridge",    "start": 148, "end": 168 },
+      { "type": "chorus",    "start": 168, "end": 193 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Let Down",
+    "artist": "Radiohead",
+    "year": 1997,
+    "genre": "Alternative Rock",
+    "duration": 294,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 22  },
+      { "type": "verse",  "start": 22,  "end": 70  },
+      { "type": "chorus", "start": 70,  "end": 102 },
+      { "type": "verse",  "start": 102, "end": 150 },
+      { "type": "chorus", "start": 150, "end": 182 },
+      { "type": "bridge", "start": 182, "end": 240 },
+      { "type": "outro",  "start": 240, "end": 294 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "Suave",
+    "artist": "El Alfa",
+    "year": 2018,
+    "genre": "Dembow",
+    "duration": 188,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 12  },
+      { "type": "verse",  "start": 12,  "end": 46  },
+      { "type": "chorus", "start": 46,  "end": 70  },
+      { "type": "verse",  "start": 70,  "end": 104 },
+      { "type": "chorus", "start": 104, "end": 128 },
+      { "type": "verse",  "start": 128, "end": 162 },
+      { "type": "chorus", "start": 162, "end": 176 },
+      { "type": "outro",  "start": 176, "end": 188 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "My Darling",
+    "artist": "Chella",
+    "year": 2025,
+    "genre": "Afrobeats",
+    "duration": 182,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",  "start": 0,   "end": 14  },
+      { "type": "verse",  "start": 14,  "end": 46  },
+      { "type": "chorus", "start": 46,  "end": 68  },
+      { "type": "verse",  "start": 68,  "end": 100 },
+      { "type": "chorus", "start": 100, "end": 122 },
+      { "type": "bridge", "start": 122, "end": 150 },
+      { "type": "chorus", "start": 150, "end": 170 },
+      { "type": "outro",  "start": 170, "end": 182 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  },
+  {
+    "name": "We Hug Now",
+    "artist": "Sydney Rose",
+    "year": 2025,
+    "genre": "Alternative/Indie",
+    "duration": 176,
+    "avgViews": null,
+    "sections": [
+      { "type": "intro",     "start": 0,   "end": 8   },
+      { "type": "verse",     "start": 8,   "end": 38  },
+      { "type": "prechorus", "start": 38,  "end": 52  },
+      { "type": "chorus",    "start": 52,  "end": 74  },
+      { "type": "verse",     "start": 74,  "end": 104 },
+      { "type": "prechorus", "start": 104, "end": 116 },
+      { "type": "chorus",    "start": 116, "end": 138 },
+      { "type": "bridge",    "start": 138, "end": 158 },
+      { "type": "chorus",    "start": 158, "end": 176 }
+    ],
+    "clips": [
+      { "start": null, "end": null, "instances": null }
+    ]
+  }
+]
