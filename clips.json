@@ -5,19 +5,94 @@
     "year": 1962,
     "genre": "Pop",
     "duration": 148,
-    "avgViews": null,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 8   },
-      { "type": "verse",  "start": 8,   "end": 30  },
-      { "type": "chorus", "start": 30,  "end": 50  },
-      { "type": "verse",  "start": 50,  "end": 72  },
-      { "type": "chorus", "start": 72,  "end": 92  },
-      { "type": "verse",  "start": 92,  "end": 114 },
-      { "type": "chorus", "start": 114, "end": 134 },
-      { "type": "outro",  "start": 134, "end": 148 }
+      { "type": "intro",       "start": 0,   "end": 15  },
+      { "type": "verse",       "start": 15,  "end": 47  },
+      { "type": "prechorus",   "start": 47,  "end": 62  },
+      { "type": "chorus",      "start": 62,  "end": 79  },
+      { "type": "instrumental", "start": 79,  "end": 95  },
+      { "type": "prechorus",   "start": 95,  "end": 110 },
+      { "type": "chorus",      "start": 110, "end": 127 },
+      { "type": "outro",       "start": 127, "end": 148 }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
+      { "start": 15, "end": 31, "instances": 1 },
+      { "start": 15, "end": 28, "instances": 2 },
+      { "start": 15, "end": 81, "instances": 1 },
+      { "start": 15, "end": 23, "instances": 1 },
+      { "start": 15, "end": 27, "instances": 1 },
+      { "start": 15, "end": 24, "instances": 1 },
+      { "start": 15, "end": 75, "instances": 2 },
+      { "start": 15, "end": 30, "instances": 1 }
+    ],
+    "rep_dots": [
+      { "word": "pretty",    "time": 0.0   },
+      { "word": "little",    "time": 2.5   },
+      { "word": "baby",      "time": 5.0   },
+      { "word": "pretty",    "time": 7.5   },
+      { "word": "little",    "time": 10.0  },
+      { "word": "baby",      "time": 12.5  },
+      { "word": "pretty",    "time": 15.0  },
+      { "word": "little",    "time": 15.62 },
+      { "word": "baby",      "time": 16.23 },
+      { "word": "love",      "time": 24.23 },
+      { "word": "pretty",    "time": 25.46 },
+      { "word": "little",    "time": 26.08 },
+      { "word": "baby",      "time": 26.69 },
+      { "word": "pretty",    "time": 41.46 },
+      { "word": "little",    "time": 42.08 },
+      { "word": "baby",      "time": 42.69 },
+      { "word": "love",      "time": 45.15 },
+      { "word": "time",      "time": 48.82 },
+      { "word": "young",     "time": 51.55 },
+      { "word": "puppy",     "time": 52.0  },
+      { "word": "love",      "time": 52.45 },
+      { "word": "day",       "time": 54.27 },
+      { "word": "love",      "time": 58.36 },
+      { "word": "heart",     "time": 59.73 },
+      { "word": "young",     "time": 60.64 },
+      { "word": "meet",      "time": 62.0  },
+      { "word": "car",       "time": 64.34 },
+      { "word": "hop",       "time": 64.93 },
+      { "word": "pop",       "time": 67.28 },
+      { "word": "shop",      "time": 67.86 },
+      { "word": "meet",      "time": 68.45 },
+      { "word": "moonlight", "time": 70.79 },
+      { "word": "daylight",  "time": 73.14 },
+      { "word": "pretty",    "time": 73.72 },
+      { "word": "little",    "time": 74.31 },
+      { "word": "baby",      "time": 74.9  },
+      { "word": "love",      "time": 77.24 },
+      { "word": "time",      "time": 96.82 },
+      { "word": "young",     "time": 99.55 },
+      { "word": "puppy",     "time": 100.0 },
+      { "word": "love",      "time": 100.45 },
+      { "word": "day",       "time": 102.27 },
+      { "word": "love",      "time": 106.36 },
+      { "word": "heart",     "time": 107.73 },
+      { "word": "young",     "time": 108.64 },
+      { "word": "meet",      "time": 110.0 },
+      { "word": "car",       "time": 112.34 },
+      { "word": "hop",       "time": 112.93 },
+      { "word": "pop",       "time": 115.28 },
+      { "word": "shop",      "time": 115.86 },
+      { "word": "meet",      "time": 116.45 },
+      { "word": "moonlight", "time": 118.79 },
+      { "word": "daylight",  "time": 121.14 },
+      { "word": "pretty",    "time": 121.72 },
+      { "word": "little",    "time": 122.31 },
+      { "word": "baby",      "time": 122.9 },
+      { "word": "love",      "time": 125.24 },
+      { "word": "pretty",    "time": 127.0 },
+      { "word": "little",    "time": 128.31 },
+      { "word": "baby",      "time": 129.62 },
+      { "word": "pretty",    "time": 133.56 },
+      { "word": "little",    "time": 134.88 },
+      { "word": "baby",      "time": 136.19 },
+      { "word": "pretty",    "time": 140.12 },
+      { "word": "little",    "time": 141.44 },
+      { "word": "baby",      "time": 142.75 },
+      { "word": "pretty",    "time": 146.69 }
     ]
   },
   {
@@ -26,216 +101,230 @@
     "year": 2015,
     "genre": "Dancehall",
     "duration": 215,
-    "avgViews": null,
     "sections": [
       { "type": "intro",     "start": 0,   "end": 12  },
-      { "type": "verse",     "start": 12,  "end": 40  },
-      { "type": "prechorus", "start": 40,  "end": 55  },
-      { "type": "chorus",    "start": 55,  "end": 80  },
-      { "type": "verse",     "start": 80,  "end": 108 },
-      { "type": "prechorus", "start": 108, "end": 120 },
-      { "type": "chorus",    "start": 120, "end": 145 },
-      { "type": "bridge",    "start": 145, "end": 168 },
-      { "type": "chorus",    "start": 168, "end": 200 },
-      { "type": "outro",     "start": 200, "end": 215 }
+      { "type": "verse",     "start": 12,  "end": 35  },
+      { "type": "prechorus", "start": 35,  "end": 49  },
+      { "type": "chorus",    "start": 49,  "end": 81  },
+      { "type": "verse",     "start": 81,  "end": 112 },
+      { "type": "prechorus", "start": 112, "end": 127 },
+      { "type": "chorus",    "start": 127, "end": 159 },
+      { "type": "bridge",    "start": 159, "end": 190 },
+      { "type": "chorus",    "start": 190, "end": 215 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Rock That Body",
     "artist": "Black Eyed Peas",
     "year": 2009,
     "genre": "Electropop",
-    "duration": 234,
-    "avgViews": null,
+    "duration": 268,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 15  },
-      { "type": "verse",     "start": 15,  "end": 45  },
-      { "type": "prechorus", "start": 45,  "end": 60  },
-      { "type": "chorus",    "start": 60,  "end": 85  },
-      { "type": "verse",     "start": 85,  "end": 115 },
-      { "type": "prechorus", "start": 115, "end": 128 },
-      { "type": "chorus",    "start": 128, "end": 153 },
-      { "type": "bridge",    "start": 153, "end": 185 },
-      { "type": "chorus",    "start": 185, "end": 215 },
-      { "type": "outro",     "start": 215, "end": 234 }
+      { "type": "intro",      "start": 0,   "end": 31  },
+      { "type": "prechorus",  "start": 31,  "end": 46  },
+      { "type": "chorus",     "start": 46,  "end": 60  },
+      { "type": "verse",      "start": 60,  "end": 77  },
+      { "type": "verse",      "start": 77,  "end": 91  },
+      { "type": "refrain",    "start": 91,  "end": 99  },
+      { "type": "prechorus",  "start": 99,  "end": 115 },
+      { "type": "chorus",     "start": 115, "end": 130 },
+      { "type": "postchorus", "start": 130, "end": 137 },
+      { "type": "verse",      "start": 137, "end": 153 },
+      { "type": "verse",      "start": 153, "end": 202 },
+      { "type": "interlude",  "start": 202, "end": 252 },
+      { "type": "outro",      "start": 252, "end": 268 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Azul",
     "artist": "J Balvin",
     "year": 2020,
     "genre": "Reggaeton",
-    "duration": 198,
-    "avgViews": null,
+    "duration": 205,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 16  },
-      { "type": "verse",  "start": 16,  "end": 48  },
-      { "type": "chorus", "start": 48,  "end": 72  },
-      { "type": "verse",  "start": 72,  "end": 104 },
-      { "type": "chorus", "start": 104, "end": 128 },
-      { "type": "bridge", "start": 128, "end": 158 },
-      { "type": "chorus", "start": 158, "end": 182 },
-      { "type": "outro",  "start": 182, "end": 198 }
+      { "type": "verse",     "start": 0,   "end": 21  },
+      { "type": "prechorus", "start": 21,  "end": 28  },
+      { "type": "chorus",    "start": 28,  "end": 70  },
+      { "type": "verse",     "start": 70,  "end": 92  },
+      { "type": "prechorus", "start": 92,  "end": 99  },
+      { "type": "chorus",    "start": 99,  "end": 123 },
+      { "type": "verse",     "start": 123, "end": 150 },
+      { "type": "chorus",    "start": 150, "end": 195 },
+      { "type": "outro",     "start": 195, "end": 205 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Dame Un Grrr",
     "artist": "Fantomel and Kate Linn",
     "year": 2025,
     "genre": "Pop",
-    "duration": 185,
-    "avgViews": null,
+    "duration": 132,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 10  },
-      { "type": "verse",     "start": 10,  "end": 38  },
-      { "type": "prechorus", "start": 38,  "end": 52  },
-      { "type": "chorus",    "start": 52,  "end": 76  },
-      { "type": "verse",     "start": 76,  "end": 104 },
-      { "type": "prechorus", "start": 104, "end": 116 },
-      { "type": "chorus",    "start": 116, "end": 140 },
-      { "type": "bridge",    "start": 140, "end": 162 },
-      { "type": "chorus",    "start": 162, "end": 185 }
+      { "type": "chorus",    "start": 0,   "end": 16  },
+      { "type": "verse",     "start": 16,  "end": 24  },
+      { "type": "prechorus", "start": 24,  "end": 40  },
+      { "type": "chorus",    "start": 40,  "end": 73  },
+      { "type": "verse",     "start": 73,  "end": 80  },
+      { "type": "prechorus", "start": 80,  "end": 97  },
+      { "type": "chorus",    "start": 97,  "end": 132 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "APT.",
     "artist": "ROSÉ & Bruno Mars",
     "year": 2024,
     "genre": "Pop",
-    "duration": 202,
-    "avgViews": 72,
+    "duration": 169,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 14  },
-      { "type": "verse",     "start": 14,  "end": 35  },
-      { "type": "prechorus", "start": 35,  "end": 52  },
-      { "type": "chorus",    "start": 52,  "end": 70  },
-      { "type": "verse",     "start": 70,  "end": 88  },
-      { "type": "prechorus", "start": 88,  "end": 101 },
-      { "type": "chorus",    "start": 101, "end": 119 },
-      { "type": "bridge",    "start": 119, "end": 163 },
-      { "type": "chorus",    "start": 163, "end": 202 }
+      { "type": "intro",     "start": 0,   "end": 6   },
+      { "type": "chorus",    "start": 6,   "end": 19  },
+      { "type": "verse",     "start": 19,  "end": 32  },
+      { "type": "prechorus", "start": 32,  "end": 45  },
+      { "type": "chorus",    "start": 45,  "end": 57  },
+      { "type": "verse",     "start": 57,  "end": 71  },
+      { "type": "prechorus", "start": 71,  "end": 83  },
+      { "type": "chorus",    "start": 83,  "end": 96  },
+      { "type": "bridge",    "start": 96,  "end": 129 },
+      { "type": "prechorus", "start": 129, "end": 142 },
+      { "type": "chorus",    "start": 142, "end": 169 }
     ],
     "clips": [
-      { "start": 14,  "end": 32,  "instances": 4 },
-      { "start": 101, "end": 119, "instances": 1 }
-    ]
+      { "start": 6,  "end": 16, "instances": 4 },
+      { "start": 29, "end": 52, "instances": 5 },
+      { "start": 0,  "end": 57, "instances": 1 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "Te Quería Ver",
     "artist": "Alemán & Neton Vega",
     "year": 2025,
     "genre": "Reggaeton",
-    "duration": 192,
-    "avgViews": null,
+    "duration": 176,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 12  },
-      { "type": "verse",  "start": 12,  "end": 44  },
-      { "type": "chorus", "start": 44,  "end": 68  },
-      { "type": "verse",  "start": 68,  "end": 100 },
-      { "type": "chorus", "start": 100, "end": 124 },
-      { "type": "bridge", "start": 124, "end": 152 },
-      { "type": "chorus", "start": 152, "end": 176 },
-      { "type": "outro",  "start": 176, "end": 192 }
+      { "type": "chorus", "start": 0,   "end": 28  },
+      { "type": "verse",  "start": 28,  "end": 57  },
+      { "type": "chorus", "start": 57,  "end": 95  },
+      { "type": "verse",  "start": 95,  "end": 134 },
+      { "type": "chorus", "start": 134, "end": 176 }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ]
+      { "start": 93, "end": 107, "instances": 8 },
+      { "start": 84, "end": 99,  "instances": 1 },
+      { "start": 78, "end": 90,  "instances": 1 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "Stecu Stecu",
     "artist": "Faris Adam",
     "year": 2025,
     "genre": "Pop",
-    "duration": 178,
-    "avgViews": null,
+    "duration": 223,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 10  },
-      { "type": "verse",     "start": 10,  "end": 36  },
-      { "type": "prechorus", "start": 36,  "end": 50  },
-      { "type": "chorus",    "start": 50,  "end": 72  },
-      { "type": "verse",     "start": 72,  "end": 98  },
-      { "type": "prechorus", "start": 98,  "end": 110 },
-      { "type": "chorus",    "start": 110, "end": 132 },
-      { "type": "outro",     "start": 132, "end": 178 }
+      { "type": "verse",  "start": 0,   "end": 49  },
+      { "type": "verse",  "start": 49,  "end": 69  },
+      { "type": "chorus", "start": 69,  "end": 99  },
+      { "type": "verse",  "start": 99,  "end": 117 },
+      { "type": "chorus", "start": 117, "end": 136 },
+      { "type": "verse",  "start": 136, "end": 155 },
+      { "type": "verse",  "start": 155, "end": 173 },
+      { "type": "chorus", "start": 173, "end": 223 }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ]
+      { "start": 169, "end": 183, "instances": 2 },
+      { "start": 155, "end": 180, "instances": 7 },
+      { "start": 155, "end": 169, "instances": 1 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "Anxiety",
     "artist": "Doechii",
     "year": 2025,
     "genre": "Pop Rap",
-    "duration": 208,
-    "avgViews": null,
+    "duration": 249,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 14  },
-      { "type": "verse",  "start": 14,  "end": 52  },
-      { "type": "chorus", "start": 52,  "end": 74  },
-      { "type": "verse",  "start": 74,  "end": 112 },
-      { "type": "chorus", "start": 112, "end": 134 },
-      { "type": "bridge", "start": 134, "end": 168 },
-      { "type": "chorus", "start": 168, "end": 190 },
-      { "type": "outro",  "start": 190, "end": 208 }
+      { "type": "refrain",     "start": 0,   "end": 35  },
+      { "type": "postrefrain", "start": 35,  "end": 48  },
+      { "type": "verse",       "start": 48,  "end": 71  },
+      { "type": "interlude",   "start": 71,  "end": 78  },
+      { "type": "refrain",     "start": 78,  "end": 92  },
+      { "type": "chorus",      "start": 92,  "end": 137 },
+      { "type": "verse",       "start": 137, "end": 154 },
+      { "type": "interlude",   "start": 154, "end": 167 },
+      { "type": "bridge",      "start": 167, "end": 181 },
+      { "type": "chorus",      "start": 181, "end": 212 },
+      { "type": "outro",       "start": 212, "end": 249 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Sailor Song",
     "artist": "Gigi Perez",
     "year": 2024,
     "genre": "Indie Folk",
-    "duration": 196,
-    "avgViews": null,
+    "duration": 211,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 12  },
-      { "type": "verse",  "start": 12,  "end": 48  },
-      { "type": "chorus", "start": 48,  "end": 70  },
-      { "type": "verse",  "start": 70,  "end": 106 },
-      { "type": "chorus", "start": 106, "end": 128 },
-      { "type": "bridge", "start": 128, "end": 158 },
-      { "type": "chorus", "start": 158, "end": 180 },
-      { "type": "outro",  "start": 180, "end": 196 }
+      { "type": "verse",  "start": 0,   "end": 64  },
+      { "type": "chorus", "start": 64,  "end": 105 },
+      { "type": "verse",  "start": 105, "end": 145 },
+      { "type": "chorus", "start": 145, "end": 186 },
+      { "type": "outro",  "start": 186, "end": 211 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Shake it To The Max (FLY) (Remix)",
     "artist": "MOLIY, Silent Addy, Skillibeng, Shensea",
     "year": 2024,
     "genre": "Hip-Hop",
-    "duration": 212,
-    "avgViews": null,
+    "duration": 178,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 10  },
-      { "type": "verse",  "start": 10,  "end": 46  },
-      { "type": "chorus", "start": 46,  "end": 68  },
-      { "type": "verse",  "start": 68,  "end": 104 },
-      { "type": "chorus", "start": 104, "end": 126 },
-      { "type": "verse",  "start": 126, "end": 162 },
-      { "type": "chorus", "start": 162, "end": 184 },
-      { "type": "outro",  "start": 184, "end": 212 }
+      { "type": "intro",      "start": 0,   "end": 9   },
+      { "type": "chorus",     "start": 9,   "end": 20  },
+      { "type": "postchorus", "start": 20,  "end": 29  },
+      { "type": "verse",      "start": 29,  "end": 56  },
+      { "type": "chorus",     "start": 56,  "end": 66  },
+      { "type": "postchorus", "start": 66,  "end": 75  },
+      { "type": "verse",      "start": 75,  "end": 96  },
+      { "type": "prechorus",  "start": 96,  "end": 105 },
+      { "type": "chorus",     "start": 105, "end": 116 },
+      { "type": "postchorus", "start": 116, "end": 124 },
+      { "type": "verse",      "start": 124, "end": 145 },
+      { "type": "prechorus",  "start": 145, "end": 154 },
+      { "type": "chorus",     "start": 154, "end": 165 },
+      { "type": "postchorus", "start": 165, "end": 178 }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ]
+      { "start": 7, "end": 19, "instances": 1 },
+      { "start": 5, "end": 20, "instances": 7 },
+      { "start": 6, "end": 14, "instances": 1 },
+      { "start": 5, "end": 30, "instances": 1 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "ocean eyes",
@@ -243,41 +332,43 @@
     "year": 2017,
     "genre": "Contemporary R&B",
     "duration": 200,
-    "avgViews": 55,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 14  },
-      { "type": "verse",  "start": 14,  "end": 42  },
-      { "type": "chorus", "start": 42,  "end": 69  },
-      { "type": "verse",  "start": 69,  "end": 97  },
-      { "type": "chorus", "start": 97,  "end": 124 },
-      { "type": "bridge", "start": 124, "end": 154 },
-      { "type": "chorus", "start": 154, "end": 182 },
-      { "type": "outro",  "start": 182, "end": 200 }
+      { "type": "intro",  "start": 0,   "end": 13  },
+      { "type": "verse",  "start": 13,  "end": 42  },
+      { "type": "chorus", "start": 42,  "end": 72  },
+      { "type": "verse",  "start": 72,  "end": 101 },
+      { "type": "chorus", "start": 101, "end": 132 },
+      { "type": "bridge", "start": 132, "end": 161 },
+      { "type": "chorus", "start": 161, "end": 200 }
     ],
     "clips": [
       { "start": 42, "end": 59, "instances": 3 }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "No One Noticed",
     "artist": "The Marias",
     "year": 2024,
     "genre": "Alternative/Indie",
-    "duration": 236,
-    "avgViews": 38,
+    "duration": 284,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 18  },
-      { "type": "verse",  "start": 18,  "end": 60  },
-      { "type": "chorus", "start": 60,  "end": 88  },
-      { "type": "verse",  "start": 88,  "end": 130 },
-      { "type": "bridge", "start": 130, "end": 168 },
-      { "type": "chorus", "start": 168, "end": 198 },
-      { "type": "outro",  "start": 198, "end": 236 }
+      { "type": "verse",   "start": 0,   "end": 19  },
+      { "type": "chorus",  "start": 19,  "end": 58  },
+      { "type": "verse",   "start": 58,  "end": 78  },
+      { "type": "chorus",  "start": 78,  "end": 99  },
+      { "type": "refrain", "start": 99,  "end": 198 },
+      { "type": "chorus",  "start": 198, "end": 220 },
+      { "type": "bridge",  "start": 220, "end": 237 },
+      { "type": "outro",   "start": 237, "end": 284 }
     ],
     "clips": [
-      { "start": 129, "end": 148, "instances": 4 },
-      { "start": 198, "end": 208, "instances": 2 }
-    ]
+      { "start": 153, "end": 168, "instances": 2 },
+      { "start": 129, "end": 149, "instances": 4 },
+      { "start": 198, "end": 208, "instances": 2 },
+      { "start": 221, "end": 248, "instances": 2 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "back to friends",
@@ -285,147 +376,158 @@
     "year": 2025,
     "genre": "Alternative/Indie",
     "duration": 199,
-    "avgViews": 29,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 12  },
-      { "type": "verse",     "start": 12,  "end": 44  },
-      { "type": "prechorus", "start": 44,  "end": 60  },
-      { "type": "chorus",    "start": 60,  "end": 82  },
-      { "type": "verse",     "start": 82,  "end": 114 },
-      { "type": "prechorus", "start": 114, "end": 128 },
-      { "type": "chorus",    "start": 128, "end": 150 },
-      { "type": "outro",     "start": 150, "end": 199 }
+      { "type": "verse",  "start": 0,   "end": 44  },
+      { "type": "chorus", "start": 44,  "end": 64  },
+      { "type": "verse",  "start": 64,  "end": 85  },
+      { "type": "chorus", "start": 85,  "end": 105 },
+      { "type": "bridge", "start": 105, "end": 137 },
+      { "type": "chorus", "start": 137, "end": 180 },
+      { "type": "outro",  "start": 180, "end": 199 }
     ],
     "clips": [
-      { "start": 44,  "end": 60,  "instances": 2 },
-      { "start": 114, "end": 128, "instances": 4 }
-    ]
+      { "start": 64,  "end": 76,  "instances": 1 },
+      { "start": 135, "end": 151, "instances": 4 },
+      { "start": 79,  "end": 94,  "instances": 4 },
+      { "start": 68,  "end": 85,  "instances": 1 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "Sparks",
     "artist": "Coldplay",
     "year": 2000,
     "genre": "Alternative Rock",
-    "duration": 226,
-    "avgViews": 61,
+    "duration": 227,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 20  },
-      { "type": "verse",  "start": 20,  "end": 65  },
-      { "type": "chorus", "start": 65,  "end": 95  },
-      { "type": "verse",  "start": 95,  "end": 140 },
-      { "type": "chorus", "start": 140, "end": 170 },
-      { "type": "bridge", "start": 170, "end": 200 },
-      { "type": "outro",  "start": 200, "end": 226 }
+      { "type": "verse",  "start": 0,   "end": 72  },
+      { "type": "chorus", "start": 72,  "end": 116 },
+      { "type": "verse",  "start": 116, "end": 156 },
+      { "type": "chorus", "start": 156, "end": 176 },
+      { "type": "bridge", "start": 176, "end": 198 },
+      { "type": "outro",  "start": 198, "end": 227 }
     ],
     "clips": [
-      { "start": 33,  "end": 54,  "instances": 4 },
-      { "start": 115, "end": 132, "instances": 1 }
-    ]
+      { "start": 53,  "end": 70,  "instances": 1 },
+      { "start": 39,  "end": 179, "instances": 1 },
+      { "start": 53,  "end": 114, "instances": 3 },
+      { "start": 0,   "end": 176, "instances": 1 },
+      { "start": 53,  "end": 72,  "instances": 1 },
+      { "start": 53,  "end": 77,  "instances": 1 },
+      { "start": 138, "end": 153, "instances": 2 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "That's So True",
     "artist": "Gracie Abrams",
     "year": 2024,
     "genre": "Folk-pop",
-    "duration": 193,
-    "avgViews": null,
+    "duration": 166,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 10  },
-      { "type": "verse",     "start": 10,  "end": 42  },
-      { "type": "prechorus", "start": 42,  "end": 56  },
-      { "type": "chorus",    "start": 56,  "end": 80  },
-      { "type": "verse",     "start": 80,  "end": 112 },
-      { "type": "prechorus", "start": 112, "end": 124 },
-      { "type": "chorus",    "start": 124, "end": 148 },
-      { "type": "bridge",    "start": 148, "end": 168 },
-      { "type": "chorus",    "start": 168, "end": 193 }
+      { "type": "verse",     "start": 0,   "end": 16  },
+      { "type": "prechorus", "start": 16,  "end": 26  },
+      { "type": "chorus",    "start": 26,  "end": 45  },
+      { "type": "verse",     "start": 45,  "end": 61  },
+      { "type": "prechorus", "start": 61,  "end": 71  },
+      { "type": "chorus",    "start": 71,  "end": 105 },
+      { "type": "bridge",    "start": 105, "end": 124 },
+      { "type": "chorus",    "start": 124, "end": 166 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "Let Down",
     "artist": "Radiohead",
     "year": 1997,
     "genre": "Alternative Rock",
-    "duration": 294,
-    "avgViews": null,
+    "duration": 299,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 22  },
-      { "type": "verse",  "start": 22,  "end": 70  },
-      { "type": "chorus", "start": 70,  "end": 102 },
-      { "type": "verse",  "start": 102, "end": 150 },
-      { "type": "chorus", "start": 150, "end": 182 },
-      { "type": "bridge", "start": 182, "end": 240 },
-      { "type": "outro",  "start": 240, "end": 294 }
+      { "type": "verse",  "start": 0,   "end": 59  },
+      { "type": "chorus", "start": 59,  "end": 90  },
+      { "type": "verse",  "start": 90,  "end": 127 },
+      { "type": "chorus", "start": 127, "end": 186 },
+      { "type": "bridge", "start": 186, "end": 221 },
+      { "type": "verse",  "start": 221, "end": 258 },
+      { "type": "chorus", "start": 258, "end": 299 }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ]
+      { "start": 222, "end": 274, "instances": 1 },
+      { "start": 220, "end": 227, "instances": 2 },
+      { "start": 220, "end": 232, "instances": 1 },
+      { "start": 220, "end": 230, "instances": 2 },
+      { "start": 231, "end": 243, "instances": 1 },
+      { "start": 240, "end": 250, "instances": 1 },
+      { "start": 220, "end": 234, "instances": 2 }
+    ],
+    "rep_dots": []
   },
   {
     "name": "Suave",
     "artist": "El Alfa",
     "year": 2018,
     "genre": "Dembow",
-    "duration": 188,
-    "avgViews": null,
+    "duration": 211,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 12  },
-      { "type": "verse",  "start": 12,  "end": 46  },
-      { "type": "chorus", "start": 46,  "end": 70  },
-      { "type": "verse",  "start": 70,  "end": 104 },
-      { "type": "chorus", "start": 104, "end": 128 },
-      { "type": "verse",  "start": 128, "end": 162 },
-      { "type": "chorus", "start": 162, "end": 176 },
-      { "type": "outro",  "start": 176, "end": 188 }
+      { "type": "intro",      "start": 0,   "end": 22  },
+      { "type": "chorus",     "start": 22,  "end": 40  },
+      { "type": "postchorus", "start": 40,  "end": 54  },
+      { "type": "verse",      "start": 54,  "end": 78  },
+      { "type": "chorus",     "start": 78,  "end": 96  },
+      { "type": "postchorus", "start": 96,  "end": 110 },
+      { "type": "bridge",     "start": 110, "end": 126 },
+      { "type": "verse",      "start": 126, "end": 134 },
+      { "type": "chorus",     "start": 134, "end": 152 },
+      { "type": "postchorus", "start": 152, "end": 166 },
+      { "type": "outro",      "start": 166, "end": 211 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "My Darling",
     "artist": "Chella",
     "year": 2025,
     "genre": "Afrobeats",
-    "duration": 182,
-    "avgViews": null,
+    "duration": 146,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 14  },
-      { "type": "verse",  "start": 14,  "end": 46  },
-      { "type": "chorus", "start": 46,  "end": 68  },
-      { "type": "verse",  "start": 68,  "end": 100 },
-      { "type": "chorus", "start": 100, "end": 122 },
-      { "type": "bridge", "start": 122, "end": 150 },
-      { "type": "chorus", "start": 150, "end": 170 },
-      { "type": "outro",  "start": 170, "end": 182 }
+      { "type": "intro",   "start": 0,   "end": 9   },
+      { "type": "refrain", "start": 9,   "end": 24  },
+      { "type": "verse",   "start": 24,  "end": 41  },
+      { "type": "chorus",  "start": 41,  "end": 58  },
+      { "type": "refrain", "start": 58,  "end": 75  },
+      { "type": "verse",   "start": 75,  "end": 91  },
+      { "type": "chorus",  "start": 91,  "end": 108 },
+      { "type": "refrain", "start": 108, "end": 130 },
+      { "type": "outro",   "start": 130, "end": 146 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   },
   {
     "name": "We Hug Now",
     "artist": "Sydney Rose",
     "year": 2025,
     "genre": "Alternative/Indie",
-    "duration": 176,
-    "avgViews": null,
+    "duration": 202,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 8   },
-      { "type": "verse",     "start": 8,   "end": 38  },
-      { "type": "prechorus", "start": 38,  "end": 52  },
-      { "type": "chorus",    "start": 52,  "end": 74  },
-      { "type": "verse",     "start": 74,  "end": 104 },
-      { "type": "prechorus", "start": 104, "end": 116 },
-      { "type": "chorus",    "start": 116, "end": 138 },
-      { "type": "bridge",    "start": 138, "end": 158 },
-      { "type": "chorus",    "start": 158, "end": 176 }
+      { "type": "verse",  "start": 0,   "end": 45  },
+      { "type": "verse",  "start": 45,  "end": 77  },
+      { "type": "chorus", "start": 77,  "end": 111 },
+      { "type": "verse",  "start": 111, "end": 140 },
+      { "type": "chorus", "start": 140, "end": 184 },
+      { "type": "outro",  "start": 184, "end": 202 }
     ],
     "clips": [
       { "start": null, "end": null, "instances": null }
-    ]
+    ],
+    "rep_dots": []
   }
 ]
