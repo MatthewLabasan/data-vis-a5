@@ -159,7 +159,6 @@
   const MARKER_STICKOUT = 0.012;
   // Detail-view scrub: only this stroke band around the ring receives clicks (not the whole circle)
   const SCRUB_HIT_WIDTH_RATIO = 0.028;
-  const CLIP_END_EPSILON = 0.08;
   const ZOOM_MS = 420;
   const DETAIL_TEXT_FADE_MS = 220;
   const DETAIL_TEXT_MOVE_MS = 300;
@@ -167,20 +166,17 @@
     "Pretty Little Baby": "songs/pretty_little_baby.mp3",
     "APT.": "songs/APT.mp3",
     "No One Noticed": "songs/no_one_noticed.mp3",
-    "No One Noticed (Extended Spanish)": "songs/no_one_noticed.mp3",
     "back to friends": "songs/back_to_friends.mp3",
     "Sparks": "songs/sparks.mp3",
   };
   const SONG_ORDER = [
     "Pretty Little Baby",
     "APT.",
-    "No One Noticed (Extended Spanish)",
+    "No One Noticed",
     "back to friends",
     "Sparks",
   ];
-  const SONG_DISPLAY_NAMES = {
-    "No One Noticed (Extended Spanish)": "No One Noticed",
-  };
+  const SONG_DISPLAY_NAMES = {};
   let ALL_DATA = [];
   let activeAudio = null;
   let activePlayBtn = null;
@@ -188,7 +184,6 @@
   let activeProgressGeom = null;
   let activeProgressRAF = null;
   let activeTimeLabel = null;
-  let clipControlOpId = 0;
 
   const SECTION_COLORS = {
     intro:        "#aaaaaa",
@@ -327,116 +322,6 @@
     return match ? match[1] : null;
   }
 
-  function getSortedValidClips(song) {
-    return (song.clips || [])
-      .filter(c => c.start != null && c.end != null && c.end > c.start)
-      .sort((a, b) => a.start - b.start);
-  }
-
-  function getPlayableClips(song, duration) {
-    const dur = Number(duration);
-    if (!Number.isFinite(dur) || dur <= 0) return getSortedValidClips(song);
-    return getSortedValidClips(song)
-      .filter((clip) => clip.start < dur - 0.01)
-      .map((clip) => ({ ...clip, end: Math.min(clip.end, dur) }))
-      .filter((clip) => clip.end > clip.start + 0.01);
-  }
-
-  function refreshClipPlaybackContext(audio, song) {
-    const duration = Number(audio.duration || audio.dataset.songDuration || song.duration || 0);
-    const clips = getPlayableClips(song, duration);
-    audio._clipPlayback = { clips, song };
-    if (!clips.length) {
-      audio.dataset.clipIndex = "0";
-      return;
-    }
-    const idx = Math.min(
-      Math.max(0, parseInt(audio.dataset.clipIndex || "0", 10)),
-      clips.length - 1
-    );
-    audio.dataset.clipIndex = String(idx);
-  }
-
-  /** Which clip index should be active after seeking to `t` (seconds)? */
-  function clipIndexAtTime(clips, t) {
-    if (!clips.length) return 0;
-    // If multiple clips overlap at time t, prefer the one that starts latest.
-    // This prevents getting "stuck" on an earlier overlapping clip when skipping.
-    let overlapIdx = -1;
-    let latestStart = -Infinity;
-    for (let i = 0; i < clips.length; i++) {
-      if (t >= clips[i].start && t < clips[i].end && clips[i].start >= latestStart) {
-        latestStart = clips[i].start;
-        overlapIdx = i;
-      }
-    }
-    if (overlapIdx !== -1) return overlapIdx;
-    let best = 0;
-    for (let i = 0; i < clips.length; i++) {
-      if (clips[i].start <= t) best = i;
-    }
-    return best;
-  }
-
-  function clampTimeToClipSpan(clips, t) {
-    if (!clips.length) return t;
-    const inClipIdx = clips.findIndex((clip) => t >= clip.start && t < clip.end);
-    if (inClipIdx !== -1) return t;
-    const nextClip = clips.find((clip) => clip.start >= t);
-    if (nextClip) return nextClip.start;
-    return clips[clips.length - 1].start;
-  }
-
-  function syncClipIndexFromTime(audio) {
-    const ctx = audio._clipPlayback;
-    if (!ctx || !ctx.clips.length) return;
-    audio.dataset.clipIndex = String(clipIndexAtTime(ctx.clips, audio.currentTime));
-  }
-
-  function resolveActiveClipIndex(audio, clips) {
-    if (!clips.length) return 0;
-    const rawIdx = parseInt(audio.dataset.clipIndex || "0", 10);
-    const idx = Number.isFinite(rawIdx)
-      ? Math.min(Math.max(0, rawIdx), clips.length - 1)
-      : 0;
-    const clip = clips[idx];
-    if (audio.currentTime >= clip.start - 0.02 && audio.currentTime < clip.end - CLIP_END_EPSILON) {
-      return idx;
-    }
-    return clipIndexAtTime(clips, audio.currentTime);
-  }
-
-  function attachClipPlaybackGuard(audio, song) {
-    refreshClipPlaybackContext(audio, song);
-    if (audio._clipGuardAttached) return;
-    audio._clipGuardAttached = true;
-    audio.addEventListener("timeupdate", () => {
-      if (activeAudio !== audio) return;
-      const ctx = audio._clipPlayback;
-      if (!ctx || !ctx.clips.length) return;
-      const idx = Math.min(
-        Math.max(0, parseInt(audio.dataset.clipIndex || "0", 10)),
-        ctx.clips.length - 1
-      );
-      const clip = ctx.clips[idx];
-      const dur = Number(audio.duration || audio.dataset.songDuration);
-      if (audio.currentTime < clip.start - CLIP_END_EPSILON) {
-        audio.currentTime = clip.start;
-        setProgressMarkerTime(audio.currentTime, dur);
-        setTimeLabel(audio.currentTime, dur);
-        return;
-      }
-      if (audio.currentTime >= clip.end - CLIP_END_EPSILON) {
-        audio.pause();
-        audio.currentTime = Math.min(clip.end, dur);
-        stopProgressLoop();
-        if (activePlayBtn) activePlayBtn.textContent = "▶";
-        setProgressMarkerTime(audio.currentTime, dur);
-        setTimeLabel(audio.currentTime, dur);
-      }
-    });
-  }
-
   function setProgressMarkerTime(seconds, duration) {
     if (!activeProgressMarker || !activeProgressGeom || !duration) return;
     const clamped = Math.max(0, Math.min(seconds, duration));
@@ -500,52 +385,6 @@
     activeTimeLabel = null;
   }
 
-  function waitForMetadata(audio) {
-    if (audio.readyState >= 1 && Number.isFinite(audio.duration) && audio.duration > 0) {
-      return Promise.resolve();
-    }
-    return new Promise((resolve) => {
-      const done = () => {
-        audio.removeEventListener("loadedmetadata", done);
-        audio.removeEventListener("durationchange", done);
-        resolve();
-      };
-      audio.addEventListener("loadedmetadata", done);
-      audio.addEventListener("durationchange", done);
-    });
-  }
-
-  function seekAudio(audio, time) {
-    return new Promise((resolve) => {
-      const target = Number(time);
-      if (!Number.isFinite(target)) {
-        resolve();
-        return;
-      }
-      let doneCalled = false;
-      const done = () => {
-        if (doneCalled) return;
-        doneCalled = true;
-        audio.removeEventListener("seeked", done);
-        audio.removeEventListener("timeupdate", done);
-        clearTimeout(timer);
-        resolve();
-      };
-      const timer = setTimeout(done, 500);
-      audio.addEventListener("seeked", done, { once: true });
-      audio.addEventListener("timeupdate", done, { once: true });
-      try {
-        audio.currentTime = target;
-      } catch (_) {
-        done();
-        return;
-      }
-      if (Math.abs(audio.currentTime - target) < 0.05 || !audio.seeking) {
-        done();
-      }
-    });
-  }
-
   function ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
     const src = getAudioSrcForSong(song);
     if (!src) return null;
@@ -556,7 +395,6 @@
 
     if (activeAudio && activeAudio.dataset.src === src) {
       if (playBtn) activePlayBtn = playBtn;
-      refreshClipPlaybackContext(activeAudio, song);
       return activeAudio;
     }
 
@@ -565,7 +403,6 @@
     audio.preload = "auto";
     audio.dataset.src = src;
     audio.dataset.songDuration = String(song.duration);
-    audio.dataset.clipIndex = "0";
     activeAudio = audio;
     activePlayBtn = playBtn || activePlayBtn;
     activeProgressMarker = progressMarker;
@@ -573,10 +410,8 @@
     activeTimeLabel = timeLabel;
     setProgressMarkerTime(0, song.duration);
     setTimeLabel(0, song.duration);
-    attachClipPlaybackGuard(audio, song);
     audio.addEventListener("loadedmetadata", () => {
       audio.dataset.songDuration = String(audio.duration || song.duration);
-      refreshClipPlaybackContext(audio, song);
     });
 
     audio.addEventListener("play", () => {
@@ -614,27 +449,10 @@
     return audio;
   }
 
-  async function toggleClipDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
-    const opId = ++clipControlOpId;
+  function toggleClipDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
     const audio = ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel);
     if (!audio) return;
-    await waitForMetadata(audio);
-    if (opId !== clipControlOpId || activeAudio !== audio) return;
-    refreshClipPlaybackContext(audio, song);
-    const clips = (audio._clipPlayback && audio._clipPlayback.clips) || getSortedValidClips(song);
-    if (!clips.length) return;
-    const idx = resolveActiveClipIndex(audio, clips);
-    const clip = clips[idx];
-    audio.dataset.clipIndex = String(idx);
-
     if (audio.paused) {
-      if (audio.currentTime < clip.start - 0.02 || audio.currentTime >= clip.end - CLIP_END_EPSILON) {
-        await seekAudio(audio, clip.start);
-        if (opId !== clipControlOpId || activeAudio !== audio) return;
-        const dur = Number(audio.duration || audio.dataset.songDuration);
-        setProgressMarkerTime(clip.start, dur);
-        setTimeLabel(clip.start, dur);
-      }
       audio.play().catch(() => {
         if (activePlayBtn) activePlayBtn.textContent = "▶";
         stopProgressLoop();
@@ -642,35 +460,6 @@
     } else {
       audio.pause();
       stopProgressLoop();
-    }
-  }
-
-  async function skipClipDetail(song, delta, progressMarker, markerGeom, timeLabel, playBtn) {
-    const opId = ++clipControlOpId;
-    const audio = ensureDetailAudio(song, playBtn || activePlayBtn, progressMarker, markerGeom, timeLabel);
-    if (!audio) return;
-    await waitForMetadata(audio);
-    if (opId !== clipControlOpId || activeAudio !== audio) return;
-    refreshClipPlaybackContext(audio, song);
-    const clips = (audio._clipPlayback && audio._clipPlayback.clips) || getSortedValidClips(song);
-    if (!clips.length) return;
-
-    const wasPlaying = !audio.paused;
-    if (wasPlaying) audio.pause();
-    let idx = resolveActiveClipIndex(audio, clips);
-    idx = Math.min(clips.length - 1, Math.max(0, idx + delta));
-    audio.dataset.clipIndex = String(idx);
-    const clip = clips[idx];
-    await seekAudio(audio, clip.start);
-    if (opId !== clipControlOpId || activeAudio !== audio) return;
-    const dur = Number(audio.duration || audio.dataset.songDuration);
-    setProgressMarkerTime(clip.start, dur);
-    setTimeLabel(clip.start, dur);
-    if (wasPlaying) {
-      audio.play().catch(() => {
-        if (activePlayBtn) activePlayBtn.textContent = "▶";
-        stopProgressLoop();
-      });
     }
   }
 
@@ -849,7 +638,10 @@
       scrubRing.style.cursor = "grab";
       svg.appendChild(scrubRing);
 
-      const seekToClientPoint = (clientX, clientY, shouldResume) => {
+      let scrubResumeOnUp = false;
+      let scrubAudio = null;
+
+      const seekToClientPoint = (clientX, clientY) => {
         const audio = ensureDetailAudio(
           song,
           (detailPlayBtnRef && detailPlayBtnRef.current) || activePlayBtn,
@@ -868,34 +660,39 @@
         const dy = localPt.y - cy;
         const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 90 + 360) % 360;
         const duration = Number(audio.duration || audio.dataset.songDuration);
-        let nextTime = (angle / 360) * duration;
-        const clips = getSortedValidClips(song);
-        nextTime = clampTimeToClipSpan(clips, nextTime);
+        const nextTime = (angle / 360) * duration;
         audio.currentTime = nextTime;
-        syncClipIndexFromTime(audio);
         setProgressMarkerTime(nextTime, duration);
         setTimeLabel(nextTime, duration);
-        if (shouldResume) audio.play();
+        scrubAudio = audio;
       };
 
       scrubRing.addEventListener("pointerdown", e => {
-        const src = getAudioSrcForSong(song);
-        const sameAudio = activeAudio && src && activeAudio.dataset.src === src;
-        const wasPlaying = Boolean(sameAudio && !activeAudio.paused);
+        const audio = ensureDetailAudio(
+          song,
+          (detailPlayBtnRef && detailPlayBtnRef.current) || activePlayBtn,
+          progressMarker,
+          markerGeom,
+          timeLabel
+        );
+        scrubResumeOnUp = Boolean(audio && !audio.paused);
+        if (audio && scrubResumeOnUp) audio.pause();
         scrubRing.setPointerCapture(e.pointerId);
         scrubRing.style.cursor = "grabbing";
-        seekToClientPoint(e.clientX, e.clientY, wasPlaying);
+        seekToClientPoint(e.clientX, e.clientY);
       });
       scrubRing.addEventListener("pointermove", e => {
-        if (e.buttons !== 1) return;
-        const src = getAudioSrcForSong(song);
-        const sameAudio = activeAudio && src && activeAudio.dataset.src === src;
-        const wasPlaying = Boolean(sameAudio && !activeAudio.paused);
-        seekToClientPoint(e.clientX, e.clientY, wasPlaying);
+        if (e.buttons !== 1 || !scrubRing.hasPointerCapture(e.pointerId)) return;
+        seekToClientPoint(e.clientX, e.clientY);
       });
       scrubRing.addEventListener("pointerup", e => {
         scrubRing.releasePointerCapture(e.pointerId);
         scrubRing.style.cursor = "grab";
+        if (scrubResumeOnUp && scrubAudio && activeAudio === scrubAudio) {
+          scrubAudio.play().catch(() => {});
+        }
+        scrubResumeOnUp = false;
+        scrubAudio = null;
       });
     }
 
@@ -986,8 +783,6 @@
     // [INDIVIDUAL VIEW ONLY] Play/skip — play only TikTok clip ranges; skip switches clip
     if (isDetail) {
       const bSp = size * 0.11, bSz = size * 0.075;
-      const detailClips = getSortedValidClips(song);
-      const hasClips = detailClips.length > 0;
       const dimFill = "rgba(255,255,255,0.22)";
       const normalFill = (isPlay) => (isPlay ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.65)");
 
@@ -1014,16 +809,11 @@
 
       const playBtn = addCtrl(cx, "▶", bSz, true, () => {
         toggleClipDetailAudio(song, playBtn, progressMarker, markerGeom, timeLabel);
-      }, hasClips);
+      }, true);
       if (detailPlayBtnRef) detailPlayBtnRef.current = playBtn;
 
-      addCtrl(cx - bSp, "⏮", bSz * 0.9, false, () => {
-        skipClipDetail(song, -1, progressMarker, markerGeom, timeLabel, playBtn);
-      }, hasClips);
-
-      addCtrl(cx + bSp, "⏭", bSz * 0.9, false, () => {
-        skipClipDetail(song, 1, progressMarker, markerGeom, timeLabel, playBtn);
-      }, hasClips);
+      addCtrl(cx - bSp, "⏮", bSz * 0.9, false, null, false);
+      addCtrl(cx + bSp, "⏭", bSz * 0.9, false, null, false);
     }
 
     // [BOTH VIEWS] Artist — same baseline as layout stack; truncate if very long
