@@ -6,93 +6,289 @@
     "genre": "Pop",
     "duration": 148,
     "sections": [
-      { "type": "intro",       "start": 0,   "end": 15  },
-      { "type": "verse",       "start": 15,  "end": 47  },
-      { "type": "prechorus",   "start": 47,  "end": 62  },
-      { "type": "chorus",      "start": 62,  "end": 79  },
-      { "type": "instrumental", "start": 79,  "end": 95  },
-      { "type": "prechorus",   "start": 95,  "end": 110 },
-      { "type": "chorus",      "start": 110, "end": 127 },
-      { "type": "outro",       "start": 127, "end": 148 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 15,
+        "rep_dots": [
+          {
+            "word": "pretty",
+            "time": 0
+          },
+          {
+            "word": "little",
+            "time": 2.5
+          },
+          {
+            "word": "baby",
+            "time": 5
+          },
+          {
+            "word": "pretty",
+            "time": 7.5
+          },
+          {
+            "word": "little",
+            "time": 10
+          },
+          {
+            "word": "baby",
+            "time": 12.5
+          }
+        ]
+      },
+      {
+        "type": "verse",
+        "start": 15,
+        "end": 47,
+        "rep_dots": [
+          {
+            "word": "pretty",
+            "time": 15.1
+          },
+          {
+            "word": "little",
+            "time": 15.62
+          },
+          {
+            "word": "baby",
+            "time": 16.23
+          },
+          {
+            "word": "love",
+            "time": 24.23
+          },
+          {
+            "word": "pretty",
+            "time": 25.46
+          },
+          {
+            "word": "little",
+            "time": 26.08
+          },
+          {
+            "word": "baby",
+            "time": 26.69
+          },
+          {
+            "word": "pretty",
+            "time": 41.46
+          },
+          {
+            "word": "little",
+            "time": 42.08
+          },
+          {
+            "word": "baby",
+            "time": 42.69
+          },
+          {
+            "word": "love",
+            "time": 45.15
+          }
+        ]
+      },
+      {
+        "type": "prechorus",
+        "start": 47,
+        "end": 62,
+        "rep_dots": [
+          {
+            "word": "young",
+            "time": 51.55
+          },
+          {
+            "word": "love",
+            "time": 52.45
+          },
+          {
+            "word": "love",
+            "time": 58.36
+          },
+          {
+            "word": "young",
+            "time": 60.64
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 62,
+        "end": 79,
+        "rep_dots": [
+          {
+            "word": "meet",
+            "time": 62
+          },
+          {
+            "word": "meet",
+            "time": 68.45
+          }
+        ]
+      },
+      {
+        "type": "instrumental",
+        "start": 79,
+        "end": 95,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 95,
+        "end": 110,
+        "rep_dots": [
+          {
+            "word": "young",
+            "time": 99.55
+          },
+          {
+            "word": "love",
+            "time": 100.45
+          },
+          {
+            "word": "love",
+            "time": 106.36
+          },
+          {
+            "word": "young",
+            "time": 108.64
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 110,
+        "end": 127,
+        "rep_dots": [
+          {
+            "word": "meet",
+            "time": 110
+          },
+          {
+            "word": "meet",
+            "time": 116.45
+          }
+        ]
+      },
+      {
+        "type": "outro",
+        "start": 127,
+        "end": 148,
+        "rep_dots": [
+          {
+            "word": "pretty",
+            "time": 127
+          },
+          {
+            "word": "little",
+            "time": 128.31
+          },
+          {
+            "word": "baby",
+            "time": 129.62
+          },
+          {
+            "word": "pretty",
+            "time": 133.56
+          },
+          {
+            "word": "little",
+            "time": 134.88
+          },
+          {
+            "word": "baby",
+            "time": 136.19
+          },
+          {
+            "word": "pretty",
+            "time": 140.12
+          },
+          {
+            "word": "little",
+            "time": 141.44
+          },
+          {
+            "word": "baby",
+            "time": 142.75
+          },
+          {
+            "word": "pretty",
+            "time": 146.69
+          }
+        ]
+      }
     ],
     "clips": [
-      { "start": 15, "end": 31, "instances": 1 },
-      { "start": 15, "end": 28, "instances": 2 },
-      { "start": 15, "end": 81, "instances": 1 },
-      { "start": 15, "end": 23, "instances": 1 },
-      { "start": 15, "end": 27, "instances": 1 },
-      { "start": 15, "end": 24, "instances": 1 },
-      { "start": 15, "end": 75, "instances": 2 },
-      { "start": 15, "end": 30, "instances": 1 }
-    ],
-    "rep_dots": [
-      { "word": "pretty",    "time": 0.0   },
-      { "word": "little",    "time": 2.5   },
-      { "word": "baby",      "time": 5.0   },
-      { "word": "pretty",    "time": 7.5   },
-      { "word": "little",    "time": 10.0  },
-      { "word": "baby",      "time": 12.5  },
-      { "word": "pretty",    "time": 15.0  },
-      { "word": "little",    "time": 15.62 },
-      { "word": "baby",      "time": 16.23 },
-      { "word": "love",      "time": 24.23 },
-      { "word": "pretty",    "time": 25.46 },
-      { "word": "little",    "time": 26.08 },
-      { "word": "baby",      "time": 26.69 },
-      { "word": "pretty",    "time": 41.46 },
-      { "word": "little",    "time": 42.08 },
-      { "word": "baby",      "time": 42.69 },
-      { "word": "love",      "time": 45.15 },
-      { "word": "time",      "time": 48.82 },
-      { "word": "young",     "time": 51.55 },
-      { "word": "puppy",     "time": 52.0  },
-      { "word": "love",      "time": 52.45 },
-      { "word": "day",       "time": 54.27 },
-      { "word": "love",      "time": 58.36 },
-      { "word": "heart",     "time": 59.73 },
-      { "word": "young",     "time": 60.64 },
-      { "word": "meet",      "time": 62.0  },
-      { "word": "car",       "time": 64.34 },
-      { "word": "hop",       "time": 64.93 },
-      { "word": "pop",       "time": 67.28 },
-      { "word": "shop",      "time": 67.86 },
-      { "word": "meet",      "time": 68.45 },
-      { "word": "moonlight", "time": 70.79 },
-      { "word": "daylight",  "time": 73.14 },
-      { "word": "pretty",    "time": 73.72 },
-      { "word": "little",    "time": 74.31 },
-      { "word": "baby",      "time": 74.9  },
-      { "word": "love",      "time": 77.24 },
-      { "word": "time",      "time": 96.82 },
-      { "word": "young",     "time": 99.55 },
-      { "word": "puppy",     "time": 100.0 },
-      { "word": "love",      "time": 100.45 },
-      { "word": "day",       "time": 102.27 },
-      { "word": "love",      "time": 106.36 },
-      { "word": "heart",     "time": 107.73 },
-      { "word": "young",     "time": 108.64 },
-      { "word": "meet",      "time": 110.0 },
-      { "word": "car",       "time": 112.34 },
-      { "word": "hop",       "time": 112.93 },
-      { "word": "pop",       "time": 115.28 },
-      { "word": "shop",      "time": 115.86 },
-      { "word": "meet",      "time": 116.45 },
-      { "word": "moonlight", "time": 118.79 },
-      { "word": "daylight",  "time": 121.14 },
-      { "word": "pretty",    "time": 121.72 },
-      { "word": "little",    "time": 122.31 },
-      { "word": "baby",      "time": 122.9 },
-      { "word": "love",      "time": 125.24 },
-      { "word": "pretty",    "time": 127.0 },
-      { "word": "little",    "time": 128.31 },
-      { "word": "baby",      "time": 129.62 },
-      { "word": "pretty",    "time": 133.56 },
-      { "word": "little",    "time": 134.88 },
-      { "word": "baby",      "time": 136.19 },
-      { "word": "pretty",    "time": 140.12 },
-      { "word": "little",    "time": 141.44 },
-      { "word": "baby",      "time": 142.75 },
-      { "word": "pretty",    "time": 146.69 }
+      {
+        "start": 15,
+        "end": 31,
+        "likes": 21400000,
+        "views": 115500000,
+        "link": "https://www.tiktok.com/@amarianiyaa/video/7504118311492373802?_r=1&_t=ZT-95Btcfv8Xkr"
+      },
+      {
+        "start": 15,
+        "end": 28,
+        "likes": 12500000,
+        "views": 90500000,
+        "link": "https://www.tiktok.com/@christiecharm/video/7498816166710791442?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 28,
+        "likes": 4900000,
+        "views": 33500000,
+        "link": "https://www.tiktok.com/@sammielys/video/7512585614978649390?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 81,
+        "likes": 9500000,
+        "views": 117200000,
+        "link": "https://www.tiktok.com/@oceanicglow3/video/7535666693339630903?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 23,
+        "likes": 8000000,
+        "views": 70000000,
+        "link": "https://www.tiktok.com/@ciklalyfernandez06/video/7500459815567789358?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 27,
+        "likes": 7100000,
+        "views": 36100000,
+        "link": "https://www.tiktok.com/@brijoles_/video/7503685598272589099?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 24,
+        "likes": 6500000,
+        "views": 27400000,
+        "link": "https://www.tiktok.com/@bubblesbobita/video/7507252992047992107?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 75,
+        "likes": 4900000,
+        "views": 39800000,
+        "link": "https://www.tiktok.com/@couture.to.the.max/video/7514349771985833262?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 75,
+        "likes": 4400000,
+        "views": 38900000,
+        "link": "https://www.tiktok.com/@animalsbehaviour/video/7530143812136602911?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      },
+      {
+        "start": 15,
+        "end": 30,
+        "likes": 4300000,
+        "views": 34300000,
+        "link": "https://www.tiktok.com/@brookemonk_/video/7504411471988804894?is_from_webapp=1&sender_device=pc&web_id=7623783917820364302"
+      }
     ]
   },
   {
@@ -102,20 +298,70 @@
     "genre": "Dancehall",
     "duration": 215,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 12  },
-      { "type": "verse",     "start": 12,  "end": 35  },
-      { "type": "prechorus", "start": 35,  "end": 49  },
-      { "type": "chorus",    "start": 49,  "end": 81  },
-      { "type": "verse",     "start": 81,  "end": 112 },
-      { "type": "prechorus", "start": 112, "end": 127 },
-      { "type": "chorus",    "start": 127, "end": 159 },
-      { "type": "bridge",    "start": 159, "end": 190 },
-      { "type": "chorus",    "start": 190, "end": 215 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 12,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 12,
+        "end": 35,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 35,
+        "end": 49,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 49,
+        "end": 81,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 81,
+        "end": 112,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 112,
+        "end": 127,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 127,
+        "end": 159,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 159,
+        "end": 190,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 190,
+        "end": 215,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Rock That Body",
@@ -124,24 +370,94 @@
     "genre": "Electropop",
     "duration": 268,
     "sections": [
-      { "type": "intro",      "start": 0,   "end": 31  },
-      { "type": "prechorus",  "start": 31,  "end": 46  },
-      { "type": "chorus",     "start": 46,  "end": 60  },
-      { "type": "verse",      "start": 60,  "end": 77  },
-      { "type": "verse",      "start": 77,  "end": 91  },
-      { "type": "refrain",    "start": 91,  "end": 99  },
-      { "type": "prechorus",  "start": 99,  "end": 115 },
-      { "type": "chorus",     "start": 115, "end": 130 },
-      { "type": "postchorus", "start": 130, "end": 137 },
-      { "type": "verse",      "start": 137, "end": 153 },
-      { "type": "verse",      "start": 153, "end": 202 },
-      { "type": "interlude",  "start": 202, "end": 252 },
-      { "type": "outro",      "start": 252, "end": 268 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 31,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 31,
+        "end": 46,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 46,
+        "end": 60,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 60,
+        "end": 77,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 77,
+        "end": 91,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 91,
+        "end": 99,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 99,
+        "end": 115,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 115,
+        "end": 130,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 130,
+        "end": 137,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 137,
+        "end": 153,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 153,
+        "end": 202,
+        "rep_dots": []
+      },
+      {
+        "type": "interlude",
+        "start": 202,
+        "end": 252,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 252,
+        "end": 268,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Azul",
@@ -150,20 +466,70 @@
     "genre": "Reggaeton",
     "duration": 205,
     "sections": [
-      { "type": "verse",     "start": 0,   "end": 21  },
-      { "type": "prechorus", "start": 21,  "end": 28  },
-      { "type": "chorus",    "start": 28,  "end": 70  },
-      { "type": "verse",     "start": 70,  "end": 92  },
-      { "type": "prechorus", "start": 92,  "end": 99  },
-      { "type": "chorus",    "start": 99,  "end": 123 },
-      { "type": "verse",     "start": 123, "end": 150 },
-      { "type": "chorus",    "start": 150, "end": 195 },
-      { "type": "outro",     "start": 195, "end": 205 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 21,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 21,
+        "end": 28,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 28,
+        "end": 70,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 70,
+        "end": 92,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 92,
+        "end": 99,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 99,
+        "end": 123,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 123,
+        "end": 150,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 150,
+        "end": 195,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 195,
+        "end": 205,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Dame Un Grrr",
@@ -172,18 +538,58 @@
     "genre": "Pop",
     "duration": 132,
     "sections": [
-      { "type": "chorus",    "start": 0,   "end": 16  },
-      { "type": "verse",     "start": 16,  "end": 24  },
-      { "type": "prechorus", "start": 24,  "end": 40  },
-      { "type": "chorus",    "start": 40,  "end": 73  },
-      { "type": "verse",     "start": 73,  "end": 80  },
-      { "type": "prechorus", "start": 80,  "end": 97  },
-      { "type": "chorus",    "start": 97,  "end": 132 }
+      {
+        "type": "chorus",
+        "start": 0,
+        "end": 16,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 16,
+        "end": 24,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 24,
+        "end": 40,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 40,
+        "end": 73,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 73,
+        "end": 80,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 80,
+        "end": 97,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 97,
+        "end": 132,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "APT.",
@@ -192,24 +598,680 @@
     "genre": "Pop",
     "duration": 169,
     "sections": [
-      { "type": "intro",     "start": 0,   "end": 6   },
-      { "type": "chorus",    "start": 6,   "end": 19  },
-      { "type": "verse",     "start": 19,  "end": 32  },
-      { "type": "prechorus", "start": 32,  "end": 45  },
-      { "type": "chorus",    "start": 45,  "end": 57  },
-      { "type": "verse",     "start": 57,  "end": 71  },
-      { "type": "prechorus", "start": 71,  "end": 83  },
-      { "type": "chorus",    "start": 83,  "end": 96  },
-      { "type": "bridge",    "start": 96,  "end": 129 },
-      { "type": "prechorus", "start": 129, "end": 142 },
-      { "type": "chorus",    "start": 142, "end": 169 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 6,
+        "rep_dots": [
+          {
+            "word": "랜덤",
+            "time": 1.5
+          },
+          {
+            "word": "게임",
+            "time": 2.25
+          },
+          {
+            "word": "랜덤",
+            "time": 3
+          },
+          {
+            "word": "게임",
+            "time": 3.75
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 6,
+        "end": 19,
+        "rep_dots": [
+          {
+            "word": "아파트",
+            "time": 6
+          },
+          {
+            "word": "아파트",
+            "time": 6.72
+          },
+          {
+            "word": "아파트",
+            "time": 7.44
+          },
+          {
+            "word": "아파트",
+            "time": 8.17
+          },
+          {
+            "word": "아파트",
+            "time": 8.89
+          },
+          {
+            "word": "아파트",
+            "time": 9.61
+          },
+          {
+            "word": "uh-huh",
+            "time": 11.06
+          },
+          {
+            "word": "uh-huh",
+            "time": 11.78
+          },
+          {
+            "word": "아파트",
+            "time": 12.5
+          },
+          {
+            "word": "아파트",
+            "time": 13.22
+          },
+          {
+            "word": "아파트",
+            "time": 13.94
+          },
+          {
+            "word": "아파트",
+            "time": 14.67
+          },
+          {
+            "word": "아파트",
+            "time": 15.39
+          },
+          {
+            "word": "아파트",
+            "time": 16.11
+          },
+          {
+            "word": "uh-huh",
+            "time": 17.56
+          },
+          {
+            "word": "uh-huh",
+            "time": 18.28
+          }
+        ]
+      },
+      {
+        "type": "verse",
+        "start": 19,
+        "end": 32,
+        "rep_dots": [
+          {
+            "word": "kissy",
+            "time": 19
+          },
+          {
+            "word": "face",
+            "time": 19.35
+          },
+          {
+            "word": "kissy",
+            "time": 19.7
+          },
+          {
+            "word": "face",
+            "time": 20.05
+          },
+          {
+            "word": "i'm",
+            "time": 22.16
+          },
+          {
+            "word": "uh-huh",
+            "time": 24.62
+          },
+          {
+            "word": "uh-huh",
+            "time": 24.97
+          },
+          {
+            "word": "red",
+            "time": 25.32
+          },
+          {
+            "word": "hearts",
+            "time": 25.68
+          },
+          {
+            "word": "red",
+            "time": 26.03
+          },
+          {
+            "word": "hearts",
+            "time": 26.38
+          },
+          {
+            "word": "i'm",
+            "time": 27.43
+          }
+        ]
+      },
+      {
+        "type": "prechorus",
+        "start": 32,
+        "end": 45,
+        "rep_dots": [
+          {
+            "word": "don't",
+            "time": 32
+          },
+          {
+            "word": "don't",
+            "time": 35.44
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 45,
+        "end": 57,
+        "rep_dots": [
+          {
+            "word": "아파트",
+            "time": 45
+          },
+          {
+            "word": "아파트",
+            "time": 45.67
+          },
+          {
+            "word": "아파트",
+            "time": 46.33
+          },
+          {
+            "word": "아파트",
+            "time": 47
+          },
+          {
+            "word": "아파트",
+            "time": 47.67
+          },
+          {
+            "word": "아파트",
+            "time": 48.33
+          },
+          {
+            "word": "uh-huh",
+            "time": 49.67
+          },
+          {
+            "word": "uh-huh",
+            "time": 50.33
+          },
+          {
+            "word": "아파트",
+            "time": 51
+          },
+          {
+            "word": "아파트",
+            "time": 51.67
+          },
+          {
+            "word": "아파트",
+            "time": 52.33
+          },
+          {
+            "word": "아파트",
+            "time": 53
+          },
+          {
+            "word": "아파트",
+            "time": 53.67
+          },
+          {
+            "word": "아파트",
+            "time": 54.33
+          },
+          {
+            "word": "uh-huh",
+            "time": 55.67
+          },
+          {
+            "word": "uh-huh",
+            "time": 56.33
+          }
+        ]
+      },
+      {
+        "type": "verse",
+        "start": 57,
+        "end": 71,
+        "rep_dots": [
+          {
+            "word": "it's",
+            "time": 57
+          },
+          {
+            "word": "whatever",
+            "time": 57.36
+          },
+          {
+            "word": "whatever",
+            "time": 57.72
+          },
+          {
+            "word": "it's",
+            "time": 58.08
+          },
+          {
+            "word": "whatever",
+            "time": 58.44
+          },
+          {
+            "word": "whatever",
+            "time": 58.79
+          },
+          {
+            "word": "it's",
+            "time": 59.15
+          },
+          {
+            "word": "whatever",
+            "time": 59.51
+          },
+          {
+            "word": "whatever",
+            "time": 59.87
+          },
+          {
+            "word": "uh-huh",
+            "time": 63.46
+          },
+          {
+            "word": "uh-huh",
+            "time": 63.82
+          },
+          {
+            "word": "건배",
+            "time": 68.13
+          },
+          {
+            "word": "건배",
+            "time": 68.49
+          }
+        ]
+      },
+      {
+        "type": "prechorus",
+        "start": 71,
+        "end": 83,
+        "rep_dots": [
+          {
+            "word": "don't",
+            "time": 71
+          },
+          {
+            "word": "don't",
+            "time": 74.18
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 83,
+        "end": 96,
+        "rep_dots": [
+          {
+            "word": "아파트",
+            "time": 83
+          },
+          {
+            "word": "아파트",
+            "time": 83.72
+          },
+          {
+            "word": "아파트",
+            "time": 84.44
+          },
+          {
+            "word": "아파트",
+            "time": 85.17
+          },
+          {
+            "word": "아파트",
+            "time": 85.89
+          },
+          {
+            "word": "아파트",
+            "time": 86.61
+          },
+          {
+            "word": "uh-huh",
+            "time": 88.06
+          },
+          {
+            "word": "uh-huh",
+            "time": 88.78
+          },
+          {
+            "word": "아파트",
+            "time": 89.5
+          },
+          {
+            "word": "아파트",
+            "time": 90.22
+          },
+          {
+            "word": "아파트",
+            "time": 90.94
+          },
+          {
+            "word": "아파트",
+            "time": 91.67
+          },
+          {
+            "word": "아파트",
+            "time": 92.39
+          },
+          {
+            "word": "아파트",
+            "time": 93.11
+          },
+          {
+            "word": "uh-huh",
+            "time": 94.56
+          },
+          {
+            "word": "uh-huh",
+            "time": 95.28
+          }
+        ]
+      },
+      {
+        "type": "bridge",
+        "start": 96,
+        "end": 129,
+        "rep_dots": [
+          {
+            "word": "i'm",
+            "time": 102.72
+          },
+          {
+            "word": "ya",
+            "time": 105.17
+          },
+          {
+            "word": "ya",
+            "time": 106.39
+          },
+          {
+            "word": "ya",
+            "time": 107.61
+          },
+          {
+            "word": "hold",
+            "time": 108.22
+          },
+          {
+            "word": "hold",
+            "time": 109.44
+          },
+          {
+            "word": "i'm",
+            "time": 110.67
+          },
+          {
+            "word": "way",
+            "time": 112.5
+          },
+          {
+            "word": "i'm",
+            "time": 116.17
+          },
+          {
+            "word": "way",
+            "time": 118
+          },
+          {
+            "word": "hold",
+            "time": 118.61
+          },
+          {
+            "word": "hold",
+            "time": 119.83
+          },
+          {
+            "word": "i'm",
+            "time": 121.06
+          },
+          {
+            "word": "way",
+            "time": 122.89
+          },
+          {
+            "word": "i'm",
+            "time": 126.56
+          },
+          {
+            "word": "way",
+            "time": 128.39
+          }
+        ]
+      },
+      {
+        "type": "prechorus",
+        "start": 129,
+        "end": 142,
+        "rep_dots": [
+          {
+            "word": "don't",
+            "time": 129
+          },
+          {
+            "word": "don't",
+            "time": 132.44
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 142,
+        "end": 169,
+        "rep_dots": [
+          {
+            "word": "아파트",
+            "time": 142
+          },
+          {
+            "word": "아파트",
+            "time": 142.53
+          },
+          {
+            "word": "아파트",
+            "time": 143.06
+          },
+          {
+            "word": "아파트",
+            "time": 143.59
+          },
+          {
+            "word": "아파트",
+            "time": 144.12
+          },
+          {
+            "word": "아파트",
+            "time": 144.65
+          },
+          {
+            "word": "uh-huh",
+            "time": 148.35
+          },
+          {
+            "word": "uh-huh",
+            "time": 148.88
+          },
+          {
+            "word": "아파트",
+            "time": 149.41
+          },
+          {
+            "word": "아파트",
+            "time": 149.94
+          },
+          {
+            "word": "아파트",
+            "time": 150.47
+          },
+          {
+            "word": "아파트",
+            "time": 151
+          },
+          {
+            "word": "아파트",
+            "time": 151.53
+          },
+          {
+            "word": "아파트",
+            "time": 152.06
+          },
+          {
+            "word": "uh-huh",
+            "time": 155.76
+          },
+          {
+            "word": "uh-huh",
+            "time": 156.29
+          },
+          {
+            "word": "아파트",
+            "time": 156.82
+          },
+          {
+            "word": "아파트",
+            "time": 157.35
+          },
+          {
+            "word": "아파트",
+            "time": 157.88
+          },
+          {
+            "word": "아파트",
+            "time": 158.41
+          },
+          {
+            "word": "아파트",
+            "time": 158.94
+          },
+          {
+            "word": "아파트",
+            "time": 159.47
+          },
+          {
+            "word": "uh-huh",
+            "time": 163.18
+          },
+          {
+            "word": "uh-huh",
+            "time": 163.71
+          },
+          {
+            "word": "아파트",
+            "time": 164.24
+          },
+          {
+            "word": "아파트",
+            "time": 164.76
+          },
+          {
+            "word": "아파트",
+            "time": 165.29
+          },
+          {
+            "word": "아파트",
+            "time": 165.82
+          },
+          {
+            "word": "아파트",
+            "time": 166.35
+          },
+          {
+            "word": "아파트",
+            "time": 166.88
+          },
+          {
+            "word": "uh-huh",
+            "time": 167.94
+          },
+          {
+            "word": "uh-huh",
+            "time": 168.47
+          }
+        ]
+      }
     ],
     "clips": [
-      { "start": 6,  "end": 16, "instances": 4 },
-      { "start": 29, "end": 52, "instances": 5 },
-      { "start": 0,  "end": 57, "instances": 1 }
-    ],
-    "rep_dots": []
+      {
+        "start": 6,
+        "end": 16,
+        "likes": 9300000,
+        "views": 71900000,
+        "link": "https://www.tiktok.com/@mooo_ayz_yy/video/7427451081657191726"
+      },
+      {
+        "start": 6,
+        "end": 16,
+        "likes": 7100000,
+        "views": 125600000,
+        "link": "https://www.tiktok.com/t/ZTkkbxmFU/"
+      },
+      {
+        "start": 6,
+        "end": 16,
+        "likes": 5200000,
+        "views": 56900000,
+        "link": "https://www.tiktok.com/t/ZTkkgLj3B/"
+      },
+      {
+        "start": 6,
+        "end": 16,
+        "likes": 4600000,
+        "views": 47300000,
+        "link": "https://www.tiktok.com/t/ZTkkgYwyt/"
+      },
+      {
+        "start": 29,
+        "end": 52,
+        "likes": 8100000,
+        "views": 70600000,
+        "link": "https://www.tiktok.com/t/ZTkkbxWgG/"
+      },
+      {
+        "start": 29,
+        "end": 52,
+        "likes": 5000000,
+        "views": 74600000,
+        "link": "https://www.tiktok.com/t/ZTkkgLuh1/"
+      },
+      {
+        "start": 29,
+        "end": 52,
+        "likes": 5000000,
+        "views": 44900000,
+        "link": "https://www.tiktok.com/t/ZTkkgYwyt/"
+      },
+      {
+        "start": 29,
+        "end": 52,
+        "likes": 5000000,
+        "views": 80800000,
+        "link": "https://www.tiktok.com/t/ZTkkgjgJv/"
+      },
+      {
+        "start": 29,
+        "end": 52,
+        "likes": 4900000,
+        "views": 75800000,
+        "link": "https://www.tiktok.com/t/ZTkkgFLUB/"
+      },
+      {
+        "start": 0,
+        "end": 57,
+        "likes": 5300000,
+        "views": 51700000,
+        "link": "https://www.tiktok.com/t/ZTkkbGf4N/"
+      }
+    ]
   },
   {
     "name": "Te Quería Ver",
@@ -218,18 +1280,109 @@
     "genre": "Reggaeton",
     "duration": 176,
     "sections": [
-      { "type": "chorus", "start": 0,   "end": 28  },
-      { "type": "verse",  "start": 28,  "end": 57  },
-      { "type": "chorus", "start": 57,  "end": 95  },
-      { "type": "verse",  "start": 95,  "end": 134 },
-      { "type": "chorus", "start": 134, "end": 176 }
+      {
+        "type": "chorus",
+        "start": 0,
+        "end": 28,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 28,
+        "end": 57,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 57,
+        "end": 95,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 95,
+        "end": 134,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 134,
+        "end": 176,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 93, "end": 107, "instances": 8 },
-      { "start": 84, "end": 99,  "instances": 1 },
-      { "start": 78, "end": 90,  "instances": 1 }
-    ],
-    "rep_dots": []
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 93,
+        "end": 107,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 84,
+        "end": 99,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 78,
+        "end": 90,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Stecu Stecu",
@@ -238,21 +1391,127 @@
     "genre": "Pop",
     "duration": 223,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 49  },
-      { "type": "verse",  "start": 49,  "end": 69  },
-      { "type": "chorus", "start": 69,  "end": 99  },
-      { "type": "verse",  "start": 99,  "end": 117 },
-      { "type": "chorus", "start": 117, "end": 136 },
-      { "type": "verse",  "start": 136, "end": 155 },
-      { "type": "verse",  "start": 155, "end": 173 },
-      { "type": "chorus", "start": 173, "end": 223 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 49,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 49,
+        "end": 69,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 69,
+        "end": 99,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 99,
+        "end": 117,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 117,
+        "end": 136,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 136,
+        "end": 155,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 155,
+        "end": 173,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 173,
+        "end": 223,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 169, "end": 183, "instances": 2 },
-      { "start": 155, "end": 180, "instances": 7 },
-      { "start": 155, "end": 169, "instances": 1 }
-    ],
-    "rep_dots": []
+      {
+        "start": 169,
+        "end": 183,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 169,
+        "end": 183,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 180,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 155,
+        "end": 169,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Anxiety",
@@ -261,22 +1520,82 @@
     "genre": "Pop Rap",
     "duration": 249,
     "sections": [
-      { "type": "refrain",     "start": 0,   "end": 35  },
-      { "type": "postrefrain", "start": 35,  "end": 48  },
-      { "type": "verse",       "start": 48,  "end": 71  },
-      { "type": "interlude",   "start": 71,  "end": 78  },
-      { "type": "refrain",     "start": 78,  "end": 92  },
-      { "type": "chorus",      "start": 92,  "end": 137 },
-      { "type": "verse",       "start": 137, "end": 154 },
-      { "type": "interlude",   "start": 154, "end": 167 },
-      { "type": "bridge",      "start": 167, "end": 181 },
-      { "type": "chorus",      "start": 181, "end": 212 },
-      { "type": "outro",       "start": 212, "end": 249 }
+      {
+        "type": "refrain",
+        "start": 0,
+        "end": 35,
+        "rep_dots": []
+      },
+      {
+        "type": "postrefrain",
+        "start": 35,
+        "end": 48,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 48,
+        "end": 71,
+        "rep_dots": []
+      },
+      {
+        "type": "interlude",
+        "start": 71,
+        "end": 78,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 78,
+        "end": 92,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 92,
+        "end": 137,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 137,
+        "end": 154,
+        "rep_dots": []
+      },
+      {
+        "type": "interlude",
+        "start": 154,
+        "end": 167,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 167,
+        "end": 181,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 181,
+        "end": 212,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 212,
+        "end": 249,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Sailor Song",
@@ -285,16 +1604,46 @@
     "genre": "Indie Folk",
     "duration": 211,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 64  },
-      { "type": "chorus", "start": 64,  "end": 105 },
-      { "type": "verse",  "start": 105, "end": 145 },
-      { "type": "chorus", "start": 145, "end": 186 },
-      { "type": "outro",  "start": 186, "end": 211 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 64,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 64,
+        "end": 105,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 105,
+        "end": 145,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 145,
+        "end": 186,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 186,
+        "end": 211,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Shake it To The Max (FLY) (Remix)",
@@ -303,28 +1652,163 @@
     "genre": "Hip-Hop",
     "duration": 178,
     "sections": [
-      { "type": "intro",      "start": 0,   "end": 9   },
-      { "type": "chorus",     "start": 9,   "end": 20  },
-      { "type": "postchorus", "start": 20,  "end": 29  },
-      { "type": "verse",      "start": 29,  "end": 56  },
-      { "type": "chorus",     "start": 56,  "end": 66  },
-      { "type": "postchorus", "start": 66,  "end": 75  },
-      { "type": "verse",      "start": 75,  "end": 96  },
-      { "type": "prechorus",  "start": 96,  "end": 105 },
-      { "type": "chorus",     "start": 105, "end": 116 },
-      { "type": "postchorus", "start": 116, "end": 124 },
-      { "type": "verse",      "start": 124, "end": 145 },
-      { "type": "prechorus",  "start": 145, "end": 154 },
-      { "type": "chorus",     "start": 154, "end": 165 },
-      { "type": "postchorus", "start": 165, "end": 178 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 9,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 9,
+        "end": 20,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 20,
+        "end": 29,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 29,
+        "end": 56,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 56,
+        "end": 66,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 66,
+        "end": 75,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 75,
+        "end": 96,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 96,
+        "end": 105,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 105,
+        "end": 116,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 116,
+        "end": 124,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 124,
+        "end": 145,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 145,
+        "end": 154,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 154,
+        "end": 165,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 165,
+        "end": 178,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 7, "end": 19, "instances": 1 },
-      { "start": 5, "end": 20, "instances": 7 },
-      { "start": 6, "end": 14, "instances": 1 },
-      { "start": 5, "end": 30, "instances": 1 }
-    ],
-    "rep_dots": []
+      {
+        "start": 7,
+        "end": 19,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 20,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 6,
+        "end": 14,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 5,
+        "end": 30,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "ocean eyes",
@@ -333,42 +1817,520 @@
     "genre": "Contemporary R&B",
     "duration": 200,
     "sections": [
-      { "type": "intro",  "start": 0,   "end": 13  },
-      { "type": "verse",  "start": 13,  "end": 42  },
-      { "type": "chorus", "start": 42,  "end": 72  },
-      { "type": "verse",  "start": 72,  "end": 101 },
-      { "type": "chorus", "start": 101, "end": 132 },
-      { "type": "bridge", "start": 132, "end": 161 },
-      { "type": "chorus", "start": 161, "end": 200 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 13,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 13,
+        "end": 42,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 42,
+        "end": 72,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 72,
+        "end": 101,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 101,
+        "end": 132,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 132,
+        "end": 161,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 161,
+        "end": 200,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 42, "end": 59, "instances": 3 }
-    ],
-    "rep_dots": []
+      {
+        "start": 42,
+        "end": 59,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 42,
+        "end": 59,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 42,
+        "end": 59,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      }
+    ]
   },
   {
-    "name": "No One Noticed",
+    "name": "No One Noticed (Extended Spanish)",
     "artist": "The Marias",
     "year": 2024,
     "genre": "Alternative/Indie",
     "duration": 284,
     "sections": [
-      { "type": "verse",   "start": 0,   "end": 19  },
-      { "type": "chorus",  "start": 19,  "end": 58  },
-      { "type": "verse",   "start": 58,  "end": 78  },
-      { "type": "chorus",  "start": 78,  "end": 99  },
-      { "type": "refrain", "start": 99,  "end": 198 },
-      { "type": "chorus",  "start": 198, "end": 220 },
-      { "type": "bridge",  "start": 220, "end": 237 },
-      { "type": "outro",   "start": 237, "end": 284 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 19,
+        "rep_dots": [
+          {
+            "word": "noticed",
+            "time": 12.09
+          },
+          {
+            "word": "noticed",
+            "time": 17.27
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 19,
+        "end": 58,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 58,
+        "end": 78,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 78,
+        "end": 99,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 99,
+        "end": 198,
+        "rep_dots": [
+          {
+            "word": "don't",
+            "time": 100.11
+          },
+          {
+            "word": "can't",
+            "time": 102.34
+          },
+          {
+            "word": "easy",
+            "time": 104.01
+          },
+          {
+            "word": "babe",
+            "time": 104.56
+          },
+          {
+            "word": "believe",
+            "time": 106.23
+          },
+          {
+            "word": "guess",
+            "time": 107.9
+          },
+          {
+            "word": "i'll",
+            "time": 108.46
+          },
+          {
+            "word": "plane",
+            "time": 110.68
+          },
+          {
+            "word": "fly",
+            "time": 111.24
+          },
+          {
+            "word": "city",
+            "time": 112.9
+          },
+          {
+            "word": "excited",
+            "time": 113.46
+          },
+          {
+            "word": "face",
+            "time": 115.69
+          },
+          {
+            "word": "hold",
+            "time": 116.24
+          },
+          {
+            "word": "console",
+            "time": 117.35
+          },
+          {
+            "word": "i'll",
+            "time": 119.58
+          },
+          {
+            "word": "without",
+            "time": 120.69
+          },
+          {
+            "word": "trace",
+            "time": 121.8
+          },
+          {
+            "word": "don't",
+            "time": 123.47
+          },
+          {
+            "word": "can't",
+            "time": 125.7
+          },
+          {
+            "word": "easy",
+            "time": 127.37
+          },
+          {
+            "word": "babe",
+            "time": 127.92
+          },
+          {
+            "word": "believe",
+            "time": 129.59
+          },
+          {
+            "word": "guess",
+            "time": 131.26
+          },
+          {
+            "word": "i'll",
+            "time": 131.81
+          },
+          {
+            "word": "plane",
+            "time": 134.04
+          },
+          {
+            "word": "fly",
+            "time": 134.6
+          },
+          {
+            "word": "city",
+            "time": 136.26
+          },
+          {
+            "word": "excited",
+            "time": 136.82
+          },
+          {
+            "word": "face",
+            "time": 139.04
+          },
+          {
+            "word": "hold",
+            "time": 139.6
+          },
+          {
+            "word": "console",
+            "time": 140.71
+          },
+          {
+            "word": "i'll",
+            "time": 142.38
+          },
+          {
+            "word": "without",
+            "time": 143.49
+          },
+          {
+            "word": "trace",
+            "time": 144.61
+          },
+          {
+            "word": "don't",
+            "time": 146.28
+          },
+          {
+            "word": "can't",
+            "time": 148.5
+          },
+          {
+            "word": "easy",
+            "time": 150.17
+          },
+          {
+            "word": "babe",
+            "time": 150.72
+          },
+          {
+            "word": "believe",
+            "time": 152.39
+          },
+          {
+            "word": "guess",
+            "time": 154.06
+          },
+          {
+            "word": "i'll",
+            "time": 154.62
+          },
+          {
+            "word": "plane",
+            "time": 156.84
+          },
+          {
+            "word": "fly",
+            "time": 157.4
+          },
+          {
+            "word": "city",
+            "time": 159.07
+          },
+          {
+            "word": "excited",
+            "time": 159.62
+          },
+          {
+            "word": "face",
+            "time": 161.85
+          },
+          {
+            "word": "hold",
+            "time": 162.4
+          },
+          {
+            "word": "console",
+            "time": 163.52
+          },
+          {
+            "word": "i'll",
+            "time": 165.74
+          },
+          {
+            "word": "without",
+            "time": 166.85
+          },
+          {
+            "word": "trace",
+            "time": 167.97
+          },
+          {
+            "word": "don't",
+            "time": 170.75
+          },
+          {
+            "word": "can't",
+            "time": 172.97
+          },
+          {
+            "word": "easy",
+            "time": 174.64
+          },
+          {
+            "word": "babe",
+            "time": 175.2
+          },
+          {
+            "word": "believe",
+            "time": 178.53
+          },
+          {
+            "word": "guess",
+            "time": 180.2
+          },
+          {
+            "word": "i'll",
+            "time": 180.76
+          },
+          {
+            "word": "plane",
+            "time": 182.98
+          },
+          {
+            "word": "fly",
+            "time": 185.21
+          },
+          {
+            "word": "city",
+            "time": 186.88
+          },
+          {
+            "word": "excited",
+            "time": 187.43
+          },
+          {
+            "word": "face",
+            "time": 189.66
+          },
+          {
+            "word": "hold",
+            "time": 191.88
+          },
+          {
+            "word": "console",
+            "time": 192.99
+          },
+          {
+            "word": "i'll",
+            "time": 195.22
+          },
+          {
+            "word": "without",
+            "time": 196.33
+          },
+          {
+            "word": "trace",
+            "time": 197.44
+          }
+        ]
+      },
+      {
+        "type": "chorus",
+        "start": 198,
+        "end": 220,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 220,
+        "end": 237,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 237,
+        "end": 284,
+        "rep_dots": [
+          {
+            "word": "estás",
+            "time": 237
+          },
+          {
+            "word": "mí",
+            "time": 244.52
+          },
+          {
+            "word": "sigo",
+            "time": 248.28
+          },
+          {
+            "word": "pensando",
+            "time": 250.16
+          },
+          {
+            "word": "sigo",
+            "time": 253.92
+          },
+          {
+            "word": "estás",
+            "time": 259.56
+          },
+          {
+            "word": "mí",
+            "time": 268.96
+          },
+          {
+            "word": "sigo",
+            "time": 274.6
+          },
+          {
+            "word": "pensando",
+            "time": 276.48
+          }
+        ]
+      }
     ],
     "clips": [
-      { "start": 153, "end": 168, "instances": 2 },
-      { "start": 129, "end": 149, "instances": 4 },
-      { "start": 198, "end": 208, "instances": 2 },
-      { "start": 221, "end": 248, "instances": 2 }
-    ],
-    "rep_dots": []
+      {
+        "start": 153,
+        "end": 168,
+        "likes": 11600000,
+        "views": 67600000,
+        "link": "https://www.tiktok.com/t/ZTkks1Bnk/"
+      },
+      {
+        "start": 153,
+        "end": 168,
+        "likes": 4900000,
+        "views": 40100000,
+        "link": "https://www.tiktok.com/t/ZTkkGXTRr/"
+      },
+      {
+        "start": 129,
+        "end": 149,
+        "likes": 8200000,
+        "views": 49900000,
+        "link": "https://www.tiktok.com/t/ZTkksfgTr/"
+      },
+      {
+        "start": 129,
+        "end": 149,
+        "likes": 6400000,
+        "views": 33300000,
+        "link": "https://www.tiktok.com/t/ZTkkshkwk/"
+      },
+      {
+        "start": 129,
+        "end": 149,
+        "likes": 5800000,
+        "views": 33500000,
+        "link": "https://www.tiktok.com/t/ZTkks4nmY/"
+      },
+      {
+        "start": 129,
+        "end": 149,
+        "likes": 4700000,
+        "views": 27300000,
+        "link": "https://www.tiktok.com/t/ZTkkGWjJt/"
+      },
+      {
+        "start": 198,
+        "end": 208,
+        "likes": 7100000,
+        "views": 35900000,
+        "link": "https://www.tiktok.com/t/ZTkksPXut/"
+      },
+      {
+        "start": 198,
+        "end": 208,
+        "likes": 5400000,
+        "views": 34000000,
+        "link": "https://www.tiktok.com/t/ZTkksbD1H/"
+      },
+      {
+        "start": 221,
+        "end": 248,
+        "likes": 5300000,
+        "views": 26800000,
+        "link": "https://www.tiktok.com/t/ZTkksooCS/"
+      },
+      {
+        "start": 221,
+        "end": 248,
+        "likes": 4700000,
+        "views": 20800000,
+        "link": "https://www.tiktok.com/t/ZTkkp3VRX/"
+      }
+    ]
   },
   {
     "name": "back to friends",
@@ -377,21 +2339,186 @@
     "genre": "Alternative/Indie",
     "duration": 199,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 44  },
-      { "type": "chorus", "start": 44,  "end": 64  },
-      { "type": "verse",  "start": 64,  "end": 85  },
-      { "type": "chorus", "start": 85,  "end": 105 },
-      { "type": "bridge", "start": 105, "end": 137 },
-      { "type": "chorus", "start": 137, "end": 180 },
-      { "type": "outro",  "start": 180, "end": 199 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 44,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 44,
+        "end": 64,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 64,
+        "end": 85,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 85,
+        "end": 105,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 105,
+        "end": 137,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 137,
+        "end": 180,
+        "rep_dots": [
+          {
+            "word": "back",
+            "time": 140.07
+          },
+          {
+            "word": "being",
+            "time": 141.61
+          },
+          {
+            "word": "friends",
+            "time": 142.38
+          },
+          {
+            "word": "shared",
+            "time": 145.45
+          },
+          {
+            "word": "bed",
+            "time": 146.98
+          },
+          {
+            "word": "pretend",
+            "time": 153.89
+          },
+          {
+            "word": "someone",
+            "time": 155.43
+          },
+          {
+            "word": "met",
+            "time": 157.73
+          },
+          {
+            "word": "back",
+            "time": 161.57
+          },
+          {
+            "word": "being",
+            "time": 163.11
+          },
+          {
+            "word": "friends",
+            "time": 163.88
+          },
+          {
+            "word": "shared",
+            "time": 166.95
+          },
+          {
+            "word": "bed",
+            "time": 168.48
+          },
+          {
+            "word": "pretend",
+            "time": 175.39
+          },
+          {
+            "word": "someone",
+            "time": 176.93
+          },
+          {
+            "word": "met",
+            "time": 179.23
+          }
+        ]
+      },
+      {
+        "type": "outro",
+        "start": 180,
+        "end": 199,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 64,  "end": 76,  "instances": 1 },
-      { "start": 135, "end": 151, "instances": 4 },
-      { "start": 79,  "end": 94,  "instances": 4 },
-      { "start": 68,  "end": 85,  "instances": 1 }
-    ],
-    "rep_dots": []
+      {
+        "start": 64,
+        "end": 76,
+        "likes": 17800000,
+        "views": 105300000,
+        "link": "https://www.tiktok.com/@austineeee_/video/7555170953857109255?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 135,
+        "end": 151,
+        "likes": 13700000,
+        "views": 206900000,
+        "link": "https://www.tiktok.com/@zaynazaan1/video/7553903939591113991?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 135,
+        "end": 151,
+        "likes": 10000000,
+        "views": 54900000,
+        "link": "https://www.tiktok.com/@isabels_flores/video/7507734997646855467?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 135,
+        "end": 151,
+        "likes": 9100000,
+        "views": 47400000,
+        "link": "https://www.tiktok.com/@iievavsvet/video/7486936862481714454?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 135,
+        "end": 151,
+        "likes": 6200000,
+        "views": 33000000,
+        "link": "https://www.tiktok.com/@sombr/video/7482143273478311199?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 79,
+        "end": 94,
+        "likes": 11000000,
+        "views": 57300000,
+        "link": "https://www.tiktok.com/@thousandmiles_09/video/7534399227598802194?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 79,
+        "end": 94,
+        "likes": 9700000,
+        "views": 50300000,
+        "link": "https://www.tiktok.com/@aldisyhptraa_/video/7510272057804983557?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 79,
+        "end": 94,
+        "likes": 6200000,
+        "views": 33000000,
+        "link": "https://www.tiktok.com/@not.megaa/video/7503864486638423318?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 79,
+        "end": 94,
+        "likes": 5600000,
+        "views": 30300000,
+        "link": "https://www.tiktok.com/@ponder_sonder/video/7500305340399897887?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      },
+      {
+        "start": 68,
+        "end": 85,
+        "likes": 6800000,
+        "views": 44800000,
+        "link": "https://www.tiktok.com/@sombr/video/7522965481066646815?is_from_webapp=1&sender_device=pc&web_id=7005432729274959366"
+      }
+    ]
   },
   {
     "name": "Sparks",
@@ -400,23 +2527,148 @@
     "genre": "Alternative Rock",
     "duration": 227,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 72  },
-      { "type": "chorus", "start": 72,  "end": 116 },
-      { "type": "verse",  "start": 116, "end": 156 },
-      { "type": "chorus", "start": 156, "end": 176 },
-      { "type": "bridge", "start": 176, "end": 198 },
-      { "type": "outro",  "start": 198, "end": 227 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 72,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 72,
+        "end": 116,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 116,
+        "end": 156,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 156,
+        "end": 176,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 176,
+        "end": 198,
+        "rep_dots": [
+          {
+            "word": "saw",
+            "time": 178.75
+          },
+          {
+            "word": "sparks",
+            "time": 180.12
+          },
+          {
+            "word": "saw",
+            "time": 184.25
+          },
+          {
+            "word": "sparks",
+            "time": 185.62
+          },
+          {
+            "word": "saw",
+            "time": 189.75
+          },
+          {
+            "word": "sparks",
+            "time": 191.12
+          },
+          {
+            "word": "saw",
+            "time": 195.25
+          },
+          {
+            "word": "sparks",
+            "time": 196.62
+          }
+        ]
+      },
+      {
+        "type": "outro",
+        "start": 198,
+        "end": 227,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 53,  "end": 70,  "instances": 1 },
-      { "start": 39,  "end": 179, "instances": 1 },
-      { "start": 53,  "end": 114, "instances": 3 },
-      { "start": 0,   "end": 176, "instances": 1 },
-      { "start": 53,  "end": 72,  "instances": 1 },
-      { "start": 53,  "end": 77,  "instances": 1 },
-      { "start": 138, "end": 153, "instances": 2 }
-    ],
-    "rep_dots": []
+      {
+        "start": 53,
+        "end": 70,
+        "likes": 15100000,
+        "views": 92600000,
+        "link": "https://www.tiktok.com/t/ZTkSJuUbc/"
+      },
+      {
+        "start": 39,
+        "end": 179,
+        "likes": 12200000,
+        "views": 94500000,
+        "link": "https://www.tiktok.com/t/ZTkSJ3mjM/"
+      },
+      {
+        "start": 53,
+        "end": 114,
+        "likes": 10800000,
+        "views": 56700000,
+        "link": "https://www.tiktok.com/t/ZTkSeRjVn/"
+      },
+      {
+        "start": 53,
+        "end": 114,
+        "likes": 8800000,
+        "views": 112400000,
+        "link": "https://www.tiktok.com/t/ZTkSeXNjD/"
+      },
+      {
+        "start": 53,
+        "end": 114,
+        "likes": 3900000,
+        "views": 27700000,
+        "link": "https://www.tiktok.com/t/ZTkSdSJkG/"
+      },
+      {
+        "start": 0,
+        "end": 176,
+        "likes": 6900000,
+        "views": 73200000,
+        "link": "https://www.tiktok.com/t/ZTkSeHdHQ/"
+      },
+      {
+        "start": 53,
+        "end": 72,
+        "likes": 6900000,
+        "views": 39600000,
+        "link": "https://www.tiktok.com/t/ZTkSeQ67C/"
+      },
+      {
+        "start": 53,
+        "end": 77,
+        "likes": 5400000,
+        "views": 31400000,
+        "link": "https://www.tiktok.com/t/ZTkSd9JAg/"
+      },
+      {
+        "start": 138,
+        "end": 153,
+        "likes": 4600000,
+        "views": 19900000,
+        "link": "https://www.tiktok.com/t/ZTkSdaEMt/"
+      },
+      {
+        "start": 138,
+        "end": 153,
+        "likes": 3900000,
+        "views": 19900000,
+        "link": "https://www.tiktok.com/t/ZTkSdaGks/"
+      }
+    ]
   },
   {
     "name": "That's So True",
@@ -425,19 +2677,64 @@
     "genre": "Folk-pop",
     "duration": 166,
     "sections": [
-      { "type": "verse",     "start": 0,   "end": 16  },
-      { "type": "prechorus", "start": 16,  "end": 26  },
-      { "type": "chorus",    "start": 26,  "end": 45  },
-      { "type": "verse",     "start": 45,  "end": 61  },
-      { "type": "prechorus", "start": 61,  "end": 71  },
-      { "type": "chorus",    "start": 71,  "end": 105 },
-      { "type": "bridge",    "start": 105, "end": 124 },
-      { "type": "chorus",    "start": 124, "end": 166 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 16,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 16,
+        "end": 26,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 26,
+        "end": 45,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 45,
+        "end": 61,
+        "rep_dots": []
+      },
+      {
+        "type": "prechorus",
+        "start": 61,
+        "end": 71,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 71,
+        "end": 105,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 105,
+        "end": 124,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 124,
+        "end": 166,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Let Down",
@@ -446,24 +2743,121 @@
     "genre": "Alternative Rock",
     "duration": 299,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 59  },
-      { "type": "chorus", "start": 59,  "end": 90  },
-      { "type": "verse",  "start": 90,  "end": 127 },
-      { "type": "chorus", "start": 127, "end": 186 },
-      { "type": "bridge", "start": 186, "end": 221 },
-      { "type": "verse",  "start": 221, "end": 258 },
-      { "type": "chorus", "start": 258, "end": 299 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 59,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 59,
+        "end": 90,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 90,
+        "end": 127,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 127,
+        "end": 186,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 186,
+        "end": 221,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 221,
+        "end": 258,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 258,
+        "end": 299,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": 222, "end": 274, "instances": 1 },
-      { "start": 220, "end": 227, "instances": 2 },
-      { "start": 220, "end": 232, "instances": 1 },
-      { "start": 220, "end": 230, "instances": 2 },
-      { "start": 231, "end": 243, "instances": 1 },
-      { "start": 240, "end": 250, "instances": 1 },
-      { "start": 220, "end": 234, "instances": 2 }
-    ],
-    "rep_dots": []
+      {
+        "start": 222,
+        "end": 274,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 227,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 227,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 232,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 230,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 230,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 231,
+        "end": 243,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 240,
+        "end": 250,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 234,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      },
+      {
+        "start": 220,
+        "end": 234,
+        "likes": 0,
+        "views": 0,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "Suave",
@@ -472,22 +2866,82 @@
     "genre": "Dembow",
     "duration": 211,
     "sections": [
-      { "type": "intro",      "start": 0,   "end": 22  },
-      { "type": "chorus",     "start": 22,  "end": 40  },
-      { "type": "postchorus", "start": 40,  "end": 54  },
-      { "type": "verse",      "start": 54,  "end": 78  },
-      { "type": "chorus",     "start": 78,  "end": 96  },
-      { "type": "postchorus", "start": 96,  "end": 110 },
-      { "type": "bridge",     "start": 110, "end": 126 },
-      { "type": "verse",      "start": 126, "end": 134 },
-      { "type": "chorus",     "start": 134, "end": 152 },
-      { "type": "postchorus", "start": 152, "end": 166 },
-      { "type": "outro",      "start": 166, "end": 211 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 22,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 22,
+        "end": 40,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 40,
+        "end": 54,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 54,
+        "end": 78,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 78,
+        "end": 96,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 96,
+        "end": 110,
+        "rep_dots": []
+      },
+      {
+        "type": "bridge",
+        "start": 110,
+        "end": 126,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 126,
+        "end": 134,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 134,
+        "end": 152,
+        "rep_dots": []
+      },
+      {
+        "type": "postchorus",
+        "start": 152,
+        "end": 166,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 166,
+        "end": 211,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "My Darling",
@@ -496,20 +2950,70 @@
     "genre": "Afrobeats",
     "duration": 146,
     "sections": [
-      { "type": "intro",   "start": 0,   "end": 9   },
-      { "type": "refrain", "start": 9,   "end": 24  },
-      { "type": "verse",   "start": 24,  "end": 41  },
-      { "type": "chorus",  "start": 41,  "end": 58  },
-      { "type": "refrain", "start": 58,  "end": 75  },
-      { "type": "verse",   "start": 75,  "end": 91  },
-      { "type": "chorus",  "start": 91,  "end": 108 },
-      { "type": "refrain", "start": 108, "end": 130 },
-      { "type": "outro",   "start": 130, "end": 146 }
+      {
+        "type": "intro",
+        "start": 0,
+        "end": 9,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 9,
+        "end": 24,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 24,
+        "end": 41,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 41,
+        "end": 58,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 58,
+        "end": 75,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 75,
+        "end": 91,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 91,
+        "end": 108,
+        "rep_dots": []
+      },
+      {
+        "type": "refrain",
+        "start": 108,
+        "end": 130,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 130,
+        "end": 146,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   },
   {
     "name": "We Hug Now",
@@ -518,16 +3022,51 @@
     "genre": "Alternative/Indie",
     "duration": 202,
     "sections": [
-      { "type": "verse",  "start": 0,   "end": 45  },
-      { "type": "verse",  "start": 45,  "end": 77  },
-      { "type": "chorus", "start": 77,  "end": 111 },
-      { "type": "verse",  "start": 111, "end": 140 },
-      { "type": "chorus", "start": 140, "end": 184 },
-      { "type": "outro",  "start": 184, "end": 202 }
+      {
+        "type": "verse",
+        "start": 0,
+        "end": 45,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 45,
+        "end": 77,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 77,
+        "end": 111,
+        "rep_dots": []
+      },
+      {
+        "type": "verse",
+        "start": 111,
+        "end": 140,
+        "rep_dots": []
+      },
+      {
+        "type": "chorus",
+        "start": 140,
+        "end": 184,
+        "rep_dots": []
+      },
+      {
+        "type": "outro",
+        "start": 184,
+        "end": 202,
+        "rep_dots": []
+      }
     ],
     "clips": [
-      { "start": null, "end": null, "instances": null }
-    ],
-    "rep_dots": []
+      {
+        "start": null,
+        "end": null,
+        "likes": null,
+        "views": null,
+        "link": ""
+      }
+    ]
   }
 ]
