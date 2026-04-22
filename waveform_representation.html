@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Song Unravel Scroll Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #0f1115;
+      --ink: #f3f5f8;
+      --accent: #f4a019;
+      --dot: #f8bf44;
+      --line-base: #f18f18;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 560vh;
+      background: radial-gradient(circle at 30% 10%, #1c212b 0%, #12161d 50%, #0b0e14 100%);
+      color: var(--ink);
+      font-family: "TikTok Sans", "Plus Jakarta Sans", "Inter", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .ui {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(13, 17, 24, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 12px;
+      backdrop-filter: blur(3px);
+    }
+
+    .ui label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    #song-select {
+      min-width: 210px;
+      color: #f4f6fa;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      background: #181d26;
+    }
+
+
+    .stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .viz-wrap {
+      width: min(1100px, 95vw);
+      height: min(560px, 72vh);
+      position: relative;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(21, 27, 38, 0.86), rgba(11, 15, 22, 0.88));
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    #viz {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    .center-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .circle-stack {
+      position: absolute;
+      inset: 0;
+    }
+
+    .intro-title {
+      position: absolute;
+      left: 50%;
+      top: calc(50% - 170px);
+      transform: translateX(-50%);
+      font-size: clamp(20px, 3.4vw, 34px);
+      font-weight: 800;
+      line-height: 0.98;
+      color: #db8600;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+      user-select: none;
+      white-space: nowrap;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .intro-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .play-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1.5px solid #f4a019;
+      background: rgba(19, 24, 33, 0.78);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .play-btn::before {
+      content: "";
+      width: 0;
+      height: 0;
+      margin-left: 2px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 12px solid #db8600;
+    }
+
+    .play-btn.playing::before {
+      width: 11px;
+      height: 14px;
+      border: none;
+      margin-left: 0;
+      background: linear-gradient(90deg, #db8600 0 39%, transparent 39% 61%, #db8600 61%);
+    }
+
+    .play-floating {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 12;
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .play-floating.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .caption {
+      position: absolute;
+      left: 20px;
+      bottom: 16px;
+      width: min(680px, 85vw);
+      font-size: clamp(17px, 2.1vw, 28px);
+      line-height: 1.06;
+      font-weight: 600;
+      color: #f3f5f8;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 200ms ease, transform 200ms ease;
+      z-index: 9;
+      pointer-events: none;
+    }
+
+    .wave-title {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      font-size: clamp(20px, 2.6vw, 34px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: #f3f5f8;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 200ms ease, transform 200ms ease;
+      z-index: 9;
+      pointer-events: none;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .legend-area {
+      position: absolute;
+      left: 20px;
+      top: 70px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: min(70vw, 820px);
+      z-index: 9;
+      pointer-events: none;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 200ms ease, transform 200ms ease;
+      pointer-events: none;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 200ms ease, transform 200ms ease;
+      pointer-events: none;
+    }
+
+    .control-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 9px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+
+    .control-item input {
+      accent-color: #db8600;
+      width: 14px;
+      height: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 9px;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: opacity 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      user-select: none;
+    }
+
+    .legend-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .legend-item.section-active {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .legend-item.section-dimmed {
+      opacity: 0.3;
+    }
+
+    .legend-swatch {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.22);
+      flex: 0 0 auto;
+    }
+
+    .rep-tooltip {
+      position: fixed;
+      background: rgba(13, 17, 24, 0.92);
+      border: 1px solid rgba(244, 160, 25, 0.5);
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f7be3e;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 100ms ease;
+      z-index: 50;
+      white-space: nowrap;
+      transform: translate(-50%, -160%);
+      max-width: 320px;
+    }
+
+    .rep-tooltip.has-link {
+      pointer-events: auto;
+      white-space: normal;
+    }
+
+    .tt-stat {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f7be3e;
+    }
+
+    .tt-link {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 400;
+      color: #f4a019;
+      text-decoration: underline;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 300px;
+    }
+
+    .tt-link:hover {
+      color: #ffd56a;
+    }
+
+    .spacer {
+      height: 440vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="ui">
+    <label for="song-select">Select song</label>
+    <select id="song-select"></select>
+  </div>
+
+  <main id="scroll-root" class="stage">
+    <div class="viz-wrap">
+      <svg id="viz" viewBox="0 0 1100 560" preserveAspectRatio="xMidYMid meet" aria-label="Song visualization"></svg>
+
+      <div class="wave-title" id="wave-title"></div>
+      <div class="legend-area">
+        <div class="legend" id="legend"></div>
+        <div class="control-row" id="control-row">
+          <label class="control-item" id="rep-control" for="rep-toggle">
+            <input id="rep-toggle" type="checkbox" checked />
+            <span>Repetition</span>
+          </label>
+          <label class="control-item" id="clips-control" for="clips-toggle">
+            <input id="clips-toggle" type="checkbox" checked />
+            <span>Clips</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="center-overlay">
+        <div class="circle-stack" id="circle-stack">
+          <div class="intro-title" id="song-title">Loading</div>
+          <button class="play-btn intro-play" id="intro-play-btn" aria-label="Play or pause"></button>
+        </div>
+      </div>
+
+      <button class="play-btn play-floating" id="play-btn" aria-label="Play or pause"></button>
+
+      <div class="rep-tooltip" id="rep-tooltip"></div>
+
+      <div class="caption" id="caption-section">
+        First, let's split up the song into its different sections.
+      </div>
+      <div class="caption" id="caption-rep">
+        Repeated words and phrases are what make songs stick. Here's where each word repeats.
+      </div>
+      <div class="caption" id="caption-clip">
+        What part of the song does the top 10 TikToks from this audio use? The taller the rectangle, the more likes that TikTok received.
+      </div>
+    </div>
+  </main>
+
+  <div class="spacer" aria-hidden="true"></div>
+
+  <script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    const SECTION_COLORS = {
+      intro: "#f04b39",
+      verse: "#ff9e75",
+      prechorus: "#ec57c7",
+      chorus: "#c26bff",
+      bridge: "#4e7dff",
+      refrain: "#7d5f2e",
+      outro: "#f04b39",
+      interlude: "#6c6c6c",
+      instrumental: "#8d8d8d",
+      postchorus: "#d07a53",
+      postrefrain: "#ca8b58"
+    };
+
+    const SECTION_LABELS = {
+      intro: "Intro",
+      verse: "Verse",
+      prechorus: "Pre-chorus",
+      chorus: "Chorus",
+      bridge: "Bridge",
+      refrain: "Refrain",
+      outro: "Outro",
+      interlude: "Interlude",
+      instrumental: "Instrumental",
+      postchorus: "Post-chorus",
+      postrefrain: "Post-refrain"
+    };
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+    function smoothstep(edge0, edge1, x) {
+      const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    function hashCode(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i += 1) {
+        h = ((h << 5) - h) + str.charCodeAt(i);
+        h |= 0;
+      }
+      return Math.abs(h);
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace("#", "");
+      const n = parseInt(clean, 16);
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      const toHex = (x) => x.toString(16).padStart(2, "0");
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+
+    function blendHex(a, b, t) {
+      const c1 = hexToRgb(a);
+      const c2 = hexToRgb(b);
+      return rgbToHex(
+        Math.round(lerp(c1.r, c2.r, t)),
+        Math.round(lerp(c1.g, c2.g, t)),
+        Math.round(lerp(c1.b, c2.b, t))
+      );
+    }
+
+    function percentile(values, p) {
+      if (!values || !values.length) return 0;
+      const sorted = values.slice().sort((a, b) => a - b);
+      const idx = Math.max(0, Math.min(sorted.length - 1, Math.floor((p / 100) * (sorted.length - 1))));
+      return sorted[idx];
+    }
+
+    function interpLinear(arr, xNorm) {
+      if (!arr || !arr.length) return 0;
+      if (arr.length === 1) return arr[0];
+      const pos = Math.max(0, Math.min(arr.length - 1, xNorm * (arr.length - 1)));
+      const i0 = Math.floor(pos);
+      const i1 = Math.min(arr.length - 1, i0 + 1);
+      const a = pos - i0;
+      return (arr[i0] * (1 - a)) + (arr[i1] * a);
+    }
+
+    function sectionAtTime(song, time) {
+      return song.sections.find((s, idx) => {
+        const isLast = idx === song.sections.length - 1;
+        return isLast ? (time >= s.start && time <= s.end) : (time >= s.start && time < s.end);
+      });
+    }
+
+    function groupWordsInSection(section) {
+      const byWord = new Map();
+      for (const d of section.rep_dots || []) {
+        const key = String(d.word || "").trim().toLowerCase();
+        if (!key) continue;
+        if (!byWord.has(key)) byWord.set(key, []);
+        byWord.get(key).push(d);
+      }
+      for (const arr of byWord.values()) {
+        arr.sort((a, b) => a.time - b.time);
+      }
+      return byWord;
+    }
+
+    let SONGS = [];
+    let activeSong = null;
+    let hoveredWord = null;
+    let repDotPositions = new Map();
+    let hoveredClip = null;
+    let clipRectPositions = [];
+    let selectedSection = null;
+    let activeWaveform = null;
+    let activeAudio = null;
+    let activeAudioUrl = null;
+    let songSelectionToken = 0;
+    let progress = 0;
+    let isPlaying = false;
+    let playTime = 0;
+    let lastAudioTime = 0;
+    let renderState = null;
+    const waveformCache = new Map();
+    const audioUrlCache = new Map();
+
+    const svg = document.getElementById("viz");
+    const selectEl = document.getElementById("song-select");
+    const titleEl = document.getElementById("song-title");
+    const introPlayBtn = document.getElementById("intro-play-btn");
+    const playBtn = document.getElementById("play-btn");
+    const repToggleEl = document.getElementById("rep-toggle");
+    const clipsToggleEl = document.getElementById("clips-toggle");
+    const repControlEl = document.getElementById("rep-control");
+    const clipsControlEl = document.getElementById("clips-control");
+    const controlRowEl = document.getElementById("control-row");
+    const waveTitle = document.getElementById("wave-title");
+    const captionSection = document.getElementById("caption-section");
+    const captionRep = document.getElementById("caption-rep");
+    const captionClip = document.getElementById("caption-clip");
+    const tooltipEl = document.getElementById("rep-tooltip");
+    const legend = document.getElementById("legend");
+    const scrollRoot = document.getElementById("scroll-root");
+
+    function updateLegendFilter() {
+      const items = legend.querySelectorAll(".legend-item");
+      items.forEach(item => {
+        const t = item.dataset.type;
+        item.classList.toggle("section-active", !!selectedSection && t === selectedSection);
+        item.classList.toggle("section-dimmed", !!selectedSection && t !== selectedSection);
+      });
+    }
+
+    function buildLegend(song) {
+      selectedSection = null;
+      legend.innerHTML = "";
+      const seen = new Set();
+      for (const s of song.sections) {
+        if (seen.has(s.type)) continue;
+        seen.add(s.type);
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.dataset.type = s.type;
+        const sw = document.createElement("span");
+        sw.className = "legend-swatch";
+        sw.style.background = SECTION_COLORS[s.type] || "#888";
+        const tx = document.createElement("span");
+        tx.textContent = SECTION_LABELS[s.type] || s.type;
+        item.appendChild(sw);
+        item.appendChild(tx);
+        item.addEventListener("click", () => {
+          selectedSection = (selectedSection === s.type) ? null : s.type;
+          updateLegendFilter();
+          draw();
+        });
+        legend.appendChild(item);
+      }
+    }
+
+    function populateSelect() {
+      selectEl.innerHTML = "";
+      SONGS.forEach((song, i) => {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `${song.name} - ${song.artist}`;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    function slugifySongName(name) {
+      return String(name || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "") || "waveform";
+    }
+
+    function unique(arr) {
+      return [...new Set(arr)];
+    }
+
+    function buildAudioCandidates(song) {
+      const slug = slugifySongName(song.name);
+      const baseNames = unique([
+        `${song.name}`,
+        `${song.artist} - ${song.name}`,
+        `${slug}`,
+      ]);
+      const exts = ["mp3", "m4a", "wav", "aac", "ogg", "flac"];
+      const urls = [];
+      for (const b of baseNames) {
+        for (const ext of exts) {
+          urls.push(`songs/${b}.${ext}`);
+        }
+      }
+      return unique(urls);
+    }
+
+    function probeAudioUrl(url, timeoutMs = 5000) {
+      return new Promise((resolve) => {
+        const audio = new Audio();
+        audio.preload = "metadata";
+
+        let settled = false;
+        const timeout = setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(null);
+        }, timeoutMs);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          audio.onloadedmetadata = null;
+          audio.onerror = null;
+        }
+
+        audio.onloadedmetadata = () => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(audio);
+        };
+
+        audio.onerror = () => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(null);
+        };
+
+        audio.src = url;
+      });
+    }
+
+    async function loadAudioForSong(song) {
+      const slug = slugifySongName(song.name);
+      if (audioUrlCache.has(slug)) {
+        const cached = audioUrlCache.get(slug);
+        if (!cached) return { audio: null, url: null };
+        const a = await probeAudioUrl(cached, 3500);
+        return { audio: a, url: a ? cached : null };
+      }
+
+      const candidates = buildAudioCandidates(song);
+      for (const url of candidates) {
+        const a = await probeAudioUrl(url, 3500);
+        if (a) {
+          audioUrlCache.set(slug, url);
+          return { audio: a, url };
+        }
+      }
+
+      audioUrlCache.set(slug, null);
+      return { audio: null, url: null };
+    }
+
+    async function loadWaveformForSong(song) {
+      const slug = slugifySongName(song.name);
+      const candidates = [
+        `songs/${slug}.waveform.json`,
+        `${slug}.waveform.json`,
+      ];
+
+      if (waveformCache.has(slug)) {
+        return waveformCache.get(slug);
+      }
+
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) continue;
+          const json = await res.json();
+          if (!json || !Array.isArray(json.amplitudes) || json.amplitudes.length < 8) continue;
+
+          const wf = {
+            source: json.source || url,
+            duration: Number(json.duration) || song.duration,
+            amplitudes: json.amplitudes.map((v) => Math.max(0, Math.min(1, Number(v) || 0))),
+            };
+
+          // Build a signed profile from amplitude deviations so rendered shape follows actual loudness changes.
+          const src = wf.amplitudes;
+          const localWindow = 8;
+          const centered = new Array(src.length).fill(0);
+          for (let i = 0; i < src.length; i += 1) {
+            const start = Math.max(0, i - localWindow);
+            const end = Math.min(src.length - 1, i + localWindow);
+            let sum = 0;
+            let count = 0;
+            for (let j = start; j <= end; j += 1) {
+              sum += src[j];
+              count += 1;
+            }
+            const localMean = count > 0 ? (sum / count) : src[i];
+            centered[i] = src[i] - localMean;
+          }
+
+          const absCentered = centered.map((v) => Math.abs(v));
+          const centeredScale = Math.max(1e-4, percentile(absCentered, 97));
+          wf.signed = centered.map((v) => Math.max(-1, Math.min(1, v / centeredScale)));
+
+          const envMin = percentile(src, 5);
+          const envMax = percentile(src, 98);
+          const envRange = Math.max(1e-4, envMax - envMin);
+          wf.envelope = src.map((v) => Math.max(0, Math.min(1, (v - envMin) / envRange)));
+
+          waveformCache.set(slug, wf);
+          return wf;
+        } catch (_) {
+          // Try next candidate.
+        }
+      }
+
+      waveformCache.set(slug, null);
+      return null;
+    }
+
+    async function setSong(index) {
+      const token = ++songSelectionToken;
+      activeSong = SONGS[index];
+      titleEl.textContent = activeSong.name;
+      waveTitle.textContent = activeSong.name;
+      buildLegend(activeSong);
+      playTime = 0;
+      lastAudioTime = 0;
+
+      if (activeAudio) {
+        try {
+          activeAudio.pause();
+        } catch (_) {
+          // Ignore audio pause failure.
+        }
+      }
+      activeAudio = null;
+      activeAudioUrl = null;
+      isPlaying = false;
+      syncPlayButtons();
+
+      activeWaveform = null;
+      draw();
+
+      const [wf, audioPack] = await Promise.all([
+        loadWaveformForSong(activeSong),
+        loadAudioForSong(activeSong),
+      ]);
+
+      if (token !== songSelectionToken) return;
+      activeWaveform = wf;
+
+      if (audioPack && audioPack.audio) {
+        activeAudio = audioPack.audio;
+        activeAudioUrl = audioPack.url;
+        activeAudio.currentTime = 0;
+        activeAudio.onended = () => {
+          isPlaying = false;
+          syncPlayButtons();
+          draw();
+        };
+      }
+
+      draw();
+    }
+
+    function syncPlayButtons() {
+      playBtn.classList.toggle("playing", isPlaying);
+      introPlayBtn.classList.toggle("playing", isPlaying);
+    }
+
+    function getEffectiveDuration() {
+      let duration = Number(activeSong?.duration) || 1;
+
+      if (activeWaveform && Number.isFinite(activeWaveform.duration) && activeWaveform.duration > 0) {
+        const wfDur = activeWaveform.duration;
+        if (Math.abs(wfDur - duration) <= 3) {
+          duration = Math.min(duration, wfDur);
+        }
+      }
+
+      if (activeAudio && Number.isFinite(activeAudio.duration) && activeAudio.duration > 0) {
+        const audioDur = activeAudio.duration;
+        if (Math.abs(audioDur - duration) <= 3) {
+          duration = Math.min(duration, audioDur);
+        }
+      }
+
+      return Math.max(1, duration);
+    }
+
+    function waveValue(seed, t) {
+      const a = 0.65 * Math.sin((t * 9.3) + seed * 0.19);
+      const b = 0.28 * Math.sin((t * 23.7) + seed * 0.07);
+      const c = 0.17 * Math.cos((t * 46.1) + seed * 0.11);
+      return a + b + c;
+    }
+
+    function envelopeAtNorm(tNorm, seed, renderDuration) {
+      if (activeWaveform && activeWaveform.amplitudes && activeWaveform.amplitudes.length > 1) {
+        const arr = activeWaveform.envelope || activeWaveform.amplitudes;
+        const wfDur = Number(activeWaveform.duration) > 0 ? Number(activeWaveform.duration) : renderDuration;
+        const timeSec = Math.max(0, Math.min(renderDuration, tNorm * renderDuration));
+        const wfNorm = Math.max(0, Math.min(1, timeSec / Math.max(1e-6, wfDur)));
+        return interpLinear(arr, wfNorm);
+      }
+      return Math.min(1, Math.abs(waveValue(seed, tNorm)) * 0.75);
+    }
+
+    function signedWaveAtNorm(tNorm, seed, renderDuration) {
+      if (activeWaveform && activeWaveform.amplitudes && activeWaveform.amplitudes.length > 1) {
+        const arr = activeWaveform.peakSigned || activeWaveform.signed || activeWaveform.amplitudes;
+        const wfDur = Number(activeWaveform.duration) > 0 ? Number(activeWaveform.duration) : renderDuration;
+        const timeSec = Math.max(0, Math.min(renderDuration, tNorm * renderDuration));
+        const wfNorm = Math.max(0, Math.min(1, timeSec / Math.max(1e-6, wfDur)));
+        const signed = interpLinear(arr, wfNorm);
+        return Math.max(-1, Math.min(1, signed));
+      }
+      return waveValue(seed, tNorm);
+    }
+
+    function clearSvg() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    }
+
+    function makePath(points) {
+      if (!points.length) return "";
+      let d = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+      for (let i = 1; i < points.length; i += 1) {
+        d += ` L ${points[i].x.toFixed(2)} ${points[i].y.toFixed(2)}`;
+      }
+      return d;
+    }
+
+    function addPath(d, stroke, width, opacity = 1, linecap = "round") {
+      const p = document.createElementNS(SVG_NS, "path");
+      p.setAttribute("d", d);
+      p.setAttribute("fill", "none");
+      p.setAttribute("stroke", stroke);
+      p.setAttribute("stroke-width", String(width));
+      p.setAttribute("stroke-linecap", linecap);
+      p.setAttribute("stroke-linejoin", "round");
+      p.setAttribute("opacity", String(opacity));
+      svg.appendChild(p);
+      return p;
+    }
+
+    function draw() {
+      if (!activeSong) return;
+      clearSvg();
+
+      const width = 1100;
+      const height = 560;
+      const centerX = width / 2;
+      const centerY = height * 0.5;
+      const renderDuration = getEffectiveDuration();
+
+      const left = 110;
+      const right = width - 90;
+      const lineWidth = right - left;
+      const N = activeWaveform && activeWaveform.amplitudes
+        ? Math.max(260, Math.min(900, Math.floor(activeWaveform.amplitudes.length * 0.55)))
+        : 210;
+      const baseLineColor = getComputedStyle(document.documentElement).getPropertyValue("--line-base").trim() || "#e97f0f";
+      const baseAmp = 58;
+      const seed = hashCode(activeSong.name + activeSong.artist);
+
+      // Thresholds scaled to 4.4-viewport total scroll
+      const unravel = smoothstep(0.10, 0.27, progress);
+      const sectionReveal = smoothstep(0.27, 0.43, progress);
+      const repReveal = repToggleEl.checked ? smoothstep(0.57, 0.70, progress) : 0;
+      const clipReveal = clipsToggleEl.checked ? smoothstep(0.73, 0.87, progress) : 0;
+
+      renderState = {
+        left,
+        lineWidth,
+        centerY,
+        baseAmp,
+        seed,
+        renderDuration,
+        unravel,
+      };
+
+      const points = [];
+      const circleDeform = smoothstep(0.08, 0.21, progress);
+      for (let i = 0; i < N; i += 1) {
+        const t = i / (N - 1);
+        const xLine = left + (t * lineWidth);
+        const ampNoise = signedWaveAtNorm(t, seed, renderDuration);
+        const ampEnv = envelopeAtNorm(t, seed, renderDuration);
+        const yLine = centerY + (ampNoise * baseAmp);
+
+        const theta = (t * Math.PI * 2) - (Math.PI / 2);
+        const radius = 92 + (ampEnv * 22 * circleDeform);
+        const xCircle = centerX + (Math.cos(theta) * radius);
+        const yCircle = centerY + (Math.sin(theta) * radius);
+
+        const x = lerp(xCircle, xLine, unravel);
+        const y = lerp(yCircle, yLine, unravel);
+        points.push({ x, y, t });
+      }
+
+      const bgPath = makePath(points);
+      addPath(bgPath, "rgba(255, 255, 255, 0.12)", 9, 0.5);
+
+      // Clip rectangles — behind waveform and rep labels
+      // Height = log-scaled likes (per-song min/max), centered on waveform axis.
+      // Each rect is 0.20 opacity so overlapping clips stack additively.
+      clipRectPositions = [];
+      if (clipReveal > 0.01) {
+        const validClips = (activeSong.clips || []).filter(
+          c => c.start !== null && c.end !== null && c.likes !== null && c.likes > 0
+        );
+        if (validClips.length > 0) {
+          const logLikes = validClips.map(c => Math.log(c.likes));
+          const minLog = Math.min(...logLikes);
+          const maxLog = Math.max(...logLikes);
+          const logRange = Math.max(1e-4, maxLog - minLog);
+          const minH = 24;
+          const maxH = 118;
+          for (const clip of validClips) {
+            const xStart = left + (clip.start / renderDuration) * lineWidth;
+            const xEnd = left + (clip.end / renderDuration) * lineWidth;
+            const w = Math.max(2, xEnd - xStart);
+            const logNorm = (Math.log(clip.likes) - minLog) / logRange;
+            const h = minH + logNorm * (maxH - minH);
+            const isHov = hoveredClip === clip;
+            clipRectPositions.push({ x1: xStart, y1: centerY - h / 2, x2: xStart + w, y2: centerY + h / 2, clip });
+            const rect = document.createElementNS(SVG_NS, "rect");
+            rect.setAttribute("x", xStart.toFixed(2));
+            rect.setAttribute("y", (centerY - h / 2).toFixed(2));
+            rect.setAttribute("width", w.toFixed(2));
+            rect.setAttribute("height", h.toFixed(2));
+            rect.setAttribute("fill", isHov ? "#ffd56a" : "#f4a019");
+            rect.setAttribute("rx", "3");
+            rect.setAttribute("opacity", String(isHov ? Math.min(1, 0.55 * clipReveal + 0.35) : 0.20 * clipReveal));
+            svg.appendChild(rect);
+          }
+        }
+      }
+
+      for (let i = 0; i < points.length - 1; i += 1) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const segD = `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} L ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+
+        const midT = ((p1.t + p2.t) * 0.5);
+        const time = midT * renderDuration;
+        const sec = sectionAtTime(activeSong, time);
+        const secColor = sec ? (SECTION_COLORS[sec.type] || baseLineColor) : baseLineColor;
+        const grayColor = "#585858";
+        const effectiveSecColor = selectedSection
+          ? (sec && sec.type === selectedSection ? secColor : grayColor)
+          : secColor;
+        const segColor = blendHex(baseLineColor, effectiveSecColor, sectionReveal);
+
+        addPath(segD, segColor, 2.8, 0.96);
+      }
+
+      if (isPlaying) {
+        const currentPlaybackTime = activeAudio && Number.isFinite(activeAudio.currentTime)
+          ? activeAudio.currentTime
+          : playTime;
+        const playNorm = (currentPlaybackTime / renderDuration) % 1;
+        const pos = Math.max(0, Math.min(points.length - 1, playNorm * (points.length - 1)));
+        const i0 = Math.floor(pos);
+        const i1 = Math.min(points.length - 1, i0 + 1);
+        const a = pos - i0;
+        const p = {
+          x: (points[i0].x * (1 - a)) + (points[i1].x * a),
+          y: (points[i0].y * (1 - a)) + (points[i1].y * a),
+        };
+        const head = document.createElementNS(SVG_NS, "circle");
+        head.setAttribute("cx", p.x.toFixed(2));
+        head.setAttribute("cy", p.y.toFixed(2));
+        head.setAttribute("r", "6");
+        head.setAttribute("fill", "#ffd56a");
+        head.setAttribute("stroke", "#ca810c");
+        head.setAttribute("stroke-width", "1.5");
+        svg.appendChild(head);
+      }
+
+      // Section labels below the waveform
+      const sectionLabelOpacity = sectionReveal * (1 - smoothstep(0.55, 0.62, progress));
+      if (sectionLabelOpacity > 0.01) {
+        const labelY = centerY + 62;
+        const tickTop = centerY + 34;
+        const tickBot = centerY + 44;
+        const ruleY = centerY + 44;
+
+        for (let si = 0; si < activeSong.sections.length; si++) {
+          const sec = activeSong.sections[si];
+          const xStart = left + (sec.start / renderDuration) * lineWidth;
+          const xEnd   = left + (sec.end   / renderDuration) * lineWidth;
+          const secW   = xEnd - xStart;
+          if (secW < 6) continue;
+
+          const rawColor = SECTION_COLORS[sec.type] || "#aaa";
+          const dimColor = "#4a4a4a";
+          const labelColor = selectedSection
+            ? (sec.type === selectedSection ? rawColor : dimColor)
+            : rawColor;
+
+          // tick at section start
+          const tick = document.createElementNS(SVG_NS, "line");
+          tick.setAttribute("x1", xStart.toFixed(1)); tick.setAttribute("x2", xStart.toFixed(1));
+          tick.setAttribute("y1", String(tickTop));    tick.setAttribute("y2", String(tickBot));
+          tick.setAttribute("stroke", labelColor);
+          tick.setAttribute("stroke-width", "1.2");
+          tick.setAttribute("opacity", String(sectionLabelOpacity));
+          svg.appendChild(tick);
+
+          // horizontal rule spanning the section
+          if (secW > 10) {
+            const rule = document.createElementNS(SVG_NS, "line");
+            rule.setAttribute("x1", xStart.toFixed(1)); rule.setAttribute("x2", xEnd.toFixed(1));
+            rule.setAttribute("y1", String(ruleY));     rule.setAttribute("y2", String(ruleY));
+            rule.setAttribute("stroke", labelColor);
+            rule.setAttribute("stroke-width", "0.8");
+            rule.setAttribute("opacity", String(sectionLabelOpacity * 0.45));
+            svg.appendChild(rule);
+          }
+
+          // text label (skip if section too narrow)
+          if (secW >= 22) {
+            const label = SECTION_LABELS[sec.type] || sec.type;
+            const txt = document.createElementNS(SVG_NS, "text");
+            txt.setAttribute("x", ((xStart + xEnd) / 2).toFixed(1));
+            txt.setAttribute("y", String(labelY));
+            txt.setAttribute("text-anchor", "middle");
+            txt.setAttribute("font-size", "9.5");
+            txt.setAttribute("font-family", "'Inter', 'Helvetica Neue', sans-serif");
+            txt.setAttribute("font-weight", "700");
+            txt.setAttribute("letter-spacing", "0.06em");
+            txt.setAttribute("fill", labelColor);
+            txt.setAttribute("opacity", String(sectionLabelOpacity));
+            txt.textContent = label.toUpperCase();
+            svg.appendChild(txt);
+          }
+        }
+
+        // final tick at the very end of the last section
+        const lastSec = activeSong.sections[activeSong.sections.length - 1];
+        if (lastSec) {
+          const xLast = left + (lastSec.end / renderDuration) * lineWidth;
+          const tickEnd = document.createElementNS(SVG_NS, "line");
+          tickEnd.setAttribute("x1", xLast.toFixed(1)); tickEnd.setAttribute("x2", xLast.toFixed(1));
+          tickEnd.setAttribute("y1", String(tickTop));   tickEnd.setAttribute("y2", String(tickBot));
+          tickEnd.setAttribute("stroke", "#aaa");
+          tickEnd.setAttribute("stroke-width", "1.2");
+          tickEnd.setAttribute("opacity", String(sectionLabelOpacity));
+          svg.appendChild(tickEnd);
+        }
+      }
+
+      repDotPositions.clear();
+      if (repReveal > 0.01 && unravel > 0.84) {
+        for (const section of activeSong.sections) {
+          if (selectedSection && section.type !== selectedSection) continue;
+          const groups = groupWordsInSection(section);
+          for (const [word, entries] of groups) {
+            if (entries.length < 2) continue;
+            const isHovered = hoveredWord === word;
+
+            // Build hit-test positions for this word
+            for (const d of entries) {
+              if (d.time > renderDuration) continue;
+              const x = left + (d.time / renderDuration) * lineWidth;
+              const y = centerY + signedWaveAtNorm(d.time / renderDuration, seed, renderDuration) * baseAmp;
+              if (!repDotPositions.has(word)) repDotPositions.set(word, []);
+              repDotPositions.get(word).push({ x, y });
+            }
+
+            for (let i = 0; i < entries.length - 1; i += 1) {
+              const a = entries[i];
+              const b = entries[i + 1];
+              if (a.time > renderDuration || b.time > renderDuration) continue;
+              const xa = left + (a.time / renderDuration) * lineWidth;
+              const xb = left + (b.time / renderDuration) * lineWidth;
+              const ya = centerY + signedWaveAtNorm(a.time / renderDuration, seed, renderDuration) * baseAmp;
+              const yb = centerY + signedWaveAtNorm(b.time / renderDuration, seed, renderDuration) * baseAmp;
+              const midX = (xa + xb) * 0.5;
+              const hump = Math.max(18, Math.abs(xb - xa) * 0.24);
+              const ctrlY = Math.min(ya, yb) - hump;
+
+              const curve = `M ${xa.toFixed(2)} ${ya.toFixed(2)} Q ${midX.toFixed(2)} ${ctrlY.toFixed(2)} ${xb.toFixed(2)} ${yb.toFixed(2)}`;
+              addPath(curve, isHovered ? "#fff8c0" : "#eda716", isHovered ? 3.5 : 2.2, isHovered ? repReveal : repReveal * 0.85);
+            }
+
+            for (const d of entries) {
+              if (d.time > renderDuration) continue;
+              const x = left + (d.time / renderDuration) * lineWidth;
+              const y = centerY + signedWaveAtNorm(d.time / renderDuration, seed, renderDuration) * baseAmp;
+              const dot = document.createElementNS(SVG_NS, "circle");
+              dot.setAttribute("cx", x.toFixed(2));
+              dot.setAttribute("cy", y.toFixed(2));
+              dot.setAttribute("r", isHovered ? "7" : "4.7");
+              dot.setAttribute("fill", isHovered ? "#fffbe8" : "#f7be3e");
+              dot.setAttribute("stroke", isHovered ? "#e8a800" : "#cb8100");
+              dot.setAttribute("stroke-width", isHovered ? "2" : "1.3");
+              dot.setAttribute("opacity", isHovered ? "1" : String(0.2 + 0.8 * repReveal));
+              svg.appendChild(dot);
+            }
+          }
+        }
+      }
+
+      const introVisible = 1 - smoothstep(0.06, 0.22, progress);
+      titleEl.style.opacity = String(introVisible);
+      titleEl.style.transform = `translateX(-50%) translateY(${(1 - introVisible) * -10}px)`;
+      introPlayBtn.style.opacity = String(introVisible);
+      introPlayBtn.style.transform = `translate(-50%, -50%) scale(${0.88 + (0.12 * introVisible)})`;
+
+      const secCapVisible = smoothstep(0.29, 0.43, progress) * (1 - smoothstep(0.54, 0.60, progress));
+      captionSection.style.opacity = String(secCapVisible);
+      captionSection.style.transform = `translateY(${(1 - Math.max(secCapVisible, 0.001)) * 10}px)`;
+
+      const repCapVisible = smoothstep(0.59, 0.68, progress) * (1 - smoothstep(0.71, 0.76, progress));
+      captionRep.style.opacity = String(repCapVisible);
+      captionRep.style.transform = `translateY(${(1 - Math.max(repCapVisible, 0.001)) * 10}px)`;
+
+      const clipCapVisible = smoothstep(0.73, 0.87, progress);
+      captionClip.style.opacity = String(clipCapVisible);
+      captionClip.style.transform = `translateY(${(1 - clipCapVisible) * 10}px)`;
+
+      const legVisible = smoothstep(0.29, 0.43, progress);
+      legend.style.opacity = String(legVisible);
+      legend.style.transform = `translateY(${(1 - legVisible) * -8}px)`;
+      controlRowEl.style.opacity = String(legVisible);
+      controlRowEl.style.transform = `translateY(${(1 - legVisible) * -8}px)`;
+
+      const repControlVisible = smoothstep(0.60, 0.70, progress);
+      repControlEl.style.opacity = String(repControlVisible);
+      repControlEl.style.pointerEvents = repControlVisible > 0.1 ? "auto" : "none";
+
+      const clipsControlVisible = smoothstep(0.74, 0.84, progress);
+      clipsControlEl.style.opacity = String(clipsControlVisible);
+      clipsControlEl.style.pointerEvents = clipsControlVisible > 0.1 ? "auto" : "none";
+
+      const titleVisible = smoothstep(0.26, 0.39, progress);
+      waveTitle.style.opacity = String(titleVisible);
+      waveTitle.style.transform = `translateY(${(1 - titleVisible) * -8}px)`;
+
+      const playVisible = smoothstep(0.26, 0.39, progress);
+      playBtn.classList.toggle("visible", playVisible > 0.05);
+    }
+
+    function updateProgress() {
+      const max = window.innerHeight * 4.4;
+      progress = clamp(window.scrollY / Math.max(max, 1), 0, 1);
+      draw();
+    }
+
+    function animate(now) {
+      if (!animate.last) animate.last = now;
+      const dt = (now - animate.last) / 1000;
+      animate.last = now;
+
+      if (activeAudio && Number.isFinite(activeAudio.currentTime)) {
+        const audioNow = activeAudio.currentTime;
+        if (!activeAudio.paused && isPlaying) {
+          // Advance continuously at frame rate and gently correct drift to audio clock.
+          playTime += dt;
+          const drift = audioNow - playTime;
+          playTime += drift * 0.18;
+        } else {
+          playTime = audioNow;
+        }
+        lastAudioTime = audioNow;
+      }
+
+      if (isPlaying && activeSong) {
+        if (!activeAudio) {
+          playTime += dt;
+        }
+        draw();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function seekFromSvgPointer(clientX) {
+      if (!activeSong || !renderState) return;
+
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width) return;
+
+      const xNorm = (clientX - rect.left) / rect.width;
+      const xSvg = xNorm * 1100;
+      const tNorm = clamp((xSvg - renderState.left) / renderState.lineWidth, 0, 1);
+      const targetTime = tNorm * renderState.renderDuration;
+
+      playTime = targetTime;
+
+      if (activeAudio) {
+        const maxTime = Number.isFinite(activeAudio.duration) && activeAudio.duration > 0
+          ? activeAudio.duration
+          : renderState.renderDuration;
+        activeAudio.currentTime = clamp(targetTime, 0, Math.max(0, maxTime - 0.01));
+      }
+
+      draw();
+    }
+
+    selectEl.addEventListener("change", () => {
+      setSong(Number(selectEl.value));
+    });
+
+    function togglePlay() {
+      if (activeAudio) {
+        if (activeAudio.paused) {
+          activeAudio.play()
+            .then(() => {
+              isPlaying = true;
+              syncPlayButtons();
+            })
+            .catch(() => {
+              // Browser autoplay policies or load issues.
+              isPlaying = false;
+              syncPlayButtons();
+            });
+        } else {
+          activeAudio.pause();
+          isPlaying = false;
+          syncPlayButtons();
+        }
+        return;
+      }
+
+      isPlaying = !isPlaying;
+      syncPlayButtons();
+      if (!isPlaying) playTime = 0;
+    }
+
+    playBtn.addEventListener("click", togglePlay);
+    introPlayBtn.addEventListener("click", togglePlay);
+
+    svg.addEventListener("pointerdown", (e) => {
+      seekFromSvgPointer(e.clientX);
+    });
+
+    function fmtCount(n) {
+      if (n == null) return "—";
+      if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+      if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "K";
+      return String(n);
+    }
+
+    svg.addEventListener("pointermove", (e) => {
+      const svgRect = svg.getBoundingClientRect();
+      const xSvg = (e.clientX - svgRect.left) / svgRect.width * 1100;
+      const ySvg = (e.clientY - svgRect.top) / svgRect.height * 560;
+
+      // Clip rect hit-test (topmost = last match)
+      let newClip = null;
+      for (const cr of clipRectPositions) {
+        if (xSvg >= cr.x1 && xSvg <= cr.x2 && ySvg >= cr.y1 && ySvg <= cr.y2) newClip = cr.clip;
+      }
+
+      if (newClip !== hoveredClip) {
+        hoveredClip = newClip;
+        hoveredWord = null;
+        draw();
+      }
+
+      if (hoveredClip) {
+        const likes = fmtCount(hoveredClip.likes);
+        const views = fmtCount(hoveredClip.views);
+        const hasLink = !!hoveredClip.link;
+        tooltipEl.innerHTML = `<span class="tt-stat">${likes} likes · ${views} views</span>`
+          + (hasLink ? `<a class="tt-link" href="${hoveredClip.link}" target="_blank" rel="noopener">${hoveredClip.link}</a>` : "");
+        tooltipEl.classList.toggle("has-link", hasLink);
+        tooltipEl.style.left = `${e.clientX}px`;
+        tooltipEl.style.top = `${e.clientY}px`;
+        tooltipEl.style.opacity = "1";
+        return;
+      }
+
+      // Rep dot hit-test
+      let nearest = null;
+      let nearestDist = 20;
+      for (const [word, dots] of repDotPositions) {
+        for (const dot of dots) {
+          const dist = Math.sqrt((xSvg - dot.x) ** 2 + (ySvg - dot.y) ** 2);
+          if (dist < nearestDist) { nearestDist = dist; nearest = word; }
+        }
+      }
+
+      if (nearest !== hoveredWord) { hoveredWord = nearest; draw(); }
+
+      if (hoveredWord) {
+        tooltipEl.innerHTML = hoveredWord;
+        tooltipEl.classList.remove("has-link");
+        tooltipEl.style.left = `${e.clientX}px`;
+        tooltipEl.style.top = `${e.clientY}px`;
+        tooltipEl.style.opacity = "1";
+      } else {
+        tooltipEl.style.opacity = "0";
+      }
+    });
+
+    svg.addEventListener("pointerleave", () => {
+      const changed = hoveredWord !== null || hoveredClip !== null;
+      hoveredWord = null;
+      hoveredClip = null;
+      tooltipEl.style.opacity = "0";
+      if (changed) draw();
+    });
+
+    repToggleEl.addEventListener("change", () => {
+      draw();
+    });
+
+    clipsToggleEl.addEventListener("change", () => {
+      draw();
+    });
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", draw);
+
+    fetch("clips.json")
+      .then((res) => res.json())
+      .then((data) => {
+        SONGS = data;
+        populateSelect();
+
+        const firstNonEmpty = SONGS.findIndex((song) =>
+          (song.sections || []).some((s) => (s.rep_dots || []).length > 0)
+        );
+        const initial = firstNonEmpty >= 0 ? firstNonEmpty : 0;
+        selectEl.value = String(initial);
+        setSong(initial);
+        updateProgress();
+        requestAnimationFrame(animate);
+      })
+      .catch((err) => {
+        titleEl.textContent = "Could not load clips.json";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
