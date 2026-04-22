@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Song Section Circles</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #fff;
+    }
+    h1 {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 20px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-bottom: 28px;
+    }
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+    .leg-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .grid-view { transition: opacity 0.3s; }
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .song-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 180px;
+    }
+    .detail-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 8px;
+    }
+    .detail-view.visible { display: flex; }
+    .detail-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 1080px;
+      flex-wrap: wrap;
+    }
+    .back-btn {
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-bottom: 24px;
+      align-self: flex-start;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .back-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.08);
+    }
+    #clip-tooltip {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      background: #111;
+      border: 0.5px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      pointer-events: none;
+    }
+    .tip-title { font-size: 11px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+    .tip-row { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .tip-sections { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+    .tip-sec-pill {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TikTok Song Clip Placement</h1>
+  <div class="legend" id="legend"></div>
+
+  <div class="grid-view" id="gridView">
+    <div class="row" id="row1"></div>
+    <div class="row" id="row2"></div>
+  </div>
+
+  <div class="detail-view" id="detailView">
+    <button class="back-btn" id="backBtn">← back to all songs</button>
+    <div class="detail-layout" id="detailLayout">
+      <div id="detailCard"></div>
+    </div>
+  </div>
+
+  <div id="clip-tooltip">
+    <div class="tip-title"    id="tip-title"></div>
+    <div class="tip-row"      id="tip-time"></div>
+    <div class="tip-row"      id="tip-tiktoks"></div>
+    <div class="tip-sections" id="tip-sections"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script>
+  // ============================================================
+  // HOW THIS FILE IS STRUCTURED
+  //
+  // There are two views:
+  //   SMALL MULTIPLES VIEW — all 5 songs shown as small rings (3 top, 2 bottom)
+  //   INDIVIDUAL VIEW      — one song zoomed in large after clicking its title
+  //
+  // The buildSVG(song, size, isDetail) function builds the ring SVG for BOTH views.
+  //   isDetail = false  →  SMALL MULTIPLES VIEW  (size 180px, no play controls)
+  //   isDetail = true   →  INDIVIDUAL VIEW        (size 380px, clip-only play + skip between clips)
+  //
+  // Sections marked [SMALL MULTIPLES] apply only when isDetail = false
+  // Sections marked [INDIVIDUAL VIEW] apply only when isDetail = true
+  // Sections marked [BOTH VIEWS] apply to both
+  // ============================================================
+
+  // ============================================================
+  // CONFIG — [BOTH VIEWS] tweak colors and opacity here
+  // ============================================================
+  const NON_CLIP_OPACITY = 0.55;
+  // Marker stick-out amount beyond thick ring edges (both sides equally)
+  const MARKER_STICKOUT = 0.012;
+  // Detail-view scrub: only this stroke band around the ring receives clicks (not the whole circle)
+  const SCRUB_HIT_WIDTH_RATIO = 0.028;
+  const CLIP_END_EPSILON = 0.08;
+  const ZOOM_MS = 420;
+  const DETAIL_TEXT_FADE_MS = 220;
+  const DETAIL_TEXT_MOVE_MS = 300;
+  const AUDIO_SOURCES = {
+    "Pretty Little Baby": "songs/pretty_little_baby.mp3",
+    "APT.": "songs/APT.mp3",
+    "No One Noticed": "songs/no_one_noticed.mp3",
+    "No One Noticed (Extended Spanish)": "songs/no_one_noticed.mp3",
+    "back to friends": "songs/back_to_friends.mp3",
+    "Sparks": "songs/sparks.mp3",
+  };
+  const SONG_ORDER = [
+    "Pretty Little Baby",
+    "APT.",
+    "No One Noticed (Extended Spanish)",
+    "back to friends",
+    "Sparks",
+  ];
+  const SONG_DISPLAY_NAMES = {
+    "No One Noticed (Extended Spanish)": "No One Noticed",
+  };
+  let ALL_DATA = [];
+  let activeAudio = null;
+  let activePlayBtn = null;
+  let activeProgressMarker = null;
+  let activeProgressGeom = null;
+  let activeProgressRAF = null;
+  let activeTimeLabel = null;
+  let clipControlOpId = 0;
+
+  const SECTION_COLORS = {
+    intro:        "#aaaaaa",
+    verse:        "#00f2ea",
+    prechorus:    "#a855f7",
+    chorus:       "#ff0050",
+    postchorus:   "#ff6b9d",
+    bridge:       "#ffd700",
+    refrain:      "#ff4500",
+    postrefrain:  "#ff9a3c",
+    interlude:    "#69c9d0",
+    instrumental: "#c0f0c0",
+    outro:        "#555555",
+  };
+
+  function clipKey(start, end) {
+    return `${start}-${end}`;
+  }
+
+  function normalizeSongData(song) {
+    const displayName = SONG_DISPLAY_NAMES[song.name] || song.name;
+    const grouped = new Map();
+    (song.clips || []).forEach((clip) => {
+      if (clip.start == null || clip.end == null || clip.end <= clip.start) return;
+      const key = clipKey(clip.start, clip.end);
+      if (!grouped.has(key)) {
+        grouped.set(key, { start: clip.start, end: clip.end, instances: 0 });
+      }
+      grouped.get(key).instances += 1;
+    });
+    const clips = [...grouped.values()]
+      .sort((a, b) => a.start - b.start || a.end - b.end);
+    return {
+      name: displayName,
+      artist: song.artist,
+      duration: song.duration,
+      sections: song.sections || [],
+      clips,
+    };
+  }
+
+  async function loadAllData() {
+    const res = await fetch("clips.json");
+    if (!res.ok) throw new Error(`Failed to load clips.json (${res.status})`);
+    const raw = await res.json();
+    const byName = new Map((raw || []).map((song) => [song.name, song]));
+    ALL_DATA = SONG_ORDER
+      .map((name) => byName.get(name))
+      .filter(Boolean)
+      .map(normalizeSongData);
+  }
+
+  // ============================================================
+  // TOOLTIP — [BOTH VIEWS] shown on hover over any clip segment
+  // ============================================================
+  const tooltip    = document.getElementById("clip-tooltip");
+  const tipTitle   = document.getElementById("tip-title");
+  const tipTime    = document.getElementById("tip-time");
+  const tipTiktoks = document.getElementById("tip-tiktoks");
+  const tipSecEl   = document.getElementById("tip-sections");
+
+  function fmtTime(s) {
+    return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  }
+
+  function truncateWithEllipsis(str, maxChars) {
+    const s = String(str || "");
+    if (s.length <= maxChars) return s;
+    return s.slice(0, Math.max(1, maxChars - 1)) + "…";
+  }
+
+  /**
+   * Always two lines for uniform vertical rhythm: line 2 may be a placeholder for short titles.
+   * maxCharsPerLine is approximate (word-wrap first, then truncate).
+   */
+  function titleTwoLines(name, maxCharsPerLine) {
+    const words = String(name || "").trim().split(/\s+/).filter(Boolean);
+    const zwsp = "\u200b";
+    if (!words.length) return ["", zwsp];
+    const full = words.join(" ");
+    if (full.length <= maxCharsPerLine) return [full, zwsp];
+
+    let line1 = words[0];
+    for (let i = 1; i < words.length; i++) {
+      const cand = `${line1} ${words[i]}`;
+      if (cand.length <= maxCharsPerLine) line1 = cand;
+      else {
+        const line2 = words.slice(i).join(" ");
+        return [
+          line1.length > maxCharsPerLine ? truncateWithEllipsis(line1, maxCharsPerLine) : line1,
+          line2.length > maxCharsPerLine ? truncateWithEllipsis(line2, maxCharsPerLine) : line2,
+        ];
+      }
+    }
+    return [truncateWithEllipsis(line1, maxCharsPerLine), zwsp];
+  }
+  function getSectionsForClip(sections, clip) {
+    const types = new Set();
+    sections.forEach(sec => {
+      if (clip.end > sec.start && clip.start < sec.end) types.add(sec.type);
+    });
+    return [...types];
+  }
+  function showTip(e, clip, sections) {
+    tipTitle.textContent   = `clip  ${fmtTime(clip.start)} – ${fmtTime(clip.end)}`;
+    tipTime.textContent    = `duration: ${Math.round(clip.end - clip.start)}s`;
+    tipTiktoks.textContent = `seen in ${clip.instances} of 10 TikToks`;
+    tipSecEl.innerHTML = "";
+    getSectionsForClip(sections, clip).forEach(type => {
+      const pill  = document.createElement("span");
+      pill.className = "tip-sec-pill";
+      const color = SECTION_COLORS[type] || "#ccc";
+      pill.style.background = color + "33";
+      pill.style.color      = color;
+      pill.style.border     = `0.5px solid ${color}66`;
+      pill.textContent = type;
+      tipSecEl.appendChild(pill);
+    });
+    tooltip.style.display = "block";
+    moveTip(e);
+  }
+  function moveTip(e) {
+    tooltip.style.left = (e.clientX + 14) + "px";
+    tooltip.style.top  = (e.clientY - 36) + "px";
+  }
+  function hideTip() { tooltip.style.display = "none"; }
+
+  function normalizeSongName(name) {
+    return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  }
+
+  function getAudioSrcForSong(song) {
+    if (AUDIO_SOURCES[song.name]) return AUDIO_SOURCES[song.name];
+    const target = normalizeSongName(song.name);
+    const match = Object.entries(AUDIO_SOURCES).find(([k]) => normalizeSongName(k) === target);
+    return match ? match[1] : null;
+  }
+
+  function getSortedValidClips(song) {
+    return (song.clips || [])
+      .filter(c => c.start != null && c.end != null && c.end > c.start)
+      .sort((a, b) => a.start - b.start);
+  }
+
+  function getPlayableClips(song, duration) {
+    const dur = Number(duration);
+    if (!Number.isFinite(dur) || dur <= 0) return getSortedValidClips(song);
+    return getSortedValidClips(song)
+      .filter((clip) => clip.start < dur - 0.01)
+      .map((clip) => ({ ...clip, end: Math.min(clip.end, dur) }))
+      .filter((clip) => clip.end > clip.start + 0.01);
+  }
+
+  function refreshClipPlaybackContext(audio, song) {
+    const duration = Number(audio.duration || audio.dataset.songDuration || song.duration || 0);
+    const clips = getPlayableClips(song, duration);
+    audio._clipPlayback = { clips, song };
+    if (!clips.length) {
+      audio.dataset.clipIndex = "0";
+      return;
+    }
+    const idx = Math.min(
+      Math.max(0, parseInt(audio.dataset.clipIndex || "0", 10)),
+      clips.length - 1
+    );
+    audio.dataset.clipIndex = String(idx);
+  }
+
+  /** Which clip index should be active after seeking to `t` (seconds)? */
+  function clipIndexAtTime(clips, t) {
+    if (!clips.length) return 0;
+    // If multiple clips overlap at time t, prefer the one that starts latest.
+    // This prevents getting "stuck" on an earlier overlapping clip when skipping.
+    let overlapIdx = -1;
+    let latestStart = -Infinity;
+    for (let i = 0; i < clips.length; i++) {
+      if (t >= clips[i].start && t < clips[i].end && clips[i].start >= latestStart) {
+        latestStart = clips[i].start;
+        overlapIdx = i;
+      }
+    }
+    if (overlapIdx !== -1) return overlapIdx;
+    let best = 0;
+    for (let i = 0; i < clips.length; i++) {
+      if (clips[i].start <= t) best = i;
+    }
+    return best;
+  }
+
+  function clampTimeToClipSpan(clips, t) {
+    if (!clips.length) return t;
+    const inClipIdx = clips.findIndex((clip) => t >= clip.start && t < clip.end);
+    if (inClipIdx !== -1) return t;
+    const nextClip = clips.find((clip) => clip.start >= t);
+    if (nextClip) return nextClip.start;
+    return clips[clips.length - 1].start;
+  }
+
+  function syncClipIndexFromTime(audio) {
+    const ctx = audio._clipPlayback;
+    if (!ctx || !ctx.clips.length) return;
+    audio.dataset.clipIndex = String(clipIndexAtTime(ctx.clips, audio.currentTime));
+  }
+
+  function resolveActiveClipIndex(audio, clips) {
+    if (!clips.length) return 0;
+    const rawIdx = parseInt(audio.dataset.clipIndex || "0", 10);
+    const idx = Number.isFinite(rawIdx)
+      ? Math.min(Math.max(0, rawIdx), clips.length - 1)
+      : 0;
+    const clip = clips[idx];
+    if (audio.currentTime >= clip.start - 0.02 && audio.currentTime < clip.end - CLIP_END_EPSILON) {
+      return idx;
+    }
+    return clipIndexAtTime(clips, audio.currentTime);
+  }
+
+  function attachClipPlaybackGuard(audio, song) {
+    refreshClipPlaybackContext(audio, song);
+    if (audio._clipGuardAttached) return;
+    audio._clipGuardAttached = true;
+    audio.addEventListener("timeupdate", () => {
+      if (activeAudio !== audio) return;
+      const ctx = audio._clipPlayback;
+      if (!ctx || !ctx.clips.length) return;
+      const idx = Math.min(
+        Math.max(0, parseInt(audio.dataset.clipIndex || "0", 10)),
+        ctx.clips.length - 1
+      );
+      const clip = ctx.clips[idx];
+      const dur = Number(audio.duration || audio.dataset.songDuration);
+      if (audio.currentTime < clip.start - CLIP_END_EPSILON) {
+        audio.currentTime = clip.start;
+        setProgressMarkerTime(audio.currentTime, dur);
+        setTimeLabel(audio.currentTime, dur);
+        return;
+      }
+      if (audio.currentTime >= clip.end - CLIP_END_EPSILON) {
+        audio.pause();
+        audio.currentTime = Math.min(clip.end, dur);
+        stopProgressLoop();
+        if (activePlayBtn) activePlayBtn.textContent = "▶";
+        setProgressMarkerTime(audio.currentTime, dur);
+        setTimeLabel(audio.currentTime, dur);
+      }
+    });
+  }
+
+  function setProgressMarkerTime(seconds, duration) {
+    if (!activeProgressMarker || !activeProgressGeom || !duration) return;
+    const clamped = Math.max(0, Math.min(seconds, duration));
+    const angle = (clamped / duration) * 360;
+    const [x1, y1] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.innerR, angle);
+    const [x2, y2] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.outerR, angle);
+    if (activeProgressGeom.outlineEl) {
+      activeProgressGeom.outlineEl.setAttribute("x1", x1);
+      activeProgressGeom.outlineEl.setAttribute("y1", y1);
+      activeProgressGeom.outlineEl.setAttribute("x2", x2);
+      activeProgressGeom.outlineEl.setAttribute("y2", y2);
+    }
+    activeProgressMarker.setAttribute("x1", x1);
+    activeProgressMarker.setAttribute("y1", y1);
+    activeProgressMarker.setAttribute("x2", x2);
+    activeProgressMarker.setAttribute("y2", y2);
+  }
+
+  function setTimeLabel(seconds, duration) {
+    if (!activeTimeLabel || !duration) return;
+    const clamped = Math.max(0, Math.min(seconds, duration));
+    activeTimeLabel.textContent = `${fmtTime(clamped)} / ${fmtTime(duration)}`;
+  }
+
+  function stopProgressLoop() {
+    if (activeProgressRAF !== null) {
+      cancelAnimationFrame(activeProgressRAF);
+      activeProgressRAF = null;
+    }
+  }
+
+  function runProgressLoop() {
+    stopProgressLoop();
+    const tick = () => {
+      if (activeAudio && !activeAudio.paused) {
+        const duration = Number(activeAudio.duration || activeAudio.dataset.songDuration);
+        setProgressMarkerTime(activeAudio.currentTime, duration);
+        setTimeLabel(activeAudio.currentTime, duration);
+        activeProgressRAF = requestAnimationFrame(tick);
+      }
+    };
+    activeProgressRAF = requestAnimationFrame(tick);
+  }
+
+  function stopActiveAudio() {
+    stopProgressLoop();
+    const savedDur = activeAudio ? Number(activeAudio.dataset.songDuration || 0) : 0;
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+    if (activePlayBtn) {
+      activePlayBtn.textContent = "▶";
+      activePlayBtn = null;
+    }
+    if (activeProgressMarker && savedDur) setProgressMarkerTime(0, savedDur);
+    if (activeTimeLabel && savedDur) setTimeLabel(0, savedDur);
+    activeProgressMarker = null;
+    activeProgressGeom = null;
+    activeTimeLabel = null;
+  }
+
+  function waitForMetadata(audio) {
+    if (audio.readyState >= 1 && Number.isFinite(audio.duration) && audio.duration > 0) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      const done = () => {
+        audio.removeEventListener("loadedmetadata", done);
+        audio.removeEventListener("durationchange", done);
+        resolve();
+      };
+      audio.addEventListener("loadedmetadata", done);
+      audio.addEventListener("durationchange", done);
+    });
+  }
+
+  function seekAudio(audio, time) {
+    return new Promise((resolve) => {
+      const target = Number(time);
+      if (!Number.isFinite(target)) {
+        resolve();
+        return;
+      }
+      let doneCalled = false;
+      const done = () => {
+        if (doneCalled) return;
+        doneCalled = true;
+        audio.removeEventListener("seeked", done);
+        audio.removeEventListener("timeupdate", done);
+        clearTimeout(timer);
+        resolve();
+      };
+      const timer = setTimeout(done, 500);
+      audio.addEventListener("seeked", done, { once: true });
+      audio.addEventListener("timeupdate", done, { once: true });
+      try {
+        audio.currentTime = target;
+      } catch (_) {
+        done();
+        return;
+      }
+      if (Math.abs(audio.currentTime - target) < 0.05 || !audio.seeking) {
+        done();
+      }
+    });
+  }
+
+  function ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
+    const src = getAudioSrcForSong(song);
+    if (!src) return null;
+
+    activeProgressMarker = progressMarker;
+    activeProgressGeom = progressGeom;
+    activeTimeLabel = timeLabel;
+
+    if (activeAudio && activeAudio.dataset.src === src) {
+      if (playBtn) activePlayBtn = playBtn;
+      refreshClipPlaybackContext(activeAudio, song);
+      return activeAudio;
+    }
+
+    stopActiveAudio();
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audio.dataset.src = src;
+    audio.dataset.songDuration = String(song.duration);
+    audio.dataset.clipIndex = "0";
+    activeAudio = audio;
+    activePlayBtn = playBtn || activePlayBtn;
+    activeProgressMarker = progressMarker;
+    activeProgressGeom = progressGeom;
+    activeTimeLabel = timeLabel;
+    setProgressMarkerTime(0, song.duration);
+    setTimeLabel(0, song.duration);
+    attachClipPlaybackGuard(audio, song);
+    audio.addEventListener("loadedmetadata", () => {
+      audio.dataset.songDuration = String(audio.duration || song.duration);
+      refreshClipPlaybackContext(audio, song);
+    });
+
+    audio.addEventListener("play", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "⏸";
+      runProgressLoop();
+    });
+    audio.addEventListener("pause", () => {
+      if (activePlayBtn && !audio.ended) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+    });
+    audio.addEventListener("ended", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+      setProgressMarkerTime(0, song.duration);
+      setTimeLabel(0, song.duration);
+      activeAudio = null;
+      activePlayBtn = null;
+      activeProgressMarker = null;
+      activeProgressGeom = null;
+      activeTimeLabel = null;
+    });
+
+    audio.addEventListener("error", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+      setProgressMarkerTime(0, song.duration);
+      setTimeLabel(0, song.duration);
+      activeAudio = null;
+      activePlayBtn = null;
+      activeProgressMarker = null;
+      activeProgressGeom = null;
+      activeTimeLabel = null;
+    });
+
+    return audio;
+  }
+
+  async function toggleClipDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
+    const opId = ++clipControlOpId;
+    const audio = ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel);
+    if (!audio) return;
+    await waitForMetadata(audio);
+    if (opId !== clipControlOpId || activeAudio !== audio) return;
+    refreshClipPlaybackContext(audio, song);
+    const clips = (audio._clipPlayback && audio._clipPlayback.clips) || getSortedValidClips(song);
+    if (!clips.length) return;
+    const idx = resolveActiveClipIndex(audio, clips);
+    const clip = clips[idx];
+    audio.dataset.clipIndex = String(idx);
+
+    if (audio.paused) {
+      if (audio.currentTime < clip.start - 0.02 || audio.currentTime >= clip.end - CLIP_END_EPSILON) {
+        await seekAudio(audio, clip.start);
+        if (opId !== clipControlOpId || activeAudio !== audio) return;
+        const dur = Number(audio.duration || audio.dataset.songDuration);
+        setProgressMarkerTime(clip.start, dur);
+        setTimeLabel(clip.start, dur);
+      }
+      audio.play().catch(() => {
+        if (activePlayBtn) activePlayBtn.textContent = "▶";
+        stopProgressLoop();
+      });
+    } else {
+      audio.pause();
+      stopProgressLoop();
+    }
+  }
+
+  async function skipClipDetail(song, delta, progressMarker, markerGeom, timeLabel, playBtn) {
+    const opId = ++clipControlOpId;
+    const audio = ensureDetailAudio(song, playBtn || activePlayBtn, progressMarker, markerGeom, timeLabel);
+    if (!audio) return;
+    await waitForMetadata(audio);
+    if (opId !== clipControlOpId || activeAudio !== audio) return;
+    refreshClipPlaybackContext(audio, song);
+    const clips = (audio._clipPlayback && audio._clipPlayback.clips) || getSortedValidClips(song);
+    if (!clips.length) return;
+
+    const wasPlaying = !audio.paused;
+    if (wasPlaying) audio.pause();
+    let idx = resolveActiveClipIndex(audio, clips);
+    idx = Math.min(clips.length - 1, Math.max(0, idx + delta));
+    audio.dataset.clipIndex = String(idx);
+    const clip = clips[idx];
+    await seekAudio(audio, clip.start);
+    if (opId !== clipControlOpId || activeAudio !== audio) return;
+    const dur = Number(audio.duration || audio.dataset.songDuration);
+    setProgressMarkerTime(clip.start, dur);
+    setTimeLabel(clip.start, dur);
+    if (wasPlaying) {
+      audio.play().catch(() => {
+        if (activePlayBtn) activePlayBtn.textContent = "▶";
+        stopProgressLoop();
+      });
+    }
+  }
+
+  // ============================================================
+  // SVG ARC HELPERS — [BOTH VIEWS] math utilities for drawing arcs
+  // ============================================================
+  function polarToXY(cx, cy, r, angleDeg) {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  }
+  function describeArc(cx, cy, r, a0, a1) {
+    const [sx, sy] = polarToXY(cx, cy, r, a0);
+    const [ex, ey] = polarToXY(cx, cy, r, a1);
+    return `M ${sx} ${sy} A ${r} ${r} 0 ${(a1 - a0) > 180 ? 1 : 0} 1 ${ex} ${ey}`;
+  }
+
+  // ============================================================
+  // buildSVG — [BOTH VIEWS]
+  // Draws the circular ring for a single song.
+  // Called with isDetail=false for SMALL MULTIPLES, isDetail=true for INDIVIDUAL VIEW.
+  // ============================================================
+  function buildSVG(song, size, isDetail) {
+    const cx = size / 2, cy = size / 2;
+    const r      = size * 0.33;
+    const thinW  = size * 0.027;
+    const thickW = size * 0.072;
+    const ns     = "http://www.w3.org/2000/svg";
+
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+    svg.setAttribute("width", "100%");
+
+    const dur        = song.duration;
+    const detailPlayBtnRef = isDetail ? { current: null } : null;
+    const validClips = (song.clips || []).filter(c => c.start !== null && c.end !== null);
+
+    // [BOTH VIEWS] Per-second clip index map
+    // Maps each second of the song to which clip index covers it (or null if no clip)
+    const clipCov = new Array(Math.ceil(dur)).fill(null);
+    validClips.forEach((clip, ci) => {
+      for (let t = Math.floor(clip.start); t < Math.ceil(clip.end) && t < dur; t++) {
+        clipCov[t] = ci;
+      }
+    });
+
+    // [BOTH VIEWS] One white outline arc per clip (full clip span)
+    // Hidden by default (opacity 0), revealed on hover to highlight the entire clip as one unit
+    const outlineArcs = validClips.map(clip => {
+      const el = document.createElementNS(ns, "path");
+      el.setAttribute("d",             describeArc(cx, cy, r, (clip.start/dur)*360, (clip.end/dur)*360));
+      el.setAttribute("stroke",        "#ffffff");
+      el.setAttribute("stroke-width",  thickW + size * 0.04);
+      el.setAttribute("fill",          "none");
+      el.setAttribute("stroke-linecap","round");
+      el.setAttribute("opacity",       "0");
+      el.setAttribute("pointer-events","none");
+      svg.appendChild(el);
+      return el;
+    });
+
+    // [BOTH VIEWS] Section-coloured arcs drawn on top of the outline arcs
+    // Thick segments = clip sections, thin + faded = non-clip sections
+    song.sections.forEach(sec => {
+      const color    = SECTION_COLORS[sec.type] || "#ccc";
+      let segStart   = sec.start;
+      let curCI      = clipCov[Math.floor(sec.start)] ?? null;
+
+      for (let t = sec.start + 1; t <= sec.end; t++) {
+        const nowCI = t < dur ? (clipCov[Math.floor(t)] ?? null) : curCI;
+        if (nowCI !== curCI || t === sec.end) {
+          const a0 = (segStart / dur) * 360;
+          const a1 = (t / dur) * 360;
+          if (a1 - a0 < 0.3) { segStart = t; curCI = nowCI; continue; }
+          const isClip = curCI !== null;
+
+          const arc = document.createElementNS(ns, "path");
+          arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
+          arc.setAttribute("stroke",        color);
+          arc.setAttribute("stroke-width",  isClip ? thickW : thinW);
+          arc.setAttribute("fill",          "none");
+          arc.setAttribute("stroke-linecap","butt");
+          arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
+          svg.appendChild(arc);
+
+          if (isClip) {
+            const ci  = curCI;
+            // [BOTH VIEWS] Wider invisible hit area makes hovering easier on thin arcs
+            const hit = document.createElementNS(ns, "path");
+            hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
+            hit.setAttribute("stroke",       "transparent");
+            hit.setAttribute("stroke-width", thickW + 10);
+            hit.setAttribute("fill",         "none");
+            hit.style.cursor = "pointer";
+            hit.addEventListener("mouseenter", e => {
+              outlineArcs[ci].setAttribute("opacity", "0.65");
+              showTip(e, validClips[ci], song.sections);
+            });
+            hit.addEventListener("mousemove",  moveTip);
+            hit.addEventListener("mouseleave", () => {
+              outlineArcs[ci].setAttribute("opacity", "0");
+              hideTip();
+            });
+            svg.appendChild(hit);
+          }
+
+          segStart = t; curCI = nowCI;
+        }
+      }
+    });
+
+    // [BOTH VIEWS] Red start marker — short red line at 12 o'clock indicating song start
+    const markerInnerR = r - thickW / 2 - size * MARKER_STICKOUT;
+    const markerOuterR = r + thickW / 2 + size * MARKER_STICKOUT;
+    const [ix, iy] = polarToXY(cx, cy, markerInnerR, 0);
+    const [ox, oy] = polarToXY(cx, cy, markerOuterR, 0);
+    const mkOutline = document.createElementNS(ns, "line");
+    mkOutline.setAttribute("x1", ix); mkOutline.setAttribute("y1", iy);
+    mkOutline.setAttribute("x2", ox); mkOutline.setAttribute("y2", oy);
+    mkOutline.setAttribute("stroke",        "#000000");
+    mkOutline.setAttribute("stroke-width",  size * 0.02);
+    mkOutline.setAttribute("stroke-linecap","round");
+    mkOutline.setAttribute("opacity",       "0.6");
+    svg.appendChild(mkOutline);
+
+    const mk = document.createElementNS(ns, "line");
+    mk.setAttribute("x1", ix); mk.setAttribute("y1", iy);
+    mk.setAttribute("x2", ox); mk.setAttribute("y2", oy);
+    mk.setAttribute("stroke",        "#ffffff");
+    mk.setAttribute("stroke-width",  size * 0.014);
+    mk.setAttribute("stroke-linecap","round");
+    mk.setAttribute("opacity",       "0.8");
+    svg.appendChild(mk);
+
+    let progressMarker = null;
+    const markerGeom = {
+      cx,
+      cy,
+      innerR: markerInnerR,
+      outerR: markerOuterR,
+    };
+    if (isDetail) {
+      const progressOutline = document.createElementNS(ns, "line");
+      progressOutline.setAttribute("stroke",        "#000000");
+      progressOutline.setAttribute("stroke-width",  size * 0.019);
+      progressOutline.setAttribute("stroke-linecap","round");
+      progressOutline.setAttribute("opacity",       "0.85");
+      svg.appendChild(progressOutline);
+
+      progressMarker = document.createElementNS(ns, "line");
+      progressMarker.setAttribute("stroke",        "#ffffff");
+      progressMarker.setAttribute("stroke-width",  size * 0.013);
+      progressMarker.setAttribute("stroke-linecap","round");
+      progressMarker.setAttribute("opacity",       "0.95");
+      svg.appendChild(progressMarker);
+      const [px1, py1] = polarToXY(cx, cy, markerGeom.innerR, 0);
+      const [px2, py2] = polarToXY(cx, cy, markerGeom.outerR, 0);
+      progressOutline.setAttribute("x1", px1);
+      progressOutline.setAttribute("y1", py1);
+      progressOutline.setAttribute("x2", px2);
+      progressOutline.setAttribute("y2", py2);
+      progressMarker.setAttribute("x1", px1);
+      progressMarker.setAttribute("y1", py1);
+      progressMarker.setAttribute("x2", px2);
+      progressMarker.setAttribute("y2", py2);
+
+      markerGeom.outlineEl = progressOutline;
+
+      const scrubRing = document.createElementNS(ns, "circle");
+      scrubRing.setAttribute("cx", cx);
+      scrubRing.setAttribute("cy", cy);
+      scrubRing.setAttribute("r", r);
+      scrubRing.setAttribute("fill", "none");
+      scrubRing.setAttribute("stroke", "transparent");
+      scrubRing.setAttribute("stroke-width", size * SCRUB_HIT_WIDTH_RATIO);
+      scrubRing.setAttribute("pointer-events", "stroke");
+      scrubRing.style.cursor = "grab";
+      svg.appendChild(scrubRing);
+
+      const seekToClientPoint = (clientX, clientY, shouldResume) => {
+        const audio = ensureDetailAudio(
+          song,
+          (detailPlayBtnRef && detailPlayBtnRef.current) || activePlayBtn,
+          progressMarker,
+          markerGeom,
+          timeLabel
+        );
+        if (!audio) return;
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return;
+        const localPt = pt.matrixTransform(ctm.inverse());
+        const dx = localPt.x - cx;
+        const dy = localPt.y - cy;
+        const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 90 + 360) % 360;
+        const duration = Number(audio.duration || audio.dataset.songDuration);
+        let nextTime = (angle / 360) * duration;
+        const clips = getSortedValidClips(song);
+        nextTime = clampTimeToClipSpan(clips, nextTime);
+        audio.currentTime = nextTime;
+        syncClipIndexFromTime(audio);
+        setProgressMarkerTime(nextTime, duration);
+        setTimeLabel(nextTime, duration);
+        if (shouldResume) audio.play();
+      };
+
+      scrubRing.addEventListener("pointerdown", e => {
+        const src = getAudioSrcForSong(song);
+        const sameAudio = activeAudio && src && activeAudio.dataset.src === src;
+        const wasPlaying = Boolean(sameAudio && !activeAudio.paused);
+        scrubRing.setPointerCapture(e.pointerId);
+        scrubRing.style.cursor = "grabbing";
+        seekToClientPoint(e.clientX, e.clientY, wasPlaying);
+      });
+      scrubRing.addEventListener("pointermove", e => {
+        if (e.buttons !== 1) return;
+        const src = getAudioSrcForSong(song);
+        const sameAudio = activeAudio && src && activeAudio.dataset.src === src;
+        const wasPlaying = Boolean(sameAudio && !activeAudio.paused);
+        seekToClientPoint(e.clientX, e.clientY, wasPlaying);
+      });
+      scrubRing.addEventListener("pointerup", e => {
+        scrubRing.releasePointerCapture(e.pointerId);
+        scrubRing.style.cursor = "grab";
+      });
+    }
+
+    // [BOTH VIEWS] Center text — fixed two-line title block + uniform gaps (detail: + time + controls)
+    const titleFS = isDetail ? size * 0.05 : size * 0.055;
+    const timeFS  = isDetail ? size * 0.034 : 0;
+    const artFS   = isDetail ? size * 0.039 : size * 0.042;
+    const titleLH = titleFS * 1.30;
+    const gapStack = size * 0.016;
+
+    const maxTitleChars = Math.max(10, Math.floor(size * (isDetail ? 0.115 : 0.098)));
+    const [titleLine1, titleLine2] = titleTwoLines(song.name, maxTitleChars);
+    const zwsp = "\u200b";
+
+    let titleY1, titleY2, timeY, controlsY, artistY;
+    if (isDetail) {
+      controlsY = cy + size * 0.12;
+      artistY = controlsY + size * 0.068;
+      timeY = controlsY - size * 0.088;
+      titleY2 = timeY - size * 0.072;
+      titleY1 = titleY2 - titleLH;
+      const minTitleY = cy - size * 0.30;
+      if (titleY1 < minTitleY) {
+        const shift = minTitleY - titleY1;
+        titleY1 += shift;
+        titleY2 += shift;
+        timeY = Math.min(timeY + shift, controlsY - size * 0.07);
+      }
+    } else {
+      artistY = cy + size * 0.105;
+      titleY2 = artistY - gapStack - artFS * 0.32 - titleLH;
+      titleY1 = titleY2 - titleLH;
+      const minTitleY = cy - size * 0.29;
+      if (titleY1 < minTitleY) {
+        const shift = minTitleY - titleY1;
+        titleY1 += shift;
+        titleY2 += shift;
+      }
+    }
+
+    const titleEl = document.createElementNS(ns, "text");
+    titleEl.setAttribute("data-role", "title");
+    titleEl.setAttribute("text-anchor", "middle");
+    titleEl.setAttribute("font-size",   titleFS);
+    titleEl.setAttribute("font-weight", "500");
+    titleEl.setAttribute("fill",        "rgba(255,255,255,0.9)");
+    titleEl.setAttribute("x", cx);
+    titleEl.setAttribute("y", titleY1);
+    const tspan1 = document.createElementNS(ns, "tspan");
+    tspan1.setAttribute("x", cx);
+    tspan1.setAttribute("dy", "0");
+    tspan1.textContent = titleLine1;
+    titleEl.appendChild(tspan1);
+    const tspan2 = document.createElementNS(ns, "tspan");
+    tspan2.setAttribute("x", cx);
+    tspan2.setAttribute("dy", String(titleLH));
+    if (titleLine2 === zwsp) {
+      tspan2.textContent = zwsp;
+      tspan2.setAttribute("fill", "transparent");
+    } else {
+      tspan2.textContent = titleLine2;
+    }
+    titleEl.appendChild(tspan2);
+    if (!isDetail) {
+      titleEl.style.cursor = "pointer";
+      titleEl.style.textDecoration = "underline";
+      titleEl.style.textDecorationColor = "rgba(255,255,255,0.3)";
+      titleEl.addEventListener("click",      () => zoomIn(song, svg));
+      titleEl.addEventListener("mouseenter", () => titleEl.setAttribute("fill", "#fff"));
+      titleEl.addEventListener("mouseleave", () => titleEl.setAttribute("fill", "rgba(255,255,255,0.9)"));
+    }
+    svg.appendChild(titleEl);
+
+    let timeLabel = null;
+    if (isDetail) {
+      timeLabel = document.createElementNS(ns, "text");
+      timeLabel.setAttribute("data-role", "time");
+      timeLabel.setAttribute("x",           cx);
+      timeLabel.setAttribute("y",           timeY);
+      timeLabel.setAttribute("text-anchor", "middle");
+      timeLabel.setAttribute("font-size",   timeFS);
+      timeLabel.setAttribute("font-weight", "500");
+      timeLabel.setAttribute("fill",        "rgba(255,255,255,0.78)");
+      timeLabel.textContent = `${fmtTime(0)} / ${fmtTime(song.duration)}`;
+      svg.appendChild(timeLabel);
+    }
+
+    // [INDIVIDUAL VIEW ONLY] Play/skip — play only TikTok clip ranges; skip switches clip
+    if (isDetail) {
+      const bSp = size * 0.11, bSz = size * 0.075;
+      const detailClips = getSortedValidClips(song);
+      const hasClips = detailClips.length > 0;
+      const dimFill = "rgba(255,255,255,0.22)";
+      const normalFill = (isPlay) => (isPlay ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.65)");
+
+      function addCtrl(x, icon, fs, isPlay, onClick, enabled) {
+        const btn = document.createElementNS(ns, "text");
+        btn.setAttribute("data-role", "control");
+        btn.setAttribute("x",           x);
+        btn.setAttribute("y",           controlsY);
+        btn.setAttribute("text-anchor", "middle");
+        btn.setAttribute("font-size",   fs);
+        btn.setAttribute("fill",        enabled ? normalFill(isPlay) : dimFill);
+        btn.setAttribute("cursor",      enabled ? "pointer" : "default");
+        btn.textContent = icon;
+        if (enabled && onClick) btn.addEventListener("click", onClick);
+        btn.addEventListener("mouseenter", () => {
+          if (enabled) btn.setAttribute("fill", "#fff");
+        });
+        btn.addEventListener("mouseleave", () => {
+          btn.setAttribute("fill", enabled ? normalFill(isPlay) : dimFill);
+        });
+        svg.appendChild(btn);
+        return btn;
+      }
+
+      const playBtn = addCtrl(cx, "▶", bSz, true, () => {
+        toggleClipDetailAudio(song, playBtn, progressMarker, markerGeom, timeLabel);
+      }, hasClips);
+      if (detailPlayBtnRef) detailPlayBtnRef.current = playBtn;
+
+      addCtrl(cx - bSp, "⏮", bSz * 0.9, false, () => {
+        skipClipDetail(song, -1, progressMarker, markerGeom, timeLabel, playBtn);
+      }, hasClips);
+
+      addCtrl(cx + bSp, "⏭", bSz * 0.9, false, () => {
+        skipClipDetail(song, 1, progressMarker, markerGeom, timeLabel, playBtn);
+      }, hasClips);
+    }
+
+    // [BOTH VIEWS] Artist — same baseline as layout stack; truncate if very long
+    const art = document.createElementNS(ns, "text");
+    art.setAttribute("data-role", "artist");
+    art.setAttribute("x",           cx);
+    art.setAttribute("y",           artistY);
+    art.setAttribute("text-anchor", "middle");
+    art.setAttribute("font-size",   artFS);
+    art.setAttribute("fill",        "rgba(255,255,255,0.3)");
+    const maxArtChars = Math.max(12, Math.floor(size * 0.11));
+    art.textContent = truncateWithEllipsis(song.artist, maxArtChars);
+    svg.appendChild(art);
+
+    return svg;
+  }
+
+  // ============================================================
+  // ZOOM IN — [SMALL MULTIPLES → INDIVIDUAL VIEW]
+  // Called when a song title is clicked in small multiples.
+  // Fades out the grid, builds a large SVG for the selected song,
+  // and shows the detail view with the back button.
+  // ============================================================
+  function zoomIn(song, sourceSvg) {
+    stopActiveAudio();
+    const gv  = document.getElementById("gridView");
+    const dv  = document.getElementById("detailView");
+    const dc  = document.getElementById("detailCard");
+    const leg = document.getElementById("legend");
+    const targetSize = 380;
+    dc.innerHTML = "";
+    const big = buildSVG(song, targetSize, true);
+    big.style.maxWidth = `${targetSize}px`;
+    big.style.visibility = "hidden";
+    dc.appendChild(big);
+    dv.classList.add("visible");
+    dv.style.opacity = "0";
+
+    const canAnimate = sourceSvg && sourceSvg.getBoundingClientRect;
+    const animateDetailTextIn = () => {
+      const titleEls = big.querySelectorAll('text[data-role="title"]');
+      const artistEls = big.querySelectorAll('text[data-role="artist"]');
+      const timeEls = big.querySelectorAll('text[data-role="time"]');
+      const controlEls = big.querySelectorAll('text[data-role="control"]');
+      const titleShift = targetSize * 0.055;
+      const artistShift = targetSize * 0.055;
+
+      titleEls.forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = `translateY(${titleShift}px)`;
+        el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`;
+      });
+      artistEls.forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = `translateY(-${artistShift}px)`;
+        el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`;
+      });
+      timeEls.forEach(el => {
+        el.style.opacity = "0";
+        el.style.transition = `opacity ${DETAIL_TEXT_FADE_MS}ms ease`;
+      });
+      controlEls.forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = "scale(0.94)";
+        el.style.transformOrigin = "center center";
+        el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`;
+      });
+
+      requestAnimationFrame(() => {
+        [...titleEls, ...artistEls, ...timeEls, ...controlEls].forEach(el => {
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0) scale(1)";
+        });
+      });
+    };
+
+    if (canAnimate) {
+      const from = sourceSvg.getBoundingClientRect();
+      const ghostWrap = document.createElement("div");
+      ghostWrap.style.position = "fixed";
+      ghostWrap.style.left = `${from.left}px`;
+      ghostWrap.style.top = `${from.top}px`;
+      ghostWrap.style.width = `${from.width}px`;
+      ghostWrap.style.height = `${from.height}px`;
+      ghostWrap.style.zIndex = "1000";
+      ghostWrap.style.pointerEvents = "none";
+      ghostWrap.style.transition = `left ${ZOOM_MS}ms ease, top ${ZOOM_MS}ms ease, width ${ZOOM_MS}ms ease, height ${ZOOM_MS}ms ease, opacity ${ZOOM_MS}ms ease`;
+      const ghostSvg = sourceSvg.cloneNode(true);
+      ghostSvg.style.width = "100%";
+      ghostSvg.style.height = "100%";
+      ghostSvg.style.filter = "drop-shadow(0 10px 24px rgba(0,0,0,0.35))";
+      ghostWrap.appendChild(ghostSvg);
+      document.body.appendChild(ghostWrap);
+
+      gv.style.opacity = "0";
+      gv.style.display = "none";
+      leg.style.opacity = "0.4";
+
+      requestAnimationFrame(() => {
+        const to = big.getBoundingClientRect();
+        leg.style.transition = `opacity ${ZOOM_MS}ms ease`;
+        dv.style.transition = `opacity ${ZOOM_MS}ms ease`;
+        dv.style.opacity = "1";
+        ghostWrap.style.left = `${to.left}px`;
+        ghostWrap.style.top = `${to.top}px`;
+        ghostWrap.style.width = `${to.width}px`;
+        ghostWrap.style.height = `${to.height}px`;
+      });
+
+      setTimeout(() => {
+        big.style.visibility = "visible";
+        animateDetailTextIn();
+        ghostWrap.remove();
+      }, ZOOM_MS + 30);
+    } else {
+      gv.style.opacity = "0";
+      setTimeout(() => {
+        gv.style.display  = "none";
+        leg.style.opacity = "0.4";
+        big.style.visibility = "visible";
+        animateDetailTextIn();
+        dv.style.transition = "opacity 0.3s";
+        dv.style.opacity = "1";
+      }, 250);
+    }
+  }
+
+  document.getElementById("backBtn").addEventListener("click", () => {
+    stopActiveAudio();
+    const gv  = document.getElementById("gridView");
+    const dv  = document.getElementById("detailView");
+    const leg = document.getElementById("legend");
+    dv.style.opacity = "0";
+    setTimeout(() => {
+      dv.classList.remove("visible");
+      leg.style.opacity = "1";
+      gv.style.display  = "block";
+      gv.style.opacity  = "0";
+      requestAnimationFrame(() => {
+        gv.style.transition = "opacity 0.3s";
+        gv.style.opacity    = "1";
+      });
+    }, 250);
+  });
+
+  // ============================================================
+  // Init
+  // ============================================================
+  function buildCard(song) {
+    const card = document.createElement("div");
+    card.className = "song-card";
+    card.appendChild(buildSVG(song, 180, false));
+    return card;
+  }
+
+  async function init() {
+    await loadAllData();
+    const legendEl = document.getElementById("legend");
+    const row1 = document.getElementById("row1");
+    const row2 = document.getElementById("row2");
+    legendEl.innerHTML = "";
+    row1.innerHTML = "";
+    row2.innerHTML = "";
+
+    const usedTypes = [...new Set(ALL_DATA.flatMap(s => s.sections.map(t => t.type)))].sort();
+    usedTypes.forEach(type => {
+      const color = SECTION_COLORS[type] || "#ccc";
+      const item  = document.createElement("div");
+      item.className = "leg-item";
+      item.innerHTML = `<span class="leg-swatch" style="background:${color}"></span>${type}`;
+      legendEl.appendChild(item);
+    });
+
+    ALL_DATA.slice(0, 3).forEach(s => row1.appendChild(buildCard(s)));
+    ALL_DATA.slice(3, 5).forEach(s => row2.appendChild(buildCard(s)));
+  }
+
+  init().catch((err) => {
+    console.error(err);
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `<p style="margin-top:16px;color:#ff7b7b;font-size:12px;">Unable to load clip data.</p>`
+    );
+  });
+  </script>
+</body>
+</html>
