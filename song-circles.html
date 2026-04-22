@@ -306,9 +306,9 @@
     stopProgressLoop();
     const tick = () => {
       if (activeAudio && !activeAudio.paused) {
-        const duration = Number(activeAudio.duration || activeAudio.dataset.songDuration);
-        setProgressMarkerTime(activeAudio.currentTime, duration);
-        setTimeLabel(activeAudio.currentTime, duration);
+        const vizDuration = Number(activeAudio.dataset.songDuration) || Number(activeAudio.duration) || 0;
+        setProgressMarkerTime(activeAudio.currentTime, vizDuration);
+        setTimeLabel(activeAudio.currentTime, vizDuration);
         activeProgressRAF = requestAnimationFrame(tick);
       }
     };
@@ -357,9 +357,6 @@
     setProgressMarkerTime(0, song.duration);
     setTimeLabel(0, song.duration);
 
-    audio.addEventListener("loadedmetadata", () => {
-      audio.dataset.songDuration = String(audio.duration || song.duration);
-    });
     audio.addEventListener("play", () => {
       if (activePlayBtn) activePlayBtn.textContent = "⏸";
       runProgressLoop();
@@ -427,63 +424,60 @@
     const detailPlayBtnRef = isDetail ? { current: null } : null;
     const validClips = (song.clips || []).filter(c => c.start !== null && c.end !== null);
 
-    const clipCov = new Array(Math.ceil(dur)).fill(null);
-    validClips.forEach((clip, ci) => {
-      for (let t = Math.floor(clip.start); t < Math.ceil(clip.end) && t < dur; t++) clipCov[t] = ci;
-    });
+    // Build a sorted list of all boundary points on the timeline:
+    // section boundaries + exact clip start/end timestamps.
+    // This ensures thick arcs start and end at the EXACT clip timestamps,
+    // not rounded to the nearest second.
+    const boundaries = new Set();
+    song.sections.forEach(sec => { boundaries.add(sec.start); boundaries.add(sec.end); });
+    validClips.forEach(clip => { boundaries.add(clip.start); boundaries.add(clip.end); });
+    const sortedBoundaries = [...boundaries].sort((a, b) => a - b);
 
-    const outlineArcs = validClips.map(clip => {
-      const el = document.createElementNS(ns, "path");
-      el.setAttribute("d",             describeArc(cx, cy, r, (clip.start/dur)*360, (clip.end/dur)*360));
-      el.setAttribute("stroke",        "#ffffff");
-      el.setAttribute("stroke-width",  thickW + size * 0.04);
-      el.setAttribute("fill",          "none");
-      el.setAttribute("stroke-linecap","round");
-      el.setAttribute("opacity",       "0");
-      el.setAttribute("pointer-events","none");
-      svg.appendChild(el);
-      return el;
-    });
+    // For each segment between consecutive boundaries, determine its section color
+    // and whether it falls inside a clip, then draw the arc.
+    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
+      const segStart = sortedBoundaries[i];
+      const segEnd   = sortedBoundaries[i + 1];
+      if (segEnd - segStart < 0.01) continue;
 
-    song.sections.forEach(sec => {
+      const mid = (segStart + segEnd) / 2;
+
+      // Find which section this segment belongs to
+      const sec = song.sections.find(s => mid >= s.start && mid < s.end);
+      if (!sec) continue;
       const color = SECTION_COLORS[sec.type] || "#ccc";
-      let segStart = sec.start;
-      let curCI    = clipCov[Math.floor(sec.start)] ?? null;
 
-      for (let t = sec.start + 1; t <= sec.end; t++) {
-        const nowCI = t < dur ? (clipCov[Math.floor(t)] ?? null) : curCI;
-        if (nowCI !== curCI || t === sec.end) {
-          const a0 = (segStart / dur) * 360;
-          const a1 = (t / dur) * 360;
-          if (a1 - a0 < 0.3) { segStart = t; curCI = nowCI; continue; }
-          const isClip = curCI !== null;
+      // Find which clip this segment belongs to (if any)
+      const ci = validClips.findIndex(clip => mid >= clip.start && mid < clip.end);
+      const isClip = ci !== -1;
 
-          const arc = document.createElementNS(ns, "path");
-          arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
-          arc.setAttribute("stroke",        color);
-          arc.setAttribute("stroke-width",  isClip ? thickW : thinW);
-          arc.setAttribute("fill",          "none");
-          arc.setAttribute("stroke-linecap","butt");
-          arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
-          svg.appendChild(arc);
+      const a0 = (segStart / dur) * 360;
+      const a1 = (segEnd   / dur) * 360;
+      if (a1 - a0 < 0.1) continue;
 
-          if (isClip) {
-            const ci  = curCI;
-            const hit = document.createElementNS(ns, "path");
-            hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
-            hit.setAttribute("stroke",       "transparent");
-            hit.setAttribute("stroke-width", thickW + 10);
-            hit.setAttribute("fill",         "none");
-            hit.style.cursor = "pointer";
-            hit.addEventListener("mouseenter", e => { outlineArcs[ci].setAttribute("opacity", "0.65"); showTip(e, validClips[ci], song.sections); });
-            hit.addEventListener("mousemove",  moveTip);
-            hit.addEventListener("mouseleave", () => { outlineArcs[ci].setAttribute("opacity", "0"); hideTip(); });
-            svg.appendChild(hit);
-          }
-          segStart = t; curCI = nowCI;
-        }
+      const arc = document.createElementNS(ns, "path");
+      arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
+      arc.setAttribute("stroke",        color);
+      arc.setAttribute("stroke-width",  isClip ? thickW : thinW);
+      arc.setAttribute("fill",          "none");
+      arc.setAttribute("stroke-linecap","butt");
+      arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
+      svg.appendChild(arc);
+
+      if (isClip) {
+        const clip = validClips[ci];
+        const hit = document.createElementNS(ns, "path");
+        hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
+        hit.setAttribute("stroke",       "transparent");
+        hit.setAttribute("stroke-width", thickW + 10);
+        hit.setAttribute("fill",         "none");
+        hit.style.cursor = "pointer";
+        hit.addEventListener("mouseenter", e => showTip(e, clip, song.sections));
+        hit.addEventListener("mousemove",  moveTip);
+        hit.addEventListener("mouseleave", hideTip);
+        svg.appendChild(hit);
       }
-    });
+    }
 
     // Start marker
     const markerInnerR = r - thickW / 2 - size * MARKER_STICKOUT;
