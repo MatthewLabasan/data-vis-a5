@@ -5,6 +5,7 @@
     "year": 1962,
     "genre": "Pop",
     "duration": 148,
+    "characteristics": { "bpm": 121, "energy": 40, "danceability": 78, "happiness": 63 },
     "sections": [
       {
         "type": "intro",
@@ -297,6 +298,7 @@
     "year": 2015,
     "genre": "Dancehall",
     "duration": 215,
+    "characteristics": { "bpm": 123, "energy": 82, "danceability": 64, "happiness": 43 },
     "sections": [
       {
         "type": "intro",
@@ -369,6 +371,7 @@
     "year": 2009,
     "genre": "Electropop",
     "duration": 268,
+    "characteristics": { "bpm": 125, "energy": 91, "danceability": 72, "happiness": 84 },
     "sections": [
       {
         "type": "intro",
@@ -465,6 +468,7 @@
     "year": 2020,
     "genre": "Reggaeton",
     "duration": 205,
+    "characteristics": { "bpm": 94, "energy": 84, "danceability": 84, "happiness": 65 },
     "sections": [
       {
         "type": "verse",
@@ -537,6 +541,7 @@
     "year": 2025,
     "genre": "Pop",
     "duration": 132,
+    "characteristics": { "bpm": 118, "energy": 83, "danceability": 90, "happiness": 90 },
     "sections": [
       {
         "type": "chorus",
@@ -597,6 +602,7 @@
     "year": 2024,
     "genre": "Pop",
     "duration": 169,
+    "characteristics": { "bpm": 149, "energy": 78, "danceability": 78, "happiness": 94 },
     "sections": [
       {
         "type": "intro",
@@ -1279,6 +1285,7 @@
     "year": 2025,
     "genre": "Reggaeton",
     "duration": 176,
+    "characteristics": { "bpm": 100, "energy": 76, "danceability": 80, "happiness": 45 },
     "sections": [
       {
         "type": "chorus",
@@ -1390,6 +1397,7 @@
     "year": 2025,
     "genre": "Pop",
     "duration": 223,
+    "characteristics": { "bpm": 103, "energy": 83, "danceability": 83, "happiness": 91 },
     "sections": [
       {
         "type": "verse",
@@ -1519,6 +1527,7 @@
     "year": 2025,
     "genre": "Pop Rap",
     "duration": 249,
+    "characteristics": { "bpm": 129, "energy": 59, "danceability": 81, "happiness": 89 },
     "sections": [
       {
         "type": "refrain",
@@ -1603,6 +1612,7 @@
     "year": 2024,
     "genre": "Indie Folk",
     "duration": 211,
+    "characteristics": { "bpm": 95, "energy": 41, "danceability": 49, "happiness": 27 },
     "sections": [
       {
         "type": "verse",
@@ -1651,6 +1661,7 @@
     "year": 2024,
     "genre": "Hip-Hop",
     "duration": 178,
+    "characteristics": { "bpm": 98, "energy": 41, "danceability": 85, "happiness": 29 },
     "sections": [
       {
         "type": "intro",
@@ -1816,6 +1827,7 @@
     "year": 2017,
     "genre": "Contemporary R&B",
     "duration": 200,
+    "characteristics": { "bpm": 145, "energy": 37, "danceability": 48, "happiness": 16 },
     "sections": [
       {
         "type": "intro",
@@ -1890,6 +1902,7 @@
     "year": 2024,
     "genre": "Alternative/Indie",
     "duration": 284,
+    "characteristics": { "bpm": 98, "energy": 30, "danceability": 63, "happiness": 35 },
     "sections": [
       {
         "type": "verse",
@@ -2338,6 +2351,7 @@
     "year": 2025,
     "genre": "Alternative/Indie",
     "duration": 199,
+    "characteristics": { "bpm": 93, "energy": 72, "danceability": 44, "happiness": 24 },
     "sections": [
       {
         "type": "verse",
@@ -2526,6 +2540,7 @@
     "year": 2000,
     "genre": "Alternative Rock",
     "duration": 227,
+    "characteristics": { "bpm": 103, "energy": 27, "danceability": 37, "happiness": 17 },
     "sections": [
       {
         "type": "verse",
@@ -2676,6 +2691,7 @@
     "year": 2024,
     "genre": "Folk-pop",
     "duration": 166,
+    "characteristics": { "bpm": 109, "energy": 81, "danceability": 55, "happiness": 37 },
     "sections": [
       {
         "type": "verse",
@@ -2742,6 +2758,7 @@
     "year": 1997,
     "genre": "Alternative Rock",
     "duration": 299,
+    "characteristics": { "bpm": 102, "energy": 68, "danceability": 35, "happiness": 14 },
     "sections": [
       {
         "type": "verse",
@@ -2865,6 +2882,7 @@
     "year": 2018,
     "genre": "Dembow",
     "duration": 211,
+    "characteristics": { "bpm": 120, "energy": 84, "danceability": 85, "happiness": 40 },
     "sections": [
       {
         "type": "intro",
@@ -2949,6 +2967,7 @@
     "year": 2025,
     "genre": "Afrobeats",
     "duration": 146,
+    "characteristics": { "bpm": 115, "energy": 49, "danceability": 83, "happiness": 62 },
     "sections": [
       {
         "type": "intro",
@@ -3021,6 +3040,7 @@
     "year": 2025,
     "genre": "Alternative/Indie",
     "duration": 202,
+    "characteristics": { "bpm": 120, "energy": 33, "danceability": 37, "happiness": 21 },
     "sections": [
       {
         "type": "verse",
