@@ -56,7 +56,7 @@
     .detail-view {
       display: none;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       padding-top: 8px;
     }
     .detail-view.visible { display: flex; }
@@ -64,11 +64,69 @@
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 28px;
       width: 100%;
       max-width: 1080px;
       flex-wrap: wrap;
+    }
+    .clip-list-panel {
+      width: 280px;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      padding: 10px;
+    }
+    .clip-list-panel.collapsed { display: none; }
+    .clip-list-toggle {
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.86);
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      align-self: flex-start;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .clip-list-toggle:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.08);
+    }
+    .clip-list-title {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 8px;
+    }
+    .clip-list-empty {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      padding: 8px 4px;
+    }
+    .clip-list-item {
+      border: 0.5px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      padding: 7px 9px;
+      margin-bottom: 7px;
+      background: rgba(255,255,255,0.02);
+    }
+    .clip-list-item:last-child { margin-bottom: 0; }
+    .clip-list-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .clip-list-meta {
+      font-size: 10px;
+      color: rgba(255,255,255,0.58);
+      line-height: 1.35;
     }
     .back-btn {
       background: none;
@@ -122,6 +180,8 @@
   <div class="detail-view" id="detailView">
     <button class="back-btn" id="backBtn">← back to all songs</button>
     <div class="detail-layout" id="detailLayout">
+      <button class="clip-list-toggle" id="clipListToggle">hide clips</button>
+      <div class="clip-list-panel" id="detailClipList"></div>
       <div id="detailCard"></div>
     </div>
   </div>
@@ -162,6 +222,7 @@
   let activeProgressGeom = null;
   let activeProgressRAF = null;
   let activeTimeLabel = null;
+  let isClipListCollapsed = true;
 
   const SECTION_COLORS = {
     intro:        "#aaaaaa",
@@ -245,6 +306,38 @@
     const types = new Set();
     sections.forEach(sec => { if (clip.end > sec.start && clip.start < sec.end) types.add(sec.type); });
     return [...types];
+  }
+  function renderDetailClipList(song) {
+    const panel = document.getElementById("detailClipList");
+    if (!panel) return;
+    const clips = (song.clips || []).filter(c => c.start !== null && c.end !== null && c.end > c.start);
+    let html = `<div class="clip-list-title">clips (${clips.length})</div>`;
+    if (!clips.length) {
+      panel.innerHTML = html + `<div class="clip-list-empty">No clips found for this song.</div>`;
+      return;
+    }
+    clips.forEach((clip) => {
+      const sections = getSectionsForClip(song.sections || [], clip);
+      const sectionText = sections.length ? sections.join(", ") : "none";
+      html += `
+        <div class="clip-list-item">
+          <div class="clip-list-time">${fmtTime(clip.start)} - ${fmtTime(clip.end)}</div>
+          <div class="clip-list-meta">
+            duration ${Math.round(clip.end - clip.start)}s<br/>
+            ${clip.instances || 0} TikToks<br/>
+            ${sectionText}
+          </div>
+        </div>
+      `;
+    });
+    panel.innerHTML = html;
+  }
+  function syncClipListCollapsedUI() {
+    const panel = document.getElementById("detailClipList");
+    const btn = document.getElementById("clipListToggle");
+    if (!panel || !btn) return;
+    panel.classList.toggle("collapsed", isClipListCollapsed);
+    btn.textContent = isClipListCollapsed ? "show clips" : "hide clips";
   }
   function showTip(e, clip, sections) {
     tipTitle.textContent   = `clip  ${fmtTime(clip.start)} – ${fmtTime(clip.end)}`;
@@ -432,6 +525,25 @@
     song.sections.forEach(sec => { boundaries.add(sec.start); boundaries.add(sec.end); });
     validClips.forEach(clip => { boundaries.add(clip.start); boundaries.add(clip.end); });
     const sortedBoundaries = [...boundaries].sort((a, b) => a - b);
+    const clipHoverOverlayByIndex = [];
+    const setClipOverlayVisible = (clipIndex, visible) => {
+      const overlayEls = clipHoverOverlayByIndex[clipIndex];
+      if (!overlayEls) return;
+      overlayEls.forEach((el) => {
+        if (visible) svg.appendChild(el); // bring hovered overlay to top visual layer
+        el.setAttribute("opacity", visible ? "0.98" : "0");
+      });
+    };
+    const getActiveClipsAt = (time) => validClips.filter(clip => time >= clip.start && time < clip.end);
+    const getInstanceCountAt = (time) => getActiveClipsAt(time).reduce((sum, clip) => sum + (clip.instances || 0), 0);
+    let maxInstanceCount = 0;
+    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
+      const segStart = sortedBoundaries[i];
+      const segEnd = sortedBoundaries[i + 1];
+      if (segEnd - segStart < 0.01) continue;
+      const mid = (segStart + segEnd) / 2;
+      maxInstanceCount = Math.max(maxInstanceCount, getInstanceCountAt(mid));
+    }
 
     // For each segment between consecutive boundaries, determine its section color
     // and whether it falls inside a clip, then draw the arc.
@@ -447,9 +559,19 @@
       if (!sec) continue;
       const color = SECTION_COLORS[sec.type] || "#ccc";
 
-      // Find which clip this segment belongs to (if any)
-      const ci = validClips.findIndex(clip => mid >= clip.start && mid < clip.end);
-      const isClip = ci !== -1;
+      const activeClipEntries = validClips
+        .map((clip, ci) => ({ clip, ci }))
+        .filter(({ clip }) => mid >= clip.start && mid < clip.end);
+      const activeClips = activeClipEntries.map(({ clip }) => clip);
+      const isClip = activeClipEntries.length > 0;
+      const instanceCount = activeClips.reduce((sum, clip) => sum + (clip.instances || 0), 0);
+      const widthRatio = (!isClip || maxInstanceCount <= 0) ? 0 : Math.min(1, instanceCount / maxInstanceCount);
+      const segStrokeW = thinW + (thickW - thinW) * widthRatio;
+      const primaryClipEntry = isClip
+        ? activeClipEntries.reduce((best, curr) => ((curr.clip.instances || 0) > (best.clip.instances || 0) ? curr : best), activeClipEntries[0])
+        : null;
+      const primaryClip = primaryClipEntry ? primaryClipEntry.clip : null;
+      const primaryClipIndex = primaryClipEntry ? primaryClipEntry.ci : -1;
 
       const a0 = (segStart / dur) * 360;
       const a1 = (segEnd   / dur) * 360;
@@ -458,26 +580,87 @@
       const arc = document.createElementNS(ns, "path");
       arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
       arc.setAttribute("stroke",        color);
-      arc.setAttribute("stroke-width",  isClip ? thickW : thinW);
+      arc.setAttribute("stroke-width",  segStrokeW);
       arc.setAttribute("fill",          "none");
       arc.setAttribute("stroke-linecap","butt");
       arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
       svg.appendChild(arc);
 
       if (isClip) {
-        const clip = validClips[ci];
         const hit = document.createElementNS(ns, "path");
         hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
         hit.setAttribute("stroke",       "transparent");
-        hit.setAttribute("stroke-width", thickW + 10);
+        hit.setAttribute("stroke-width", segStrokeW + 10);
         hit.setAttribute("fill",         "none");
         hit.style.cursor = "pointer";
-        hit.addEventListener("mouseenter", e => showTip(e, clip, song.sections));
+        hit.addEventListener("mouseenter", e => {
+          setClipOverlayVisible(primaryClipIndex, true);
+          showTip(e, primaryClip, song.sections);
+        });
         hit.addEventListener("mousemove",  moveTip);
-        hit.addEventListener("mouseleave", hideTip);
+        hit.addEventListener("mouseleave", () => {
+          setClipOverlayVisible(primaryClipIndex, false);
+          hideTip();
+        });
         svg.appendChild(hit);
       }
     }
+
+    validClips.forEach((clip, ci) => {
+      const clipStartA = (clip.start / dur) * 360;
+      const clipEndA = (clip.end / dur) * 360;
+      if (clipEndA - clipStartA < 0.1) return;
+      const overlayBandW = thickW;
+      const edgeInnerR = r - overlayBandW / 2;
+      const edgeOuterR = r + overlayBandW / 2;
+      const borderW = Math.max(1, size * 0.006);
+
+      const innerArc = document.createElementNS(ns, "path");
+      innerArc.setAttribute("d",             describeArc(cx, cy, edgeInnerR, clipStartA, clipEndA));
+      innerArc.setAttribute("stroke",        "#ffffff");
+      innerArc.setAttribute("stroke-width",  borderW);
+      innerArc.setAttribute("fill",          "none");
+      innerArc.setAttribute("stroke-linecap","butt");
+      innerArc.setAttribute("opacity",       "0");
+      innerArc.setAttribute("pointer-events","none");
+      svg.appendChild(innerArc);
+
+      const outerArc = document.createElementNS(ns, "path");
+      outerArc.setAttribute("d",             describeArc(cx, cy, edgeOuterR, clipStartA, clipEndA));
+      outerArc.setAttribute("stroke",        "#ffffff");
+      outerArc.setAttribute("stroke-width",  borderW);
+      outerArc.setAttribute("fill",          "none");
+      outerArc.setAttribute("stroke-linecap","butt");
+      outerArc.setAttribute("opacity",       "0");
+      outerArc.setAttribute("pointer-events","none");
+      svg.appendChild(outerArc);
+
+      const [sx1, sy1] = polarToXY(cx, cy, edgeInnerR, clipStartA);
+      const [sx2, sy2] = polarToXY(cx, cy, edgeOuterR, clipStartA);
+      const startEdge = document.createElementNS(ns, "line");
+      startEdge.setAttribute("x1", sx1); startEdge.setAttribute("y1", sy1);
+      startEdge.setAttribute("x2", sx2); startEdge.setAttribute("y2", sy2);
+      startEdge.setAttribute("stroke", "#ffffff");
+      startEdge.setAttribute("stroke-width", borderW);
+      startEdge.setAttribute("stroke-linecap", "butt");
+      startEdge.setAttribute("opacity", "0");
+      startEdge.setAttribute("pointer-events", "none");
+      svg.appendChild(startEdge);
+
+      const [ex1, ey1] = polarToXY(cx, cy, edgeInnerR, clipEndA);
+      const [ex2, ey2] = polarToXY(cx, cy, edgeOuterR, clipEndA);
+      const endEdge = document.createElementNS(ns, "line");
+      endEdge.setAttribute("x1", ex1); endEdge.setAttribute("y1", ey1);
+      endEdge.setAttribute("x2", ex2); endEdge.setAttribute("y2", ey2);
+      endEdge.setAttribute("stroke", "#ffffff");
+      endEdge.setAttribute("stroke-width", borderW);
+      endEdge.setAttribute("stroke-linecap", "butt");
+      endEdge.setAttribute("opacity", "0");
+      endEdge.setAttribute("pointer-events", "none");
+      svg.appendChild(endEdge);
+
+      clipHoverOverlayByIndex[ci] = [innerArc, outerArc, startEdge, endEdge];
+    });
 
     // Start marker
     const markerInnerR = r - thickW / 2 - size * MARKER_STICKOUT;
@@ -642,9 +825,13 @@
     const gv  = document.getElementById("gridView");
     const dv  = document.getElementById("detailView");
     const dc  = document.getElementById("detailCard");
+    const clipListPanel = document.getElementById("detailClipList");
     const leg = document.getElementById("legend");
     const targetSize = 380;
     dc.innerHTML = "";
+    if (clipListPanel) clipListPanel.scrollTop = 0;
+    renderDetailClipList(song);
+    syncClipListCollapsedUI();
     const big = buildSVG(song, targetSize, true);
     big.style.maxWidth = `${targetSize}px`;
     big.style.visibility = "hidden";
@@ -707,6 +894,10 @@
       gv.style.display = "block"; gv.style.opacity = "0";
       requestAnimationFrame(() => { gv.style.transition = "opacity 0.3s"; gv.style.opacity = "1"; });
     }, 250);
+  });
+  document.getElementById("clipListToggle").addEventListener("click", () => {
+    isClipListCollapsed = !isClipListCollapsed;
+    syncClipListCollapsedUI();
   });
 
   function buildCard(song) {
