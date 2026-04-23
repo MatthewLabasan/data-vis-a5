@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Song Section Circles</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #fff;
+    }
+    h1 {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 20px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-bottom: 28px;
+    }
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+    .leg-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .grid-view { transition: opacity 0.3s; }
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .song-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 180px;
+    }
+    .detail-view {
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 8px;
+    }
+    .detail-view.visible { display: flex; }
+    .detail-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 28px;
+      width: 100%;
+      max-width: 1080px;
+      flex-wrap: wrap;
+    }
+    .clip-list-panel {
+      width: 280px;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      padding: 10px;
+    }
+    .clip-list-panel.collapsed { display: none; }
+    .clip-list-toggle {
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.86);
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      align-self: flex-start;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .clip-list-toggle:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.08);
+    }
+    .clip-list-title {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 8px;
+    }
+    .clip-list-empty {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      padding: 8px 4px;
+    }
+    .clip-list-item {
+      border: 0.5px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      padding: 7px 9px;
+      margin-bottom: 7px;
+      background: rgba(255,255,255,0.02);
+    }
+    .clip-list-item:last-child { margin-bottom: 0; }
+    .clip-list-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .clip-list-meta {
+      font-size: 10px;
+      color: rgba(255,255,255,0.58);
+      line-height: 1.35;
+    }
+    .back-btn {
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-bottom: 24px;
+      align-self: flex-start;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .back-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.08);
+    }
+    #clip-tooltip {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      background: #111;
+      border: 0.5px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      pointer-events: none;
+    }
+    .tip-title { font-size: 11px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+    .tip-row { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .tip-sections { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+    .tip-sec-pill {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TikTok Song Clip Placement</h1>
+  <div class="legend" id="legend"></div>
+
+  <div class="grid-view" id="gridView">
+    <div class="row" id="row1"></div>
+    <div class="row" id="row2"></div>
+  </div>
+
+  <div class="detail-view" id="detailView">
+    <button class="back-btn" id="backBtn">← back to all songs</button>
+    <div class="detail-layout" id="detailLayout">
+      <button class="clip-list-toggle" id="clipListToggle">hide clips</button>
+      <div class="clip-list-panel" id="detailClipList"></div>
+      <div id="detailCard"></div>
+    </div>
+  </div>
+
+  <div id="clip-tooltip">
+    <div class="tip-title"    id="tip-title"></div>
+    <div class="tip-row"      id="tip-time"></div>
+    <div class="tip-row"      id="tip-tiktoks"></div>
+    <div class="tip-sections" id="tip-sections"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script>
+  const NON_CLIP_OPACITY = 0.55;
+  const MARKER_STICKOUT = 0.012;
+  const ZOOM_MS = 420;
+  const DETAIL_TEXT_FADE_MS = 220;
+  const DETAIL_TEXT_MOVE_MS = 300;
+  const AUDIO_SOURCES = {
+    "Pretty Little Baby": "songs/pretty_little_baby.mp3",
+    "APT.": "songs/APT.mp3",
+    "No One Noticed": "songs/no_one_noticed.mp3",
+    "back to friends": "songs/back_to_friends.mp3",
+    "Sparks": "songs/sparks.mp3",
+  };
+  const SONG_ORDER = [
+    "Pretty Little Baby",
+    "APT.",
+    "No One Noticed",
+    "back to friends",
+    "Sparks",
+  ];
+  const SONG_DISPLAY_NAMES = {};
+  let ALL_DATA = [];
+  let activeAudio = null;
+  let activePlayBtn = null;
+  let activeProgressMarker = null;
+  let activeProgressGeom = null;
+  let activeProgressRAF = null;
+  let activeTimeLabel = null;
+  let isClipListCollapsed = true;
+
+  const SECTION_COLORS = {
+    intro:        "#aaaaaa",
+    verse:        "#00f2ea",
+    prechorus:    "#a855f7",
+    chorus:       "#ff0050",
+    postchorus:   "#ff6b9d",
+    bridge:       "#ffd700",
+    refrain:      "#ff4500",
+    postrefrain:  "#ff9a3c",
+    interlude:    "#69c9d0",
+    instrumental: "#c0f0c0",
+    outro:        "#555555",
+  };
+
+  function clipKey(start, end) { return `${start}-${end}`; }
+
+  function normalizeSongData(song) {
+    const displayName = SONG_DISPLAY_NAMES[song.name] || song.name;
+    const grouped = new Map();
+    (song.clips || []).forEach((clip) => {
+      if (clip.start == null || clip.end == null || clip.end <= clip.start) return;
+      const key = clipKey(clip.start, clip.end);
+      if (!grouped.has(key)) {
+        grouped.set(key, { start: clip.start, end: clip.end, instances: 0 });
+      }
+      grouped.get(key).instances += 1;
+    });
+    const clips = [...grouped.values()].sort((a, b) => a.start - b.start || a.end - b.end);
+    return {
+      name: displayName,
+      artist: song.artist,
+      duration: song.duration,
+      sections: song.sections || [],
+      clips,
+    };
+  }
+
+  async function loadAllData() {
+    const res = await fetch("clips.json");
+    if (!res.ok) throw new Error(`Failed to load clips.json (${res.status})`);
+    const raw = await res.json();
+    const byName = new Map((raw || []).map((song) => [song.name, song]));
+    ALL_DATA = SONG_ORDER.map((name) => byName.get(name)).filter(Boolean).map(normalizeSongData);
+  }
+
+  const tooltip    = document.getElementById("clip-tooltip");
+  const tipTitle   = document.getElementById("tip-title");
+  const tipTime    = document.getElementById("tip-time");
+  const tipTiktoks = document.getElementById("tip-tiktoks");
+  const tipSecEl   = document.getElementById("tip-sections");
+
+  function fmtTime(s) {
+    return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  }
+  function truncateWithEllipsis(str, maxChars) {
+    const s = String(str || "");
+    return s.length <= maxChars ? s : s.slice(0, Math.max(1, maxChars - 1)) + "…";
+  }
+  function titleTwoLines(name, maxCharsPerLine) {
+    const words = String(name || "").trim().split(/\s+/).filter(Boolean);
+    const zwsp = "\u200b";
+    if (!words.length) return ["", zwsp];
+    const full = words.join(" ");
+    if (full.length <= maxCharsPerLine) return [full, zwsp];
+    let line1 = words[0];
+    for (let i = 1; i < words.length; i++) {
+      const cand = `${line1} ${words[i]}`;
+      if (cand.length <= maxCharsPerLine) line1 = cand;
+      else {
+        const line2 = words.slice(i).join(" ");
+        return [
+          line1.length > maxCharsPerLine ? truncateWithEllipsis(line1, maxCharsPerLine) : line1,
+          line2.length > maxCharsPerLine ? truncateWithEllipsis(line2, maxCharsPerLine) : line2,
+        ];
+      }
+    }
+    return [truncateWithEllipsis(line1, maxCharsPerLine), zwsp];
+  }
+  function getSectionsForClip(sections, clip) {
+    const types = new Set();
+    sections.forEach(sec => { if (clip.end > sec.start && clip.start < sec.end) types.add(sec.type); });
+    return [...types];
+  }
+  function renderDetailClipList(song) {
+    const panel = document.getElementById("detailClipList");
+    if (!panel) return;
+    const clips = (song.clips || []).filter(c => c.start !== null && c.end !== null && c.end > c.start);
+    let html = `<div class="clip-list-title">clips (${clips.length})</div>`;
+    if (!clips.length) {
+      panel.innerHTML = html + `<div class="clip-list-empty">No clips found for this song.</div>`;
+      return;
+    }
+    clips.forEach((clip) => {
+      const sections = getSectionsForClip(song.sections || [], clip);
+      const sectionText = sections.length ? sections.join(", ") : "none";
+      html += `
+        <div class="clip-list-item">
+          <div class="clip-list-time">${fmtTime(clip.start)} - ${fmtTime(clip.end)}</div>
+          <div class="clip-list-meta">
+            duration ${Math.round(clip.end - clip.start)}s<br/>
+            ${clip.instances || 0} TikToks<br/>
+            ${sectionText}
+          </div>
+        </div>
+      `;
+    });
+    panel.innerHTML = html;
+  }
+  function syncClipListCollapsedUI() {
+    const panel = document.getElementById("detailClipList");
+    const btn = document.getElementById("clipListToggle");
+    if (!panel || !btn) return;
+    panel.classList.toggle("collapsed", isClipListCollapsed);
+    btn.textContent = isClipListCollapsed ? "show clips" : "hide clips";
+  }
+  function showTip(e, clip, sections) {
+    tipTitle.textContent   = `clip  ${fmtTime(clip.start)} – ${fmtTime(clip.end)}`;
+    tipTime.textContent    = `duration: ${Math.round(clip.end - clip.start)}s`;
+    tipTiktoks.textContent = `seen in ${clip.instances} of 10 TikToks`;
+    tipSecEl.innerHTML = "";
+    getSectionsForClip(sections, clip).forEach(type => {
+      const pill = document.createElement("span");
+      pill.className = "tip-sec-pill";
+      const color = SECTION_COLORS[type] || "#ccc";
+      pill.style.background = color + "33";
+      pill.style.color      = color;
+      pill.style.border     = `0.5px solid ${color}66`;
+      pill.textContent = type;
+      tipSecEl.appendChild(pill);
+    });
+    tooltip.style.display = "block";
+    moveTip(e);
+  }
+  function moveTip(e) { tooltip.style.left = (e.clientX + 14) + "px"; tooltip.style.top = (e.clientY - 36) + "px"; }
+  function hideTip() { tooltip.style.display = "none"; }
+
+  function normalizeSongName(name) { return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, ""); }
+  function getAudioSrcForSong(song) {
+    if (AUDIO_SOURCES[song.name]) return AUDIO_SOURCES[song.name];
+    const target = normalizeSongName(song.name);
+    const match = Object.entries(AUDIO_SOURCES).find(([k]) => normalizeSongName(k) === target);
+    return match ? match[1] : null;
+  }
+
+  function setProgressMarkerTime(seconds, duration) {
+    if (!activeProgressMarker || !activeProgressGeom || !duration) return;
+    const clamped = Math.max(0, Math.min(seconds, duration));
+    const angle = (clamped / duration) * 360;
+    const [x1, y1] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.innerR, angle);
+    const [x2, y2] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.outerR, angle);
+    if (activeProgressGeom.outlineEl) {
+      activeProgressGeom.outlineEl.setAttribute("x1", x1);
+      activeProgressGeom.outlineEl.setAttribute("y1", y1);
+      activeProgressGeom.outlineEl.setAttribute("x2", x2);
+      activeProgressGeom.outlineEl.setAttribute("y2", y2);
+    }
+    activeProgressMarker.setAttribute("x1", x1);
+    activeProgressMarker.setAttribute("y1", y1);
+    activeProgressMarker.setAttribute("x2", x2);
+    activeProgressMarker.setAttribute("y2", y2);
+  }
+
+  function setTimeLabel(seconds, duration) {
+    if (!activeTimeLabel || !duration) return;
+    activeTimeLabel.textContent = `${fmtTime(Math.max(0, Math.min(seconds, duration)))} / ${fmtTime(duration)}`;
+  }
+
+  function stopProgressLoop() {
+    if (activeProgressRAF !== null) { cancelAnimationFrame(activeProgressRAF); activeProgressRAF = null; }
+  }
+
+  function runProgressLoop() {
+    stopProgressLoop();
+    const tick = () => {
+      if (activeAudio && !activeAudio.paused) {
+        const vizDuration = Number(activeAudio.dataset.songDuration) || Number(activeAudio.duration) || 0;
+        setProgressMarkerTime(activeAudio.currentTime, vizDuration);
+        setTimeLabel(activeAudio.currentTime, vizDuration);
+        activeProgressRAF = requestAnimationFrame(tick);
+      }
+    };
+    activeProgressRAF = requestAnimationFrame(tick);
+  }
+
+  function stopActiveAudio() {
+    stopProgressLoop();
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+    if (activePlayBtn) { activePlayBtn.textContent = "▶"; activePlayBtn = null; }
+    activeProgressMarker = null;
+    activeProgressGeom = null;
+    activeTimeLabel = null;
+  }
+
+  function ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
+    const src = getAudioSrcForSong(song);
+    if (!src) return null;
+
+    activeProgressMarker = progressMarker;
+    activeProgressGeom   = progressGeom;
+    activeTimeLabel      = timeLabel;
+
+    if (activeAudio && activeAudio.dataset.src === src) {
+      if (playBtn) activePlayBtn = playBtn;
+      return activeAudio;
+    }
+
+    stopActiveAudio();
+
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audio.dataset.src = src;
+    audio.dataset.songDuration = String(song.duration);
+
+    activeAudio          = audio;
+    activePlayBtn        = playBtn || activePlayBtn;
+    activeProgressMarker = progressMarker;
+    activeProgressGeom   = progressGeom;
+    activeTimeLabel      = timeLabel;
+
+    setProgressMarkerTime(0, song.duration);
+    setTimeLabel(0, song.duration);
+
+    audio.addEventListener("play", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "⏸";
+      runProgressLoop();
+    });
+    audio.addEventListener("pause", () => {
+      if (activePlayBtn && !audio.ended) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+    });
+    audio.addEventListener("ended", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+      setProgressMarkerTime(0, song.duration);
+      setTimeLabel(0, song.duration);
+      activeAudio = null; activePlayBtn = null;
+      activeProgressMarker = null; activeProgressGeom = null; activeTimeLabel = null;
+    });
+    audio.addEventListener("error", () => {
+      if (activePlayBtn) activePlayBtn.textContent = "▶";
+      stopProgressLoop();
+      setProgressMarkerTime(0, song.duration);
+      setTimeLabel(0, song.duration);
+      activeAudio = null; activePlayBtn = null;
+      activeProgressMarker = null; activeProgressGeom = null; activeTimeLabel = null;
+    });
+
+    return audio;
+  }
+
+  function toggleClipDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
+    const audio = ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel);
+    if (!audio) return;
+    if (audio.paused) {
+      audio.play().catch(() => {
+        if (activePlayBtn) activePlayBtn.textContent = "▶";
+        stopProgressLoop();
+      });
+    } else {
+      audio.pause();
+      stopProgressLoop();
+    }
+  }
+
+  function polarToXY(cx, cy, r, angleDeg) {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  }
+  function describeArc(cx, cy, r, a0, a1) {
+    const [sx, sy] = polarToXY(cx, cy, r, a0);
+    const [ex, ey] = polarToXY(cx, cy, r, a1);
+    return `M ${sx} ${sy} A ${r} ${r} 0 ${(a1 - a0) > 180 ? 1 : 0} 1 ${ex} ${ey}`;
+  }
+
+  function buildSVG(song, size, isDetail) {
+    const cx = size / 2, cy = size / 2;
+    const r      = size * 0.33;
+    const thinW  = size * 0.027;
+    const thickW = size * 0.072;
+    const ns     = "http://www.w3.org/2000/svg";
+
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+    svg.setAttribute("width", "100%");
+
+    const dur        = song.duration;
+    const detailPlayBtnRef = isDetail ? { current: null } : null;
+    const validClips = (song.clips || []).filter(c => c.start !== null && c.end !== null);
+
+    // Build a sorted list of all boundary points on the timeline:
+    // section boundaries + exact clip start/end timestamps.
+    // This ensures thick arcs start and end at the EXACT clip timestamps,
+    // not rounded to the nearest second.
+    const boundaries = new Set();
+    song.sections.forEach(sec => { boundaries.add(sec.start); boundaries.add(sec.end); });
+    validClips.forEach(clip => { boundaries.add(clip.start); boundaries.add(clip.end); });
+    const sortedBoundaries = [...boundaries].sort((a, b) => a - b);
+    const clipHoverOverlayByIndex = [];
+    const setClipOverlayVisible = (clipIndex, visible) => {
+      const overlayEls = clipHoverOverlayByIndex[clipIndex];
+      if (!overlayEls) return;
+      overlayEls.forEach((el) => {
+        if (visible) svg.appendChild(el); // bring hovered overlay to top visual layer
+        el.setAttribute("opacity", visible ? "0.98" : "0");
+      });
+    };
+    const getActiveClipsAt = (time) => validClips.filter(clip => time >= clip.start && time < clip.end);
+    const getInstanceCountAt = (time) => getActiveClipsAt(time).reduce((sum, clip) => sum + (clip.instances || 0), 0);
+    let maxInstanceCount = 0;
+    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
+      const segStart = sortedBoundaries[i];
+      const segEnd = sortedBoundaries[i + 1];
+      if (segEnd - segStart < 0.01) continue;
+      const mid = (segStart + segEnd) / 2;
+      maxInstanceCount = Math.max(maxInstanceCount, getInstanceCountAt(mid));
+    }
+
+    // For each segment between consecutive boundaries, determine its section color
+    // and whether it falls inside a clip, then draw the arc.
+    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
+      const segStart = sortedBoundaries[i];
+      const segEnd   = sortedBoundaries[i + 1];
+      if (segEnd - segStart < 0.01) continue;
+
+      const mid = (segStart + segEnd) / 2;
+
+      // Find which section this segment belongs to
+      const sec = song.sections.find(s => mid >= s.start && mid < s.end);
+      if (!sec) continue;
+      const color = SECTION_COLORS[sec.type] || "#ccc";
+
+      const activeClipEntries = validClips
+        .map((clip, ci) => ({ clip, ci }))
+        .filter(({ clip }) => mid >= clip.start && mid < clip.end);
+      const activeClips = activeClipEntries.map(({ clip }) => clip);
+      const isClip = activeClipEntries.length > 0;
+      const instanceCount = activeClips.reduce((sum, clip) => sum + (clip.instances || 0), 0);
+      const widthRatio = (!isClip || maxInstanceCount <= 0) ? 0 : Math.min(1, instanceCount / maxInstanceCount);
+      const segStrokeW = thinW + (thickW - thinW) * widthRatio;
+      const primaryClipEntry = isClip
+        ? activeClipEntries.reduce((best, curr) => ((curr.clip.instances || 0) > (best.clip.instances || 0) ? curr : best), activeClipEntries[0])
+        : null;
+      const primaryClip = primaryClipEntry ? primaryClipEntry.clip : null;
+      const primaryClipIndex = primaryClipEntry ? primaryClipEntry.ci : -1;
+
+      const a0 = (segStart / dur) * 360;
+      const a1 = (segEnd   / dur) * 360;
+      if (a1 - a0 < 0.1) continue;
+
+      const arc = document.createElementNS(ns, "path");
+      arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
+      arc.setAttribute("stroke",        color);
+      arc.setAttribute("stroke-width",  segStrokeW);
+      arc.setAttribute("fill",          "none");
+      arc.setAttribute("stroke-linecap","butt");
+      arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
+      svg.appendChild(arc);
+
+      if (isClip) {
+        const hit = document.createElementNS(ns, "path");
+        hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
+        hit.setAttribute("stroke",       "transparent");
+        hit.setAttribute("stroke-width", segStrokeW + 10);
+        hit.setAttribute("fill",         "none");
+        hit.style.cursor = "pointer";
+        hit.addEventListener("mouseenter", e => {
+          setClipOverlayVisible(primaryClipIndex, true);
+          showTip(e, primaryClip, song.sections);
+        });
+        hit.addEventListener("mousemove",  moveTip);
+        hit.addEventListener("mouseleave", () => {
+          setClipOverlayVisible(primaryClipIndex, false);
+          hideTip();
+        });
+        svg.appendChild(hit);
+      }
+    }
+
+    validClips.forEach((clip, ci) => {
+      const clipStartA = (clip.start / dur) * 360;
+      const clipEndA = (clip.end / dur) * 360;
+      if (clipEndA - clipStartA < 0.1) return;
+      const overlayBandW = thickW;
+      const edgeInnerR = r - overlayBandW / 2;
+      const edgeOuterR = r + overlayBandW / 2;
+      const borderW = Math.max(1, size * 0.006);
+
+      const innerArc = document.createElementNS(ns, "path");
+      innerArc.setAttribute("d",             describeArc(cx, cy, edgeInnerR, clipStartA, clipEndA));
+      innerArc.setAttribute("stroke",        "#ffffff");
+      innerArc.setAttribute("stroke-width",  borderW);
+      innerArc.setAttribute("fill",          "none");
+      innerArc.setAttribute("stroke-linecap","butt");
+      innerArc.setAttribute("opacity",       "0");
+      innerArc.setAttribute("pointer-events","none");
+      svg.appendChild(innerArc);
+
+      const outerArc = document.createElementNS(ns, "path");
+      outerArc.setAttribute("d",             describeArc(cx, cy, edgeOuterR, clipStartA, clipEndA));
+      outerArc.setAttribute("stroke",        "#ffffff");
+      outerArc.setAttribute("stroke-width",  borderW);
+      outerArc.setAttribute("fill",          "none");
+      outerArc.setAttribute("stroke-linecap","butt");
+      outerArc.setAttribute("opacity",       "0");
+      outerArc.setAttribute("pointer-events","none");
+      svg.appendChild(outerArc);
+
+      const [sx1, sy1] = polarToXY(cx, cy, edgeInnerR, clipStartA);
+      const [sx2, sy2] = polarToXY(cx, cy, edgeOuterR, clipStartA);
+      const startEdge = document.createElementNS(ns, "line");
+      startEdge.setAttribute("x1", sx1); startEdge.setAttribute("y1", sy1);
+      startEdge.setAttribute("x2", sx2); startEdge.setAttribute("y2", sy2);
+      startEdge.setAttribute("stroke", "#ffffff");
+      startEdge.setAttribute("stroke-width", borderW);
+      startEdge.setAttribute("stroke-linecap", "butt");
+      startEdge.setAttribute("opacity", "0");
+      startEdge.setAttribute("pointer-events", "none");
+      svg.appendChild(startEdge);
+
+      const [ex1, ey1] = polarToXY(cx, cy, edgeInnerR, clipEndA);
+      const [ex2, ey2] = polarToXY(cx, cy, edgeOuterR, clipEndA);
+      const endEdge = document.createElementNS(ns, "line");
+      endEdge.setAttribute("x1", ex1); endEdge.setAttribute("y1", ey1);
+      endEdge.setAttribute("x2", ex2); endEdge.setAttribute("y2", ey2);
+      endEdge.setAttribute("stroke", "#ffffff");
+      endEdge.setAttribute("stroke-width", borderW);
+      endEdge.setAttribute("stroke-linecap", "butt");
+      endEdge.setAttribute("opacity", "0");
+      endEdge.setAttribute("pointer-events", "none");
+      svg.appendChild(endEdge);
+
+      clipHoverOverlayByIndex[ci] = [innerArc, outerArc, startEdge, endEdge];
+    });
+
+    // Start marker
+    const markerInnerR = r - thickW / 2 - size * MARKER_STICKOUT;
+    const markerOuterR = r + thickW / 2 + size * MARKER_STICKOUT;
+    const [ix, iy] = polarToXY(cx, cy, markerInnerR, 0);
+    const [ox, oy] = polarToXY(cx, cy, markerOuterR, 0);
+    const mkOutline = document.createElementNS(ns, "line");
+    mkOutline.setAttribute("x1", ix); mkOutline.setAttribute("y1", iy);
+    mkOutline.setAttribute("x2", ox); mkOutline.setAttribute("y2", oy);
+    mkOutline.setAttribute("stroke", "#000000"); mkOutline.setAttribute("stroke-width", size * 0.02);
+    mkOutline.setAttribute("stroke-linecap", "round"); mkOutline.setAttribute("opacity", "0.6");
+    svg.appendChild(mkOutline);
+    const mk = document.createElementNS(ns, "line");
+    mk.setAttribute("x1", ix); mk.setAttribute("y1", iy);
+    mk.setAttribute("x2", ox); mk.setAttribute("y2", oy);
+    mk.setAttribute("stroke", "#ffffff"); mk.setAttribute("stroke-width", size * 0.014);
+    mk.setAttribute("stroke-linecap", "round"); mk.setAttribute("opacity", "0.8");
+    svg.appendChild(mk);
+
+    let progressMarker = null;
+    const markerGeom = { cx, cy, innerR: markerInnerR, outerR: markerOuterR };
+
+    if (isDetail) {
+      const progressOutline = document.createElementNS(ns, "line");
+      progressOutline.setAttribute("stroke", "#000000");
+      progressOutline.setAttribute("stroke-width", size * 0.019);
+      progressOutline.setAttribute("stroke-linecap", "round");
+      progressOutline.setAttribute("opacity", "0.85");
+      svg.appendChild(progressOutline);
+
+      progressMarker = document.createElementNS(ns, "line");
+      progressMarker.setAttribute("stroke", "#ffffff");
+      progressMarker.setAttribute("stroke-width", size * 0.013);
+      progressMarker.setAttribute("stroke-linecap", "round");
+      progressMarker.setAttribute("opacity", "0.95");
+      svg.appendChild(progressMarker);
+
+      const [px1, py1] = polarToXY(cx, cy, markerGeom.innerR, 0);
+      const [px2, py2] = polarToXY(cx, cy, markerGeom.outerR, 0);
+      progressOutline.setAttribute("x1", px1); progressOutline.setAttribute("y1", py1);
+      progressOutline.setAttribute("x2", px2); progressOutline.setAttribute("y2", py2);
+      progressMarker.setAttribute("x1", px1);  progressMarker.setAttribute("y1", py1);
+      progressMarker.setAttribute("x2", px2);  progressMarker.setAttribute("y2", py2);
+      markerGeom.outlineEl = progressOutline;
+    }
+
+    // Center text layout
+    const titleFS = isDetail ? size * 0.05 : size * 0.055;
+    const timeFS  = isDetail ? size * 0.034 : 0;
+    const artFS   = isDetail ? size * 0.039 : size * 0.042;
+    const titleLH = titleFS * 1.30;
+    const gapStack = size * 0.016;
+    const maxTitleChars = Math.max(10, Math.floor(size * (isDetail ? 0.115 : 0.098)));
+    const [titleLine1, titleLine2] = titleTwoLines(song.name, maxTitleChars);
+    const zwsp = "\u200b";
+
+    let titleY1, titleY2, timeY, controlsY, artistY;
+    if (isDetail) {
+      controlsY = cy + size * 0.12;
+      artistY   = controlsY + size * 0.068;
+      timeY     = controlsY - size * 0.088;
+      titleY2   = timeY - size * 0.072;
+      titleY1   = titleY2 - titleLH;
+      const minTitleY = cy - size * 0.30;
+      if (titleY1 < minTitleY) {
+        const shift = minTitleY - titleY1;
+        titleY1 += shift; titleY2 += shift;
+        timeY = Math.min(timeY + shift, controlsY - size * 0.07);
+      }
+    } else {
+      artistY = cy + size * 0.105;
+      titleY2 = artistY - gapStack - artFS * 0.32 - titleLH;
+      titleY1 = titleY2 - titleLH;
+      const minTitleY = cy - size * 0.29;
+      if (titleY1 < minTitleY) {
+        const shift = minTitleY - titleY1;
+        titleY1 += shift; titleY2 += shift;
+      }
+    }
+
+    const titleEl = document.createElementNS(ns, "text");
+    titleEl.setAttribute("data-role", "title");
+    titleEl.setAttribute("text-anchor", "middle");
+    titleEl.setAttribute("font-size",   titleFS);
+    titleEl.setAttribute("font-weight", "500");
+    titleEl.setAttribute("fill",        "rgba(255,255,255,0.9)");
+    titleEl.setAttribute("x", cx);
+    titleEl.setAttribute("y", titleY1);
+    const tspan1 = document.createElementNS(ns, "tspan");
+    tspan1.setAttribute("x", cx); tspan1.setAttribute("dy", "0");
+    tspan1.textContent = titleLine1;
+    titleEl.appendChild(tspan1);
+    const tspan2 = document.createElementNS(ns, "tspan");
+    tspan2.setAttribute("x", cx); tspan2.setAttribute("dy", String(titleLH));
+    if (titleLine2 === zwsp) { tspan2.textContent = zwsp; tspan2.setAttribute("fill", "transparent"); }
+    else { tspan2.textContent = titleLine2; }
+    titleEl.appendChild(tspan2);
+    if (!isDetail) {
+      titleEl.style.cursor = "pointer";
+      titleEl.style.textDecoration = "underline";
+      titleEl.style.textDecorationColor = "rgba(255,255,255,0.3)";
+      titleEl.addEventListener("click",      () => zoomIn(song, svg));
+      titleEl.addEventListener("mouseenter", () => titleEl.setAttribute("fill", "#fff"));
+      titleEl.addEventListener("mouseleave", () => titleEl.setAttribute("fill", "rgba(255,255,255,0.9)"));
+    }
+    svg.appendChild(titleEl);
+
+    let timeLabel = null;
+    if (isDetail) {
+      timeLabel = document.createElementNS(ns, "text");
+      timeLabel.setAttribute("data-role", "time");
+      timeLabel.setAttribute("x", cx); timeLabel.setAttribute("y", timeY);
+      timeLabel.setAttribute("text-anchor", "middle");
+      timeLabel.setAttribute("font-size", timeFS);
+      timeLabel.setAttribute("font-weight", "500");
+      timeLabel.setAttribute("fill", "rgba(255,255,255,0.78)");
+      timeLabel.textContent = `${fmtTime(0)} / ${fmtTime(song.duration)}`;
+      svg.appendChild(timeLabel);
+    }
+
+    if (isDetail) {
+      const bSp = size * 0.11, bSz = size * 0.075;
+      const dimFill = "rgba(255,255,255,0.22)";
+      const normalFill = (isPlay) => isPlay ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.65)";
+
+      function addCtrl(x, icon, fs, isPlay, onClick, enabled) {
+        const btn = document.createElementNS(ns, "text");
+        btn.setAttribute("data-role", "control");
+        btn.setAttribute("x", x); btn.setAttribute("y", controlsY);
+        btn.setAttribute("text-anchor", "middle"); btn.setAttribute("font-size", fs);
+        btn.setAttribute("fill", enabled ? normalFill(isPlay) : dimFill);
+        btn.setAttribute("cursor", enabled ? "pointer" : "default");
+        btn.textContent = icon;
+        if (enabled && onClick) btn.addEventListener("click", onClick);
+        btn.addEventListener("mouseenter", () => { if (enabled) btn.setAttribute("fill", "#fff"); });
+        btn.addEventListener("mouseleave", () => { btn.setAttribute("fill", enabled ? normalFill(isPlay) : dimFill); });
+        svg.appendChild(btn);
+        return btn;
+      }
+
+      const playBtn = addCtrl(cx, "▶", bSz, true, () => {
+        toggleClipDetailAudio(song, playBtn, progressMarker, markerGeom, timeLabel);
+      }, true);
+      if (detailPlayBtnRef) detailPlayBtnRef.current = playBtn;
+      addCtrl(cx - bSp, "⏮", bSz * 0.9, false, null, false);
+      addCtrl(cx + bSp, "⏭", bSz * 0.9, false, null, false);
+    }
+
+    const art = document.createElementNS(ns, "text");
+    art.setAttribute("data-role", "artist");
+    art.setAttribute("x", cx); art.setAttribute("y", artistY);
+    art.setAttribute("text-anchor", "middle"); art.setAttribute("font-size", artFS);
+    art.setAttribute("fill", "rgba(255,255,255,0.3)");
+    art.textContent = truncateWithEllipsis(song.artist, Math.max(12, Math.floor(size * 0.11)));
+    svg.appendChild(art);
+
+    return svg;
+  }
+
+  function zoomIn(song, sourceSvg) {
+    stopActiveAudio();
+    const gv  = document.getElementById("gridView");
+    const dv  = document.getElementById("detailView");
+    const dc  = document.getElementById("detailCard");
+    const clipListPanel = document.getElementById("detailClipList");
+    const leg = document.getElementById("legend");
+    const targetSize = 380;
+    dc.innerHTML = "";
+    if (clipListPanel) clipListPanel.scrollTop = 0;
+    renderDetailClipList(song);
+    syncClipListCollapsedUI();
+    const big = buildSVG(song, targetSize, true);
+    big.style.maxWidth = `${targetSize}px`;
+    big.style.visibility = "hidden";
+    dc.appendChild(big);
+    dv.classList.add("visible");
+    dv.style.opacity = "0";
+
+    const animateDetailTextIn = () => {
+      const titleEls   = big.querySelectorAll('text[data-role="title"]');
+      const artistEls  = big.querySelectorAll('text[data-role="artist"]');
+      const timeEls    = big.querySelectorAll('text[data-role="time"]');
+      const controlEls = big.querySelectorAll('text[data-role="control"]');
+      const titleShift = targetSize * 0.055;
+      titleEls.forEach(el => { el.style.opacity = "0"; el.style.transform = `translateY(${titleShift}px)`; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
+      artistEls.forEach(el => { el.style.opacity = "0"; el.style.transform = `translateY(-${titleShift}px)`; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
+      timeEls.forEach(el => { el.style.opacity = "0"; el.style.transition = `opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
+      controlEls.forEach(el => { el.style.opacity = "0"; el.style.transform = "scale(0.94)"; el.style.transformOrigin = "center center"; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
+      requestAnimationFrame(() => {
+        [...titleEls, ...artistEls, ...timeEls, ...controlEls].forEach(el => { el.style.opacity = "1"; el.style.transform = "translateY(0) scale(1)"; });
+      });
+    };
+
+    const canAnimate = sourceSvg && sourceSvg.getBoundingClientRect;
+    if (canAnimate) {
+      const from = sourceSvg.getBoundingClientRect();
+      const ghostWrap = document.createElement("div");
+      ghostWrap.style.cssText = `position:fixed;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;z-index:1000;pointer-events:none;transition:left ${ZOOM_MS}ms ease,top ${ZOOM_MS}ms ease,width ${ZOOM_MS}ms ease,height ${ZOOM_MS}ms ease,opacity ${ZOOM_MS}ms ease;`;
+      const ghostSvg = sourceSvg.cloneNode(true);
+      ghostSvg.style.cssText = "width:100%;height:100%;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.35));";
+      ghostWrap.appendChild(ghostSvg);
+      document.body.appendChild(ghostWrap);
+      gv.style.opacity = "0"; gv.style.display = "none"; leg.style.opacity = "0.4";
+      requestAnimationFrame(() => {
+        const to = big.getBoundingClientRect();
+        leg.style.transition = `opacity ${ZOOM_MS}ms ease`;
+        dv.style.transition  = `opacity ${ZOOM_MS}ms ease`;
+        dv.style.opacity = "1";
+        ghostWrap.style.left = `${to.left}px`; ghostWrap.style.top = `${to.top}px`;
+        ghostWrap.style.width = `${to.width}px`; ghostWrap.style.height = `${to.height}px`;
+      });
+      setTimeout(() => { big.style.visibility = "visible"; animateDetailTextIn(); ghostWrap.remove(); }, ZOOM_MS + 30);
+    } else {
+      gv.style.opacity = "0";
+      setTimeout(() => {
+        gv.style.display = "none"; leg.style.opacity = "0.4";
+        big.style.visibility = "visible"; animateDetailTextIn();
+        dv.style.transition = "opacity 0.3s"; dv.style.opacity = "1";
+      }, 250);
+    }
+  }
+
+  document.getElementById("backBtn").addEventListener("click", () => {
+    stopActiveAudio();
+    const gv  = document.getElementById("gridView");
+    const dv  = document.getElementById("detailView");
+    const leg = document.getElementById("legend");
+    dv.style.opacity = "0";
+    setTimeout(() => {
+      dv.classList.remove("visible"); leg.style.opacity = "1";
+      gv.style.display = "block"; gv.style.opacity = "0";
+      requestAnimationFrame(() => { gv.style.transition = "opacity 0.3s"; gv.style.opacity = "1"; });
+    }, 250);
+  });
+  document.getElementById("clipListToggle").addEventListener("click", () => {
+    isClipListCollapsed = !isClipListCollapsed;
+    syncClipListCollapsedUI();
+  });
+
+  function buildCard(song) {
+    const card = document.createElement("div");
+    card.className = "song-card";
+    card.appendChild(buildSVG(song, 180, false));
+    return card;
+  }
+
+  async function init() {
+    await loadAllData();
+    const legendEl = document.getElementById("legend");
+    const row1 = document.getElementById("row1");
+    const row2 = document.getElementById("row2");
+    legendEl.innerHTML = ""; row1.innerHTML = ""; row2.innerHTML = "";
+    const usedTypes = [...new Set(ALL_DATA.flatMap(s => s.sections.map(t => t.type)))].sort();
+    usedTypes.forEach(type => {
+      const color = SECTION_COLORS[type] || "#ccc";
+      const item = document.createElement("div");
+      item.className = "leg-item";
+      item.innerHTML = `<span class="leg-swatch" style="background:${color}"></span>${type}`;
+      legendEl.appendChild(item);
+    });
+    ALL_DATA.slice(0, 3).forEach(s => row1.appendChild(buildCard(s)));
+    ALL_DATA.slice(3, 5).forEach(s => row2.appendChild(buildCard(s)));
+  }
+
+  init().catch((err) => {
+    console.error(err);
+    document.body.insertAdjacentHTML("beforeend", `<p style="margin-top:16px;color:#ff7b7b;font-size:12px;">Unable to load clip data: ${err.message}</p>`);
+  });
+  </script>
+</body>
+</html>

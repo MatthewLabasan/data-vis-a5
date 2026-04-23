@@ -524,6 +524,20 @@
     let lastPlayheadSvgX = null;
     const waveformCache = new Map();
     const audioUrlCache = new Map();
+    const AUDIO_FILE_OVERRIDES = {
+      "Pretty Little Baby": "pretty_little_baby.mp3",
+      "APT.": "APT.mp3",
+      "No One Noticed": "no_one_noticed.mp3",
+      "back to friends": "back_to_friends.mp3",
+      "Sparks": "sparks.mp3",
+    };
+    const WAVEFORM_FILE_OVERRIDES = {
+      "Pretty Little Baby": "pretty_little_baby.waveform.json",
+      "APT.": "apt.waveform.json",
+      "No One Noticed": "no_one_noticed_extended_spanish.waveform.json",
+      "back to friends": "back_to_friends.waveform.json",
+      "Sparks": "sparks.waveform.json",
+    };
 
     const svg = document.getElementById("viz");
     const selectEl = document.getElementById("song-select");
@@ -601,14 +615,17 @@
 
     function buildAudioCandidates(song) {
       const slug = slugifySongName(song.name);
+      const override = AUDIO_FILE_OVERRIDES[song.name];
       const baseNames = unique([
         `${song.name}`,
         `${song.artist} - ${song.name}`,
         `${slug}`,
       ]);
-      const exts = ["mp3", "m4a", "wav", "aac", "ogg", "flac"];
+      const exts = ["m4a", "wav", "aac", "ogg", "flac"];
       const urls = [];
+      if (override) urls.push(`songs/${override}`);
       for (const b of baseNames) {
+        urls.push(`songs/${b}.mp3`);
         for (const ext of exts) {
           urls.push(`songs/${b}.${ext}`);
         }
@@ -677,7 +694,9 @@
 
     async function loadWaveformForSong(song) {
       const slug = slugifySongName(song.name);
+      const override = WAVEFORM_FILE_OVERRIDES[song.name];
       const candidates = [
+        ...(override ? [`songs/${override}`] : []),
         `songs/${slug}.waveform.json`,
         `${slug}.waveform.json`,
       ];
