@@ -145,11 +145,10 @@
 
   #circles-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
     gap: 20px;
     flex: 1;
     padding: 8px 0;
+    align-content: stretch;
   }
 
   .song-circle-wrap {
@@ -641,18 +640,17 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 100;
+    z-index: 300;
   }
 
-  #zoom-circle {
+  .zoom-anchor-clone {
     position: fixed;
-    border-radius: 50%;
-    background: #161616;
-    border: 1.5px solid #333;
+    left: 0;
+    top: 0;
     pointer-events: none;
-    transform: translate(-50%, -50%);
-    transition: none;
-    z-index: 100;
+    transform-origin: top left;
+    will-change: transform, opacity;
+    transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.62s ease;
   }
 </style>
 </head>
@@ -751,7 +749,6 @@
 
 <!-- Zoom overlay -->
 <div id="zoom-overlay">
-  <div id="zoom-circle" style="display:none"></div>
 </div>
 
 <audio id="song-audio" preload="none"></audio>
@@ -937,17 +934,37 @@ function sortSongs(by) {
   renderGrid();
 }
 
+function getGridLayoutForView() {
+  if (currentView === 'one-hit') return { cols: 3, rows: 2, gap: 30 };
+  if (currentView === 'long-lasting') return { cols: 5, rows: 3, gap: 22 };
+  return { cols: 5, rows: 4, gap: 20 };
+}
+
 function renderGrid() {
   const grid = document.getElementById('circles-grid');
   grid.innerHTML = '';
+  const layoutCfg = getGridLayoutForView();
+  grid.style.gridTemplateColumns = `repeat(${layoutCfg.cols}, minmax(0, 1fr))`;
+  grid.style.gridTemplateRows = `repeat(${layoutCfg.rows}, minmax(0, 1fr))`;
+  grid.style.gap = `${layoutCfg.gap}px`;
 
-  displayOrder.forEach((song, i) => {
+  // Scale circles to fill available page area for filtered views.
+  const gridW = grid.clientWidth || 900;
+  const gridH = grid.clientHeight || 600;
+  const cellW = (gridW - layoutCfg.gap * (layoutCfg.cols - 1)) / layoutCfg.cols;
+  const cellH = (gridH - layoutCfg.gap * (layoutCfg.rows - 1)) / layoutCfg.rows;
+  const size = Math.max(110, Math.floor(Math.min(cellW, cellH) * 0.9));
+  const r = Math.floor(size * 0.42);
+  const titleFontSize = Math.max(10, Math.floor(size * 0.09));
+  const lineH = Math.max(11, Math.floor(size * 0.1));
+  const artistFontSize = Math.max(8, Math.floor(size * 0.07));
+  const rankFontSize = Math.max(8, Math.floor(size * 0.075));
+
+  displayOrder.forEach((song) => {
     const wrap = document.createElement('div');
     wrap.className = 'song-circle-wrap';
     wrap.dataset.rank = song.rank;
 
-    const size = 110;
-    const r = 46;
     const cx = size / 2, cy = size / 2;
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1012,14 +1029,13 @@ function renderGrid() {
     });
     if (currentLine) lines.push(currentLine);
 
-    const lineH = 11;
     const titleY = cy - (lines.length - 1) * lineH / 2 - 6;
 
     lines.forEach((line, li) => {
       const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       t.setAttribute('x', cx);
       t.setAttribute('y', titleY + li * lineH);
-      t.setAttribute('font-size', '10');
+      t.setAttribute('font-size', String(titleFontSize));
       t.className.baseVal = 'circle-title';
       t.textContent = line;
       g.appendChild(t);
@@ -1029,7 +1045,7 @@ function renderGrid() {
     const artistEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     artistEl.setAttribute('x', cx);
     artistEl.setAttribute('y', titleY + lines.length * lineH + 2);
-    artistEl.setAttribute('font-size', '7.5');
+    artistEl.setAttribute('font-size', String(artistFontSize));
     artistEl.className.baseVal = 'circle-artist';
     const shortArtist = song.artist.length > 14 ? song.artist.substring(0, 13) + '…' : song.artist;
     artistEl.textContent = shortArtist;
@@ -1039,7 +1055,7 @@ function renderGrid() {
     const rankEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     rankEl.setAttribute('x', cx);
     rankEl.setAttribute('y', cy + r - 8);
-    rankEl.setAttribute('font-size', '8');
+    rankEl.setAttribute('font-size', String(rankFontSize));
     rankEl.setAttribute('fill', '#fff');
     rankEl.setAttribute('text-anchor', 'middle');
     rankEl.setAttribute('font-family', 'SF Mono, monospace');
@@ -1079,52 +1095,145 @@ document.getElementById('sort-category').addEventListener('click', function() {
 document.getElementById('view-all').addEventListener('click', () => applyView('all'));
 document.getElementById('view-one-hit').addEventListener('click', () => applyView('one-hit'));
 document.getElementById('view-long-lasting').addEventListener('click', () => applyView('long-lasting'));
+window.addEventListener('resize', () => {
+  if (document.getElementById('small-multiples').style.pointerEvents !== 'none') {
+    renderGrid();
+  }
+});
 
 // ─── ZOOM TRANSITION ────────────────────────────────────────────────────────
 function zoomIntoSong(song, wrapEl) {
-  const rect = wrapEl.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const startR = rect.width / 2;
-
-  const zc = document.getElementById('zoom-circle');
-  zc.style.display = 'block';
-  zc.style.left = cx + 'px';
-  zc.style.top = cy + 'px';
-  zc.style.width = (startR * 2) + 'px';
-  zc.style.height = (startR * 2) + 'px';
-  zc.style.transition = 'none';
-
-  // Force reflow
-  zc.getBoundingClientRect();
-
-  const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
-  zc.style.transition = 'width 0.55s cubic-bezier(0.4,0,0.2,1), height 0.55s cubic-bezier(0.4,0,0.2,1)';
-  zc.style.width = maxDim + 'px';
-  zc.style.height = maxDim + 'px';
-
-  setTimeout(() => {
+  if (isTransitioning) return;
+  isTransitioning = true;
+  lastSelectedRank = song.rank;
+  const sourceSvg = wrapEl.querySelector('svg');
+  if (!sourceSvg) {
+    openSongView(song);
     document.getElementById('small-multiples').style.opacity = '0';
     document.getElementById('small-multiples').style.pointerEvents = 'none';
-    openSongView(song);
+    document.getElementById('song-view').classList.add('visible');
+    isTransitioning = false;
+    return;
+  }
 
-    setTimeout(() => {
-      zc.style.transition = 'none';
-      zc.style.display = 'none';
-      document.getElementById('song-view').classList.add('visible');
-    }, 120);
-  }, 400);
+  const zoomOverlay = document.getElementById('zoom-overlay');
+  zoomOverlay.innerHTML = '';
+
+  const sourceRect = sourceSvg.getBoundingClientRect();
+  const anchor = document.createElement('div');
+  anchor.className = 'zoom-anchor-clone';
+  anchor.style.width = `${sourceRect.width}px`;
+  anchor.style.height = `${sourceRect.height}px`;
+  anchor.style.transform = `translate(${sourceRect.left}px, ${sourceRect.top}px) scale(1)`;
+  anchor.appendChild(sourceSvg.cloneNode(true));
+  zoomOverlay.appendChild(anchor);
+
+  const smallMultiples = document.getElementById('small-multiples');
+  const songView = document.getElementById('song-view');
+  smallMultiples.style.pointerEvents = 'none';
+
+  openSongView(song);
+  const targetWrap = document.getElementById('song-circle-svg-wrap');
+  const targetSvg = document.getElementById('song-circle-svg');
+  const targetRect = targetWrap.getBoundingClientRect();
+  const targetSize = targetSvg.getBoundingClientRect().width || 230;
+  const targetX = targetRect.left + (targetRect.width - targetSize) / 2;
+  const targetY = targetRect.top + (targetRect.height - targetSize) / 2;
+  const scale = targetSize / sourceRect.width;
+
+  if (targetWrap) targetWrap.style.visibility = 'hidden';
+  songView.classList.add('visible');
+  songView.style.opacity = '0';
+  songView.style.pointerEvents = 'none';
+
+  requestAnimationFrame(() => {
+    smallMultiples.style.transition = 'opacity 0.62s ease';
+    smallMultiples.style.opacity = '0';
+    songView.style.transition = 'opacity 0.4s ease';
+    songView.style.opacity = '0.6';
+    anchor.style.transform = `translate(${targetX}px, ${targetY}px) scale(${scale})`;
+  });
+
+  setTimeout(() => {
+    if (targetWrap) targetWrap.style.visibility = '';
+    anchor.style.opacity = '0';
+    songView.style.opacity = '1';
+  }, 520);
+
+  setTimeout(() => {
+    zoomOverlay.innerHTML = '';
+    songView.style.pointerEvents = 'all';
+    songView.style.transition = '';
+    isTransitioning = false;
+  }, 700);
 }
 
 function zoomOut() {
-  stopPlayback();
-  clearVideoGrid();
-  document.getElementById('song-view').classList.remove('visible');
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  const smallMultiples = document.getElementById('small-multiples');
+  const songView = document.getElementById('song-view');
+  const sourceWrap = document.getElementById('song-circle-svg-wrap');
+  const sourceSvg = document.getElementById('song-circle-svg');
+  const zoomOverlay = document.getElementById('zoom-overlay');
+  zoomOverlay.innerHTML = '';
+
+  const targetWrap = lastSelectedRank != null
+    ? document.querySelector(`.song-circle-wrap[data-rank="${lastSelectedRank}"]`)
+    : null;
+  const targetSvg = targetWrap ? targetWrap.querySelector('svg') : null;
+
+  if (!sourceSvg || !targetSvg) {
+    stopPlayback();
+    clearVideoGrid();
+    songView.classList.remove('visible');
+    setTimeout(() => {
+      smallMultiples.style.opacity = '1';
+      smallMultiples.style.pointerEvents = 'all';
+      smallMultiples.style.transition = '';
+      isTransitioning = false;
+    }, 300);
+    return;
+  }
+
+  const srcRect = sourceSvg.getBoundingClientRect();
+  const dstRect = targetSvg.getBoundingClientRect();
+  const anchor = document.createElement('div');
+  anchor.className = 'zoom-anchor-clone';
+  anchor.style.width = `${srcRect.width}px`;
+  anchor.style.height = `${srcRect.height}px`;
+  anchor.style.transform = `translate(${srcRect.left}px, ${srcRect.top}px) scale(1)`;
+  anchor.appendChild(sourceSvg.cloneNode(true));
+  zoomOverlay.appendChild(anchor);
+
+  songView.style.pointerEvents = 'none';
+  if (sourceWrap) sourceWrap.style.visibility = 'hidden';
+
+  requestAnimationFrame(() => {
+    smallMultiples.style.transition = 'opacity 0.62s ease';
+    smallMultiples.style.opacity = '1';
+    songView.style.transition = 'opacity 0.5s ease';
+    songView.style.opacity = '0.35';
+    anchor.style.transform = `translate(${dstRect.left}px, ${dstRect.top}px) scale(${dstRect.width / srcRect.width})`;
+  });
 
   setTimeout(() => {
-    document.getElementById('small-multiples').style.opacity = '1';
-    document.getElementById('small-multiples').style.pointerEvents = 'all';
-  }, 300);
+    songView.classList.remove('visible');
+    songView.style.opacity = '';
+    songView.style.transition = '';
+    if (sourceWrap) sourceWrap.style.visibility = '';
+    anchor.style.opacity = '0';
+    stopPlayback();
+    clearVideoGrid();
+  }, 520);
+
+  setTimeout(() => {
+    zoomOverlay.innerHTML = '';
+    smallMultiples.style.pointerEvents = 'all';
+    smallMultiples.style.transition = '';
+    isTransitioning = false;
+  }, 700);
 }
 
 document.getElementById('back-btn').addEventListener('click', zoomOut);
@@ -1314,6 +1423,8 @@ let circleFillRevealRect = null;
 let circleFillProgress = 0;
 let circleFillTarget = 0;
 let circleFillAnimId = null;
+let lastSelectedRank = null;
+let isTransitioning = false;
 
 function parseClips(song) {
   return song.clips.map((c, i) => {
