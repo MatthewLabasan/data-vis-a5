@@ -912,105 +912,89 @@ function zoomOut() {
 
 document.getElementById('back-btn').addEventListener('click', zoomOut);
 
-// ─── VIDEO GRID ──────────────────────────────────────────────────────────────
-const activeVideoMap  = new Map(); // clip.index → <video> element
-const removingVideoSet = new Set(); // indices currently fading out
+// ─── VIDEO GRID (fixed 2×5) ──────────────────────────────────────────────────
+let videoSlots = []; // 10 fixed slots, each { cell, video, clip, active }
 
-// Re-run layout whenever the grid container is resized (e.g. first paint, window resize)
-new ResizeObserver(() => updateVideoGridColumns(activeVideoMap.size))
-  .observe(document.getElementById('video-grid'));
-
-function updateVideoGridColumns(count) {
+function layoutVideoGrid() {
   const grid = document.getElementById('video-grid');
-  if (count === 0) {
-    grid.style.gridTemplateColumns = '';
-    grid.style.gridTemplateRows = '';
-    return;
-  }
-
-  const cols = count === 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4;
-  const rows = Math.ceil(count / cols);
-  const gap = 4;
-
   const W = grid.clientWidth  || grid.offsetWidth  || 400;
   const H = grid.clientHeight || grid.offsetHeight || 300;
-
+  const cols = 5, rows = 2, gap = 6;
   const cellW = (W - (cols - 1) * gap) / cols;
   const cellH = (H - (rows - 1) * gap) / rows;
-
-  // Fit 9:16 portrait video inside each cell — height-constrained for typical landscape containers
   let videoW, videoH;
   if (cellH * 9 / 16 <= cellW) {
-    videoH = cellH;
-    videoW = cellH * 9 / 16;
+    videoH = cellH; videoW = cellH * 9 / 16;
   } else {
-    videoW = cellW;
-    videoH = cellW * 16 / 9;
+    videoW = cellW; videoH = cellW * 16 / 9;
+  }
+  grid.style.gridTemplateColumns = `repeat(5, ${Math.floor(videoW)}px)`;
+  grid.style.gridTemplateRows    = `repeat(2, ${Math.floor(videoH)}px)`;
+}
+
+new ResizeObserver(layoutVideoGrid).observe(document.getElementById('video-grid'));
+
+function initVideoGrid() {
+  const grid = document.getElementById('video-grid');
+  grid.innerHTML = '';
+  videoSlots = [];
+
+  for (let i = 0; i < 10; i++) {
+    const clip = processedClips.find(c => c.index === i) || null;
+
+    const cell = document.createElement('div');
+    cell.className = 'video-cell';
+    cell.style.opacity = '0';
+
+    let video = null;
+    if (clip) {
+      const folder = clip.file.replace(/_\d+$/, '');
+      video = document.createElement('video');
+      video.src = `tiktoks/${folder}/${clip.file}.mp4`;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = 'auto';
+      cell.style.borderColor = catColor(clip.category);
+      cell.appendChild(video);
+    } else {
+      cell.style.borderColor = 'transparent';
+      cell.style.background = 'transparent';
+      cell.style.pointerEvents = 'none';
+    }
+
+    grid.appendChild(cell);
+    videoSlots.push({ cell, video, clip, active: false });
   }
 
-  grid.style.gridTemplateColumns = `repeat(${cols}, ${Math.floor(videoW)}px)`;
-  grid.style.gridTemplateRows    = `repeat(${rows}, ${Math.floor(videoH)}px)`;
+  layoutVideoGrid();
 }
 
 function syncVideoGrid() {
   if (!currentSong) return;
 
-  const nowActive = new Set();
-  processedClips.forEach(c => {
-    if (currentTimeSec >= c.startSec && currentTimeSec <= c.endSec) {
-      nowActive.add(c.index);
+  videoSlots.forEach(slot => {
+    if (!slot.clip) return;
+    const shouldBeActive = currentTimeSec >= slot.clip.startSec && currentTimeSec <= slot.clip.endSec;
+
+    if (shouldBeActive && !slot.active) {
+      slot.active = true;
+      if (slot.video) {
+        slot.video.currentTime = Math.max(0, currentTimeSec - slot.clip.startSec);
+        if (isPlaying) slot.video.play().catch(() => {});
+      }
+      slot.cell.style.opacity = '1';
+    } else if (!shouldBeActive && slot.active) {
+      slot.active = false;
+      if (slot.video) slot.video.pause();
+      slot.cell.style.opacity = '0';
     }
   });
-
-  // Fade out clips that ended
-  for (const [idx, v] of activeVideoMap) {
-    if (!nowActive.has(idx) && !removingVideoSet.has(idx)) {
-      removingVideoSet.add(idx);
-      v.pause();
-      const cell = v.parentElement;
-      if (cell) cell.style.opacity = '0';
-      setTimeout(() => {
-        if (cell) cell.remove();
-        activeVideoMap.delete(idx);
-        removingVideoSet.delete(idx);
-        updateVideoGridColumns(activeVideoMap.size);
-      }, 380);
-    }
-  }
-
-  // Fade in clips that just started
-  for (const c of processedClips) {
-    if (nowActive.has(c.index) && !activeVideoMap.has(c.index) && !removingVideoSet.has(c.index)) {
-      const folder = c.file.replace(/_\d+$/, '');
-      const cell = document.createElement('div');
-      cell.className = 'video-cell';
-      cell.style.borderColor = catColor(c.category);
-      cell.style.opacity = '0';
-      const v = document.createElement('video');
-      v.src = `tiktoks/${folder}/${c.file}.mp4`;
-      v.muted = true;
-      v.playsInline = true;
-      v.currentTime = Math.max(0, currentTimeSec - c.startSec);
-      if (isPlaying) v.play().catch(() => {});
-      cell.appendChild(v);
-      document.getElementById('video-grid').appendChild(cell);
-      activeVideoMap.set(c.index, v);
-      // two rAFs ensure the browser commits opacity:0 before transitioning to 1
-      requestAnimationFrame(() => requestAnimationFrame(() => { cell.style.opacity = '1'; }));
-    }
-  }
-
-  updateVideoGridColumns(activeVideoMap.size);
 }
 
 function clearVideoGrid() {
-  removingVideoSet.clear();
-  for (const [, v] of activeVideoMap) {
-    v.pause();
-    v.parentElement?.remove();
-  }
-  activeVideoMap.clear();
-  updateVideoGridColumns(0);
+  videoSlots.forEach(s => { if (s.video) s.video.pause(); });
+  videoSlots = [];
+  document.getElementById('video-grid').innerHTML = '';
 }
 
 // ─── AUDIO ───────────────────────────────────────────────────────────────────
@@ -1090,6 +1074,7 @@ function openSongView(song) {
   renderSongCircle(song);
   renderClipsList(song);
   renderTimelineTicks(song);
+  initVideoGrid();
   updateTimeline();
 }
 
@@ -1224,7 +1209,7 @@ function startPlayback() {
     audioEl.currentTime = currentTimeSec;
     audioEl.play().catch(() => {});
   }
-  for (const [, v] of activeVideoMap) v.play().catch(() => {});
+  videoSlots.forEach(s => { if (s.video && s.active) s.video.play().catch(() => {}); });
   isPlaying = true;
   playTimer = requestAnimationFrame(tick);
   document.getElementById('play-btn').textContent = '⏸';
@@ -1235,7 +1220,7 @@ function stopPlayback() {
   if (playTimer) cancelAnimationFrame(playTimer);
   playTimer = null;
   if (audioEl.src) audioEl.pause();
-  for (const [, v] of activeVideoMap) v.pause();
+  videoSlots.forEach(s => { if (s.video && s.active) s.video.pause(); });
   document.getElementById('play-btn').textContent = '▶';
 }
 
