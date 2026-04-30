@@ -3,9 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TikTok Audio Stars</title>
+  <title>TikTok Viz — Audio Fingerprint of the Biggest Songs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.cdnfonts.com/css/proxima-nova-2');
+    @font-face {
+      font-family: 'TikTok Sans';
+      src: url('./fonts/TikTokSans-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TikTok Sans';
+      src: url('./fonts/TikTokSans-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TikTok Sans';
+      src: url('./fonts/TikTokSans-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TikTok Sans';
+      src: url('./fonts/TikTokSans-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
 
     :root {
       color-scheme: dark;
@@ -35,11 +61,44 @@
       scroll-behavior: smooth;
     }
 
+    .trend-stars-stage {
+      position: relative;
+      min-height: 0;
+    }
+
+    .trend-stars-stage > .page-section {
+      transition: opacity 520ms ease;
+    }
+
+    .trend-stars-stage > .page-section:not(.is-active-view) {
+      display: none;
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .trend-stars-stage > .page-section.is-active-view {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      inset: auto;
+    }
+
+    .scroll-arrow.swap-back {
+      transform: none;
+    }
+    .scroll-arrow.swap-back span {
+      display: inline-block;
+      transform: rotate(180deg);
+    }
+
     body {
       position: relative;
       margin: 0;
       color: var(--ink);
-      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       background: linear-gradient(180deg, #191414 0%, #120f12 52%, #191414 100%);
       min-height: 100vh;
     }
@@ -61,9 +120,9 @@
     }
 
     main {
-      width: min(1260px, calc(100vw - 96px));
+      width: min(1380px, calc(100vw - 48px));
       margin: 0 auto;
-      padding: 40px 0 72px;
+      padding: 18px 0 18px;
       position: relative;
       z-index: 1;
     }
@@ -73,11 +132,11 @@
     }
 
     .intro-screen {
-      min-height: calc(100vh - 112px);
+      min-height: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding-bottom: 54px;
+      justify-content: flex-start;
+      padding-bottom: 12px;
       will-change: opacity;
     }
 
@@ -103,13 +162,13 @@
     }
 
     h1 {
-      margin: 0 0 22px;
-      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
-      font-size: clamp(1.85rem, 4.2vw, 4.3rem);
-      line-height: 0.94;
-      letter-spacing: -0.05em;
+      margin: 0 0 6px;
+      font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: 0;
       max-width: none;
-      white-space: nowrap;
     }
 
     .hero-copy {
@@ -134,21 +193,21 @@
 
     .legend-caption {
       margin: 0;
-      font-size: 1rem;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.5;
       color: var(--muted);
-      max-width: 76ch;
+      max-width: 760px;
     }
 
     .scale-list {
       display: grid;
-      gap: 8px;
-      margin-top: 16px;
+      gap: 4px;
+      margin-top: 10px;
     }
 
     .scale-item {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 11px;
       line-height: 1.45;
     }
 
@@ -161,6 +220,36 @@
       display: grid;
       gap: 18px;
       margin-top: 18px;
+    }
+
+    .intro-trend-panel {
+      margin-top: 5px;
+    }
+
+    .intro-trend-panel .stars-panel {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .intro-screen .trend-viz-col {
+      min-height: 320px;
+      padding: 0;
+    }
+
+    .intro-screen .trend-group {
+      min-height: 280px;
+    }
+
+    .intro-screen .trend-star-list {
+      min-height: 300px;
+    }
+
+    .intro-screen .scroll-arrow {
+      margin-top: 0;
+    }
+
+    .intro-screen .stars-panel + .trend-layout {
+      margin-bottom: 0;
     }
 
     .scroll-arrow {
@@ -196,8 +285,9 @@
     .panel-title {
       margin: 0 0 10px;
       color: var(--muted);
-      font-size: 0.76rem;
-      letter-spacing: 0.16em;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
@@ -231,6 +321,91 @@
       color: #fff0f7;
     }
 
+    .trend-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      align-items: start;
+      max-width: 1240px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .trend-viz-col {
+      min-width: 0;
+      min-height: 520px;
+      display: grid;
+      align-content: center;
+      padding: 10px 0 24px;
+      position: relative;
+    }
+
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 34px 140px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .trend-group {
+      min-width: 0;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .trend-group-header {
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .trend-group-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .trend-group[data-trend="one-hit"] .trend-group-title {
+      color: var(--fuchsia);
+    }
+
+    .trend-group[data-trend="long"] .trend-group-title {
+      color: var(--aquamarine);
+    }
+
+    .trend-group-count {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .trend-star-list {
+      position: relative;
+      min-height: 450px;
+      padding: 0;
+    }
+
+    .trend-star-list .card {
+      position: absolute;
+      left: var(--cluster-x);
+      top: var(--cluster-y);
+      width: clamp(104px, 9.2vw, 128px);
+      transform: translate(-50%, -50%) scale(var(--cluster-scale, 1));
+    }
+
+    .trend-star-list .card:hover,
+    .trend-star-list .card:focus-within {
+      z-index: 4;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -242,8 +417,13 @@
       margin-right: auto;
     }
 
-    .stars-screen {
-      padding-top: 22px;
+    .stars-screen,
+    .trend-screen {
+      min-height: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 22px 0 18px;
       scroll-margin-top: 28px;
     }
 
@@ -261,6 +441,10 @@
     .stars-panel {
       margin-top: 8px;
       margin-bottom: 34px;
+    }
+
+    .stars-panel + .trend-layout {
+      margin-bottom: 54px;
     }
 
     .overview-section {
@@ -401,6 +585,41 @@
       background: currentColor;
     }
 
+    .trend-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 4px 9px;
+      border: 1px solid var(--trend-border);
+      border-radius: 999px;
+      background: var(--trend-bg);
+      color: var(--trend-ink);
+      font-size: 0.68rem;
+      line-height: 1;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .trend-badge[data-trend="long"] {
+      --trend-bg: rgba(147, 233, 222, 0.12);
+      --trend-border: rgba(147, 233, 222, 0.36);
+      --trend-ink: #b9fff7;
+    }
+
+    .trend-badge[data-trend="one-hit"] {
+      --trend-bg: rgba(255, 70, 50, 0.12);
+      --trend-border: rgba(255, 70, 50, 0.34);
+      --trend-ink: #ffc2ba;
+    }
+
+    .timeline-legend-item .trend-badge {
+      min-height: 20px;
+      padding: 3px 7px;
+      font-size: 0.58rem;
+    }
+
     .overview-note {
       margin: 12px 0 0;
       color: var(--muted);
@@ -452,12 +671,22 @@
       transform-origin: center center;
     }
 
+    .grid .card:hover,
+    .grid .card:focus-within {
+      position: relative;
+      z-index: 100;
+    }
+
+    .trend-group .card {
+      width: clamp(130px, 12vw, 168px);
+    }
+
     .card.is-clickable .viz-wrap {
       cursor: zoom-in;
     }
 
     .title {
-      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       font-size: 1.32rem;
       line-height: 1.02;
       margin: 14px 0 0;
@@ -470,11 +699,90 @@
       font-size: 0.95rem;
     }
 
+    .card .trend-badge {
+      margin-top: 11px;
+    }
+
+    .category-counts {
+      width: min(100%, 228px);
+      margin-top: 12px;
+      display: grid;
+      gap: 7px;
+      justify-items: center;
+    }
+
+    .category-count-heading {
+      color: var(--muted);
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .category-count-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .category-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 22px;
+      padding: 4px 7px;
+      border: 1px solid rgba(243, 237, 232, 0.1);
+      border-radius: 999px;
+      background: rgba(243, 237, 232, 0.035);
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .category-count-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .category-count strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .tooltip .category-counts {
+      width: 100%;
+      margin-top: 0;
+      justify-items: start;
+    }
+
+    .tooltip .category-count-list {
+      justify-content: flex-start;
+    }
+
     .viz-wrap {
       margin: 0;
       display: grid;
       place-items: center;
       position: relative;
+      transition: opacity 180ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform-origin: center;
+    }
+
+    .trend-star-list:hover .card .viz-wrap,
+    .trend-star-list:focus-within .card .viz-wrap {
+      opacity: 0.46;
+      transform: scale(0.94);
+    }
+
+    .trend-star-list:hover .card:hover .viz-wrap,
+    .trend-star-list:focus-within .card:focus-within .viz-wrap {
+      opacity: 1;
+      transform: scale(1.1);
+      z-index: 3;
     }
 
     .tooltip {
@@ -486,8 +794,8 @@
       border-radius: 16px;
       border: 1px solid rgba(243, 237, 232, 0.18);
       background:
-        linear-gradient(180deg, rgba(243, 237, 232, 0.12), rgba(243, 237, 232, 0.032)),
-        linear-gradient(180deg, rgba(49, 35, 58, 0.24), rgba(22, 18, 25, 0.18));
+        linear-gradient(180deg, rgba(243, 237, 232, 0.18), rgba(243, 237, 232, 0.08)),
+        linear-gradient(180deg, rgba(49, 35, 58, 0.74), rgba(22, 18, 25, 0.9));
       box-shadow:
         0 18px 34px rgba(0, 0, 0, 0.28),
         inset 0 1px 0 rgba(255, 255, 255, 0.18),
@@ -499,7 +807,7 @@
       backdrop-filter: blur(18px) saturate(145%);
       -webkit-backdrop-filter: blur(18px) saturate(145%);
       isolation: isolate;
-      z-index: 2;
+      z-index: 200;
     }
 
     .tooltip.is-visible {
@@ -568,6 +876,40 @@
       overflow: visible;
     }
 
+    .trend-group .card svg {
+      width: clamp(104px, 9.2vw, 128px);
+      height: clamp(104px, 9.2vw, 128px);
+      animation: cluster-star-float var(--float-duration, 5s) ease-in-out infinite;
+      animation-delay: var(--float-delay, 0s);
+      transform: rotate(var(--star-rotate, 0deg));
+      transform-origin: center;
+    }
+
+    .trend-star-name {
+      fill: rgba(243, 237, 232, 0.9);
+      stroke: rgba(25, 20, 20, 0.72);
+      stroke-width: 4px;
+      paint-order: stroke;
+      font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1;
+      pointer-events: none;
+      text-anchor: middle;
+    }
+
+    @keyframes cluster-star-float {
+      0%,
+      100% {
+        transform: translateY(0) rotate(var(--star-rotate, 0deg));
+      }
+
+      50% {
+        transform: translateY(var(--float-distance, -8px)) rotate(calc(var(--star-rotate, 0deg) + 2deg));
+      }
+    }
+
     .axis {
       stroke: rgba(255, 255, 255, 0.18);
       stroke-width: 1.2;
@@ -616,7 +958,7 @@
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     }
 
     .axis-label-bpm,
@@ -740,11 +1082,44 @@
       margin-top: 14px;
     }
 
+    .cat-legend-pinned {
+      position: fixed;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 8px;
+      margin-top: 0;
+      padding: 14px 16px;
+      background: rgba(25, 20, 20, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 30;
+      max-height: 80vh;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 320ms ease;
+    }
+
+    .cat-legend-pinned.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cat-legend-pinned .cat-legend-item {
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
     .cat-legend-item {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.82rem;
+      font-size: 11px;
       color: var(--muted);
     }
 
@@ -755,65 +1130,17 @@
       flex: 0 0 auto;
     }
 
-    .cluster-screen {
-      padding: 18px 0 72px;
-      scroll-margin-top: 28px;
-    }
-
-    .cluster-heading {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.76rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .cluster-caption {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.6;
-      max-width: 66ch;
-    }
-
-    .cluster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-      gap: 36px 16px;
-      margin-top: 18px;
-      justify-items: center;
-    }
-
-    .cluster-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .cluster-card svg {
-      overflow: visible;
-    }
-
-    .cluster-name {
-      margin-top: 10px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      line-height: 1.1;
-      max-width: 13ch;
-    }
-
-    .cluster-meta {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.82rem;
+    @media (max-width: 960px) {
+      .trend-layout {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 700px) {
       main {
-        width: min(100vw - 32px, 1260px);
-        padding-top: 20px;
-        padding-bottom: 48px;
+        width: min(100vw - 24px, 1380px);
+        padding-top: 10px;
+        padding-bottom: 16px;
       }
 
       .hero {
@@ -824,7 +1151,7 @@
 
       .intro-screen {
         min-height: auto;
-        padding-bottom: 26px;
+        padding-bottom: 12px;
       }
 
       .timeline-screen {
@@ -840,6 +1167,33 @@
 
       .stars-panel {
         margin-bottom: 28px;
+      }
+
+      .trend-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .trend-viz-col {
+        min-height: auto;
+        padding-bottom: 4px;
+      }
+
+      .trend-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .trend-group {
+        min-height: auto;
+      }
+
+      .stars-panel + .trend-layout {
+        margin-bottom: 12px;
+      }
+
+      .trend-star-list {
+        min-height: 360px;
       }
 
       .grid {
@@ -873,11 +1227,6 @@
         height: 210px;
       }
 
-      .cluster-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px 10px;
-      }
-
       .focus-overlay {
         padding: 14px;
       }
@@ -895,91 +1244,53 @@
 </head>
 <body>
   <main>
-    <section class="page-section intro-screen">
-      <section class="hero">
-        <div class="hero-copy">
-          <h1>Let&#39;s Explore More!</h1>
-          <p class="legend-caption">
-            Each star uses the same four directions. The farther a point stretches from the center, the stronger that attribute is for the track.
-          </p>
-          <div class="scale-list">
-            <div class="scale-item"><strong>BPM:</strong> shown on the BPM scale, from slower to faster.</div>
-            <div class="scale-item"><strong>Energy, Danceability, Happiness:</strong> shown on a 0-100 audio-feature scale.</div>
-            <div class="scale-item"><strong>Center to edge:</strong> low values stay near the middle; high values reach toward the outer guide.</div>
+    <div class="trend-stars-stage" id="trend-stars-stage">
+      <section class="page-section intro-screen reveal-section is-active-view" id="trend-screen">
+        <section class="hero">
+          <div class="hero-copy">
+            <h1>Song Characteristics</h1>
+            <p class="legend-caption">
+              Each star reads on four axes — bpm, energy, danceability, happiness. The farther a point stretches from the center, the stronger that attribute is for the track.
+            </p>
+            <div class="scale-list">
+              <div class="scale-item"><strong>BPM:</strong> shown on the BPM scale, from slower to faster.</div>
+              <div class="scale-item"><strong>Energy, Danceability, Happiness:</strong> shown on a 0-100 audio-feature scale.</div>
+              <div class="scale-item"><strong>Center to edge:</strong> low values stay near the middle; high values reach toward the outer guide.</div>
+            </div>
           </div>
-          <section class="overview-section" aria-labelledby="overview-title">
-            <div class="overview-copy">
-              <div class="panel-title">Data Overview</div>
-              <p class="overview-caption" id="overview-title">
-                The dataset totals stay here, so you can see the core numbers behind these 10 songs before moving into the post-date timeline.
-              </p>
-              <div class="overview-stats" id="overview-stats"></div>
+          <div class="legend-wrap" aria-hidden="true">
+            <svg class="legend-star" id="average-star" viewBox="0 0 320 260"></svg>
+          </div>
+        </section>
+        <div class="intro-trend-panel">
+          <div class="hero-panels stars-panel">
+            <div class="controls-panel">
+              <div class="panel-title">One-hit wonders vs long-lasting trends</div>
+              <div class="cat-legend cat-legend-inline" data-cat-legend aria-label="Video category legend"></div>
+            </div>
+          </div>
+          <section class="trend-layout" aria-label="Grouped stars by trend type">
+            <div class="trend-viz-col">
+              <div class="trend-grid" id="trend-groups"></div>
             </div>
           </section>
         </div>
-        <div class="legend-wrap" aria-hidden="true">
-          <svg class="legend-star" viewBox="0 0 320 260">
-            <g transform="translate(132 130)">
-              <line x1="0" y1="-88" x2="0" y2="88" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
-              <line x1="-88" y1="0" x2="88" y2="0" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
-              <polygon points="0,-72 26,-26 72,0 26,26 0,72 -26,26 -72,0 -26,-26" fill="rgba(186, 177, 177, 0.08)" stroke="rgba(186, 177, 177, 0.32)" stroke-width="1.1"></polygon>
-              <circle cx="0" cy="0" r="6" fill="none" stroke="rgba(244,238,229,0.9)" stroke-width="1.4" stroke-dasharray="2.2 2.2"></circle>
-              <text x="0" y="-98" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">BPM</text>
-              <text x="98" y="4" text-anchor="start" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">ENERGY</text>
-              <text x="0" y="106" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">DANCEABILITY</text>
-              <text x="-98" y="4" text-anchor="end" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">HAPPINESS</text>
-            </g>
-          </svg>
-        </div>
+        <a class="scroll-arrow" href="#stars-screen" data-view-target="stars" aria-label="Show the small multiples section">
+          <span>↓</span>
+        </a>
       </section>
-      <a class="scroll-arrow" href="#timeline-screen" aria-label="Scroll to the timeline section">
-        <span>↓</span>
-      </a>
-    </section>
 
-    <section class="page-section timeline-screen reveal-section" id="timeline-screen">
-      <div class="timeline-panel">
-        <div class="timeline-heading">Post Date Area Overlap</div>
-        <p class="timeline-caption">
-          All 10 songs now share one timeline. The x-axis stays the post-date timeline, the y-axis shows how many videos were posted, and the metric buttons change the color shading.
-        </p>
-        <div class="timeline-controls" id="timeline-controls" aria-label="Choose timeline metric view"></div>
-        <div class="overview-viz">
-          <div class="timeline-frame" aria-label="Horizontally scrollable timeline frame">
-            <div class="timeline-scroll" id="timeline-scroll">
-              <svg class="overview-svg" id="overview-svg" viewBox="0 0 1200 520" role="img" aria-label="Overlapped post date area chart for all 10 songs"></svg>
-            </div>
+      <section class="page-section stars-screen reveal-section" id="stars-screen">
+        <div class="hero-panels stars-panel">
+          <div class="controls-panel">
+            <div class="panel-title">Sort stars by</div>
+            <div class="controls" id="controls"></div>
+            <div class="cat-legend cat-legend-inline" data-cat-legend aria-label="Video category legend"></div>
           </div>
-          <div class="timeline-legend" id="timeline-legend" aria-label="Timeline legend"></div>
-          <p class="overview-note" id="overview-note">The selected metric controls both height and shading. The curve shape still follows when posts cluster together on the timeline.</p>
         </div>
-      </div>
-      <a class="scroll-arrow" href="#stars-screen" aria-label="Scroll to the star ranking section">
-        <span>↓</span>
-      </a>
-    </section>
-
-    <section class="page-section stars-screen reveal-section" id="stars-screen">
-      <div class="hero-panels stars-panel">
-        <div class="controls-panel">
-          <div class="panel-title">Sort Stars By</div>
-          <div class="controls" id="controls"></div>
-          <div class="cat-legend" id="cat-legend" aria-label="Video category legend"></div>
-        </div>
-      </div>
-      <section class="grid" id="grid" aria-live="polite"></section>
-      <a class="scroll-arrow" href="#cluster-screen" aria-label="Scroll to the video clusters section">
-        <span>↓</span>
-      </a>
-    </section>
-
-    <section class="page-section cluster-screen reveal-section" id="cluster-screen">
-      <div class="cluster-heading">Video Clusters</div>
-      <p class="cluster-caption">
-        Each circle groups every video that used the same song. One mini-star equals one video — packed outward from the center in rings, colored by the song's dominant audio trait.
-      </p>
-      <div class="cluster-grid" id="cluster-grid" aria-live="polite"></div>
-    </section>
+        <section class="grid" id="grid" aria-live="polite"></section>
+      </section>
+    </div>
   </main>
   <div class="focus-overlay" id="focus-overlay" aria-hidden="true">
     <div class="focus-stage" role="dialog" aria-modal="true" aria-label="Expanded song star">
@@ -995,34 +1306,34 @@
     "artist": "Connie Francis",
     "year": 1962,
     "genre": "Pop",
-    "duration": 142,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 13,
+    "duration": 148,
+    "validClipCount": 8,
+    "clipInstances": 10,
+    "avgClipLength": 24.9,
     "bpm": 121,
     "energy": 40,
     "danceability": 78,
     "happiness": 63,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/pretty-little-baby/5GQPBzoRBDxcAjwSSluQXD",
-    "postDate": "2025-05-13"
+    "postDate": "2025-04-29"
   },
   {
     "name": "Hold My Hand",
     "artist": "Jess Glynne",
     "year": 2015,
     "genre": "Dancehall",
-    "duration": 227,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 12,
+    "duration": 215,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 123,
     "energy": 82,
     "danceability": 64,
     "happiness": 43,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/hold-my-hand/1i1rNVtxbE7rdFfpHuNq2j",
-    "postDate": "2025-07-04"
+    "postDate": "2025-06-17"
   },
   {
     "name": "Rock That Body",
@@ -1030,50 +1341,50 @@
     "year": 2009,
     "genre": "Electropop",
     "duration": 268,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 11,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 125,
     "energy": 91,
     "danceability": 72,
     "happiness": 84,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/rock-that-body/2WQ09wqQBIOor7Q0VpIDBK",
-    "postDate": "2025-06-25"
+    "postDate": "2025-06-08"
   },
   {
     "name": "Azul",
     "artist": "J Balvin",
     "year": 2020,
     "genre": "Reggaeton",
-    "duration": 206,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 11,
+    "duration": 205,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 94,
     "energy": 84,
     "danceability": 84,
     "happiness": 65,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/azul/2lCkncy6bIB0LTMT7kvrD1",
-    "postDate": "2025-03-27"
+    "postDate": "2024-04-21"
   },
   {
     "name": "Dame Un Grrr",
     "artist": "Fantomel and Kate Linn",
     "year": 2025,
     "genre": "Pop",
-    "duration": 133,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 6,
+    "duration": 132,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 118,
     "energy": 83,
     "danceability": 90,
     "happiness": 90,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/dame-un-grrr/7ih7pYSRZgWCTXuOmrnXjX",
-    "postDate": "2025-06-24"
+    "postDate": "2025-06-05"
   },
   {
     "name": "APT.",
@@ -1081,16 +1392,16 @@
     "year": 2024,
     "genre": "Pop",
     "duration": 169,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 10,
+    "validClipCount": 3,
+    "clipInstances": 10,
+    "avgClipLength": 30,
     "bpm": 149,
     "energy": 78,
     "danceability": 78,
     "happiness": 94,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/apt/5vNRhkKd0yEAg8suGBpjeY",
-    "postDate": "2024-10-19"
+    "postDate": "2024-10-18"
   },
   {
     "name": "Te Quería Ver",
@@ -1098,16 +1409,16 @@
     "year": 2025,
     "genre": "Reggaeton",
     "duration": 176,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 14,
+    "validClipCount": 3,
+    "clipInstances": 10,
+    "avgClipLength": 13.7,
     "bpm": 100,
     "energy": 76,
     "danceability": 80,
     "happiness": 45,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/te-queria-ver/78HEzDEs1QUnHB2DbxgC1s",
-    "postDate": "2025-04-01"
+    "postDate": "2025-03-03"
   },
   {
     "name": "Stecu Stecu",
@@ -1115,9 +1426,9 @@
     "year": 2025,
     "genre": "Pop",
     "duration": 223,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 14,
+    "validClipCount": 3,
+    "clipInstances": 10,
+    "avgClipLength": 17.7,
     "bpm": 103,
     "energy": 82,
     "danceability": 83,
@@ -1132,16 +1443,16 @@
     "year": 2025,
     "genre": "Pop Rap",
     "duration": 249,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 16,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 129,
     "energy": 59,
     "danceability": 81,
     "happiness": 89,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/anxiety/1musbempyJAw5gfSKZHXP9",
-    "postDate": "2025-03-18"
+    "postDate": "2025-02-24"
   },
   {
     "name": "Sailor Song",
@@ -1149,16 +1460,186 @@
     "year": 2024,
     "genre": "Indie Folk",
     "duration": 211,
-    "validClipCount": 1,
-    "clipInstances": 1,
-    "avgClipLength": 12,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
     "bpm": 95,
     "energy": 41,
     "danceability": 49,
     "happiness": 27,
     "featureSource": "Musicstax",
     "featureUrl": "https://musicstax.com/track/sailor-song/2262bWmqomIaJXwCRHr13j",
-    "postDate": "2025-03-11"
+    "postDate": "2024-08-25"
+  },
+  {
+    "name": "Shake it To The Max (FLY) (Remix)",
+    "artist": "MOLIY, Silent Addy, Skillibeng, Shensea",
+    "year": 2024,
+    "genre": "Hip-Hop",
+    "duration": 178,
+    "validClipCount": 4,
+    "clipInstances": 10,
+    "avgClipLength": 15,
+    "bpm": 98,
+    "energy": 55,
+    "danceability": 86,
+    "happiness": 56,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/shake-it-to-the-max-fly-remix/0QCIpQV3twfqo9kh0t8Zza",
+    "postDate": "2025-04-04"
+  },
+  {
+    "name": "ocean eyes",
+    "artist": "Billie Eilish",
+    "year": 2017,
+    "genre": "Contemporary R&B",
+    "duration": 200,
+    "validClipCount": 1,
+    "clipInstances": 3,
+    "avgClipLength": 17,
+    "bpm": 145,
+    "energy": 36,
+    "danceability": 51,
+    "happiness": 17,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/ocean-eyes/7hDVYcQq6MxkdJGweuCtl9",
+    "postDate": "2025-09-04"
+  },
+  {
+    "name": "No One Noticed",
+    "artist": "The Marias",
+    "year": 2024,
+    "genre": "Alternative/Indie",
+    "duration": 284,
+    "validClipCount": 4,
+    "clipInstances": 10,
+    "avgClipLength": 18,
+    "bpm": 98,
+    "energy": 34,
+    "danceability": 70,
+    "happiness": 46,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/no-one-noticed/3siwsiaEoU4Kuuc9WKMUy5",
+    "postDate": "2025-01-03"
+  },
+  {
+    "name": "back to friends",
+    "artist": "sombr",
+    "year": 2025,
+    "genre": "Alternative/Indie",
+    "duration": 199,
+    "validClipCount": 4,
+    "clipInstances": 10,
+    "avgClipLength": 15,
+    "bpm": 93,
+    "energy": 72,
+    "danceability": 44,
+    "happiness": 24,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/back-to-friends/0FTmksd2dxiE5e3rWyJXs6",
+    "postDate": "2025-03-15"
+  },
+  {
+    "name": "Sparks",
+    "artist": "Coldplay",
+    "year": 2000,
+    "genre": "Alternative Rock",
+    "duration": 227,
+    "validClipCount": 7,
+    "clipInstances": 10,
+    "avgClipLength": 64.6,
+    "bpm": 103,
+    "energy": 27,
+    "danceability": 37,
+    "happiness": 16,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/sparks/7D0RhFcb3CrfPuTJ0obrod",
+    "postDate": "2024-07-22"
+  },
+  {
+    "name": "That's So True",
+    "artist": "Gracie Abrams",
+    "year": 2024,
+    "genre": "Folk-pop",
+    "duration": 166,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
+    "bpm": 109,
+    "energy": 81,
+    "danceability": 55,
+    "happiness": 37,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/thats-so-true/7ne4VBA60CxGM75vw0EYad",
+    "postDate": "2024-12-01"
+  },
+  {
+    "name": "Let Down",
+    "artist": "Radiohead",
+    "year": 1997,
+    "genre": "Alternative Rock",
+    "duration": 299,
+    "validClipCount": 7,
+    "clipInstances": 10,
+    "avgClipLength": 16.7,
+    "bpm": 102,
+    "energy": 68,
+    "danceability": 35,
+    "happiness": 14,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/let-down/2fuYa3Lx06QQJAm0MjztKr",
+    "postDate": "2025-05-24"
+  },
+  {
+    "name": "Suave",
+    "artist": "El Alfa",
+    "year": 2018,
+    "genre": "Dembow",
+    "duration": 211,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
+    "bpm": 120,
+    "energy": 91,
+    "danceability": 88,
+    "happiness": 52,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/suave-remix/4phvdPGXE8MGXsTBhqB5ht",
+    "postDate": "2025-04-20"
+  },
+  {
+    "name": "My Darling",
+    "artist": "Chella",
+    "year": 2025,
+    "genre": "Afrobeats",
+    "duration": 146,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
+    "bpm": 115,
+    "energy": 49,
+    "danceability": 83,
+    "happiness": 62,
+    "featureSource": "SongData.io",
+    "featureUrl": "https://songdata.io/track/7mdvPu1ZAOIgMzr3sfpAqk/My-Darling-by-Chella",
+    "postDate": "2025-04-01"
+  },
+  {
+    "name": "We Hug Now",
+    "artist": "Sydney Rose",
+    "year": 2025,
+    "genre": "Alternative/Indie",
+    "duration": 202,
+    "validClipCount": 0,
+    "clipInstances": 0,
+    "avgClipLength": 0,
+    "bpm": 120,
+    "energy": 33,
+    "danceability": 37,
+    "happiness": 21,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/similar/hold-me-down/4s76r7AbquJcTccqJiqdVu",
+    "postDate": "2025-03-13"
   }
 ]
   </script>
@@ -1169,144 +1650,872 @@
     "name": "Pretty Little Baby",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-04-29", "count": 1 },
-      { "date": "2025-05-04", "count": 1 },
-      { "date": "2025-05-12", "count": 1 },
-      { "date": "2025-05-13", "count": 1 },
-      { "date": "2025-05-14", "count": 1 },
-      { "date": "2025-05-22", "count": 1 },
-      { "date": "2025-06-05", "count": 1 },
-      { "date": "2025-06-10", "count": 1 },
-      { "date": "2025-07-23", "count": 1 },
-      { "date": "2025-08-06", "count": 1 }
+      {
+        "date": "2025-04-29",
+        "count": 1
+      },
+      {
+        "date": "2025-05-04",
+        "count": 1
+      },
+      {
+        "date": "2025-05-12",
+        "count": 1
+      },
+      {
+        "date": "2025-05-13",
+        "count": 1
+      },
+      {
+        "date": "2025-05-14",
+        "count": 1
+      },
+      {
+        "date": "2025-05-22",
+        "count": 1
+      },
+      {
+        "date": "2025-06-05",
+        "count": 1
+      },
+      {
+        "date": "2025-06-10",
+        "count": 1
+      },
+      {
+        "date": "2025-07-23",
+        "count": 1
+      },
+      {
+        "date": "2025-08-06",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Hold My Hand",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-06-17", "count": 1 },
-      { "date": "2025-06-20", "count": 1 },
-      { "date": "2025-07-04", "count": 1 },
-      { "date": "2025-07-06", "count": 1 },
-      { "date": "2025-07-16", "count": 1 },
-      { "date": "2025-07-21", "count": 1 },
-      { "date": "2025-07-22", "count": 1 },
-      { "date": "2025-07-30", "count": 1 },
-      { "date": "2025-08-17", "count": 1 },
-      { "date": "2025-08-21", "count": 1 }
+      {
+        "date": "2025-06-17",
+        "count": 1
+      },
+      {
+        "date": "2025-06-20",
+        "count": 1
+      },
+      {
+        "date": "2025-07-04",
+        "count": 1
+      },
+      {
+        "date": "2025-07-06",
+        "count": 1
+      },
+      {
+        "date": "2025-07-16",
+        "count": 1
+      },
+      {
+        "date": "2025-07-21",
+        "count": 1
+      },
+      {
+        "date": "2025-07-22",
+        "count": 1
+      },
+      {
+        "date": "2025-07-30",
+        "count": 1
+      },
+      {
+        "date": "2025-08-17",
+        "count": 1
+      },
+      {
+        "date": "2025-08-21",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Rock That Body",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-06-08", "count": 1 },
-      { "date": "2025-06-10", "count": 1 },
-      { "date": "2025-06-25", "count": 1 },
-      { "date": "2025-07-23", "count": 1 },
-      { "date": "2025-07-28", "count": 1 },
-      { "date": "2025-08-07", "count": 1 },
-      { "date": "2025-08-17", "count": 1 },
-      { "date": "2025-08-19", "count": 1 },
-      { "date": "2025-08-23", "count": 1 },
-      { "date": "2025-09-09", "count": 1 }
+      {
+        "date": "2025-06-08",
+        "count": 1
+      },
+      {
+        "date": "2025-06-10",
+        "count": 1
+      },
+      {
+        "date": "2025-06-25",
+        "count": 1
+      },
+      {
+        "date": "2025-07-23",
+        "count": 1
+      },
+      {
+        "date": "2025-07-28",
+        "count": 1
+      },
+      {
+        "date": "2025-08-07",
+        "count": 1
+      },
+      {
+        "date": "2025-08-17",
+        "count": 1
+      },
+      {
+        "date": "2025-08-19",
+        "count": 1
+      },
+      {
+        "date": "2025-08-23",
+        "count": 1
+      },
+      {
+        "date": "2025-09-09",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Azul",
     "totalVideos": 10,
     "posts": [
-      { "date": "2024-04-21", "count": 1 },
-      { "date": "2025-02-17", "count": 3 },
-      { "date": "2025-02-18", "count": 1 },
-      { "date": "2025-02-22", "count": 1 },
-      { "date": "2025-02-25", "count": 1 },
-      { "date": "2025-03-22", "count": 1 },
-      { "date": "2025-03-27", "count": 1 },
-      { "date": "2025-03-28", "count": 1 }
+      {
+        "date": "2024-04-21",
+        "count": 1
+      },
+      {
+        "date": "2025-02-07",
+        "count": 1
+      },
+      {
+        "date": "2025-02-16",
+        "count": 1
+      },
+      {
+        "date": "2025-02-17",
+        "count": 2
+      },
+      {
+        "date": "2025-02-18",
+        "count": 1
+      },
+      {
+        "date": "2025-02-22",
+        "count": 1
+      },
+      {
+        "date": "2025-02-25",
+        "count": 1
+      },
+      {
+        "date": "2025-03-22",
+        "count": 1
+      },
+      {
+        "date": "2025-03-27",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Dame Un Grrr",
-    "totalVideos": 1,
+    "totalVideos": 10,
     "posts": [
-      { "date": "2025-06-24", "count": 1 }
+      {
+        "date": "2025-06-05",
+        "count": 1
+      },
+      {
+        "date": "2025-06-09",
+        "count": 1
+      },
+      {
+        "date": "2025-06-12",
+        "count": 1
+      },
+      {
+        "date": "2025-06-13",
+        "count": 1
+      },
+      {
+        "date": "2025-06-18",
+        "count": 1
+      },
+      {
+        "date": "2025-06-19",
+        "count": 1
+      },
+      {
+        "date": "2025-06-21",
+        "count": 2
+      },
+      {
+        "date": "2025-06-22",
+        "count": 1
+      },
+      {
+        "date": "2025-06-24",
+        "count": 1
+      }
     ]
   },
   {
     "name": "APT.",
     "totalVideos": 10,
     "posts": [
-      { "date": "2024-10-18", "count": 1 },
-      { "date": "2024-10-19", "count": 1 },
-      { "date": "2024-10-20", "count": 1 },
-      { "date": "2024-10-22", "count": 1 },
-      { "date": "2024-10-28", "count": 1 },
-      { "date": "2024-10-30", "count": 1 },
-      { "date": "2024-10-31", "count": 1 },
-      { "date": "2024-11-01", "count": 1 },
-      { "date": "2024-11-18", "count": 1 },
-      { "date": "2024-12-07", "count": 1 }
+      {
+        "date": "2024-10-18",
+        "count": 1
+      },
+      {
+        "date": "2024-10-19",
+        "count": 1
+      },
+      {
+        "date": "2024-10-22",
+        "count": 1
+      },
+      {
+        "date": "2024-10-28",
+        "count": 1
+      },
+      {
+        "date": "2024-10-30",
+        "count": 1
+      },
+      {
+        "date": "2024-10-31",
+        "count": 1
+      },
+      {
+        "date": "2024-11-01",
+        "count": 1
+      },
+      {
+        "date": "2024-11-18",
+        "count": 1
+      },
+      {
+        "date": "2024-12-02",
+        "count": 1
+      },
+      {
+        "date": "2024-12-07",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Te Quería Ver",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-03-03", "count": 1 },
-      { "date": "2025-03-18", "count": 1 },
-      { "date": "2025-03-19", "count": 1 },
-      { "date": "2025-03-20", "count": 1 },
-      { "date": "2025-03-22", "count": 1 },
-      { "date": "2025-03-24", "count": 1 },
-      { "date": "2025-03-30", "count": 1 },
-      { "date": "2025-04-01", "count": 1 },
-      { "date": "2025-04-09", "count": 1 },
-      { "date": "2025-04-28", "count": 1 }
+      {
+        "date": "2025-03-03",
+        "count": 1
+      },
+      {
+        "date": "2025-03-18",
+        "count": 1
+      },
+      {
+        "date": "2025-03-19",
+        "count": 1
+      },
+      {
+        "date": "2025-03-20",
+        "count": 1
+      },
+      {
+        "date": "2025-03-22",
+        "count": 1
+      },
+      {
+        "date": "2025-03-24",
+        "count": 1
+      },
+      {
+        "date": "2025-03-30",
+        "count": 1
+      },
+      {
+        "date": "2025-04-01",
+        "count": 1
+      },
+      {
+        "date": "2025-04-09",
+        "count": 1
+      },
+      {
+        "date": "2025-04-28",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Stecu Stecu",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-03-26", "count": 1 },
-      { "date": "2025-04-02", "count": 1 },
-      { "date": "2025-04-06", "count": 4 },
-      { "date": "2025-04-07", "count": 1 },
-      { "date": "2025-04-10", "count": 1 },
-      { "date": "2025-04-11", "count": 1 },
-      { "date": "2025-04-13", "count": 1 }
+      {
+        "date": "2025-03-26",
+        "count": 1
+      },
+      {
+        "date": "2025-04-02",
+        "count": 1
+      },
+      {
+        "date": "2025-04-06",
+        "count": 4
+      },
+      {
+        "date": "2025-04-07",
+        "count": 1
+      },
+      {
+        "date": "2025-04-10",
+        "count": 1
+      },
+      {
+        "date": "2025-04-11",
+        "count": 1
+      },
+      {
+        "date": "2025-04-13",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Anxiety",
     "totalVideos": 10,
     "posts": [
-      { "date": "2025-02-24", "count": 1 },
-      { "date": "2025-03-05", "count": 1 },
-      { "date": "2025-03-07", "count": 1 },
-      { "date": "2025-03-08", "count": 1 },
-      { "date": "2025-03-10", "count": 2 },
-      { "date": "2025-03-14", "count": 1 },
-      { "date": "2025-03-18", "count": 2 },
-      { "date": "2025-04-06", "count": 1 }
+      {
+        "date": "2025-02-24",
+        "count": 1
+      },
+      {
+        "date": "2025-03-05",
+        "count": 1
+      },
+      {
+        "date": "2025-03-07",
+        "count": 1
+      },
+      {
+        "date": "2025-03-08",
+        "count": 1
+      },
+      {
+        "date": "2025-03-10",
+        "count": 2
+      },
+      {
+        "date": "2025-03-14",
+        "count": 1
+      },
+      {
+        "date": "2025-03-18",
+        "count": 2
+      },
+      {
+        "date": "2025-04-06",
+        "count": 1
+      }
     ]
   },
   {
     "name": "Sailor Song",
     "totalVideos": 10,
     "posts": [
-      { "date": "2024-08-25", "count": 1 },
-      { "date": "2024-09-05", "count": 1 },
-      { "date": "2024-09-16", "count": 1 },
-      { "date": "2024-11-20", "count": 1 },
-      { "date": "2024-11-22", "count": 1 },
-      { "date": "2024-12-07", "count": 1 },
-      { "date": "2025-01-03", "count": 1 },
-      { "date": "2025-02-22", "count": 1 },
-      { "date": "2025-03-11", "count": 1 },
-      { "date": "2025-04-21", "count": 1 }
+      {
+        "date": "2024-08-25",
+        "count": 1
+      },
+      {
+        "date": "2024-09-05",
+        "count": 1
+      },
+      {
+        "date": "2024-09-16",
+        "count": 1
+      },
+      {
+        "date": "2024-11-20",
+        "count": 1
+      },
+      {
+        "date": "2024-11-22",
+        "count": 1
+      },
+      {
+        "date": "2024-12-07",
+        "count": 1
+      },
+      {
+        "date": "2025-01-03",
+        "count": 1
+      },
+      {
+        "date": "2025-02-22",
+        "count": 1
+      },
+      {
+        "date": "2025-03-11",
+        "count": 1
+      },
+      {
+        "date": "2025-04-21",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "Shake it To The Max (FLY) (Remix)",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-04-04",
+        "count": 1
+      },
+      {
+        "date": "2025-04-19",
+        "count": 1
+      },
+      {
+        "date": "2025-04-30",
+        "count": 1
+      },
+      {
+        "date": "2025-05-02",
+        "count": 1
+      },
+      {
+        "date": "2025-05-06",
+        "count": 1
+      },
+      {
+        "date": "2025-05-16",
+        "count": 1
+      },
+      {
+        "date": "2025-05-18",
+        "count": 1
+      },
+      {
+        "date": "2025-05-23",
+        "count": 1
+      },
+      {
+        "date": "2025-06-02",
+        "count": 1
+      },
+      {
+        "date": "2025-06-06",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "ocean eyes",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-09-04",
+        "count": 1
+      },
+      {
+        "date": "2025-09-06",
+        "count": 1
+      },
+      {
+        "date": "2025-09-08",
+        "count": 1
+      },
+      {
+        "date": "2025-09-09",
+        "count": 1
+      },
+      {
+        "date": "2025-09-11",
+        "count": 1
+      },
+      {
+        "date": "2025-09-12",
+        "count": 2
+      },
+      {
+        "date": "2025-09-14",
+        "count": 1
+      },
+      {
+        "date": "2025-09-19",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "name": "No One Noticed",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-01-03",
+        "count": 1
+      },
+      {
+        "date": "2025-01-12",
+        "count": 1
+      },
+      {
+        "date": "2025-04-13",
+        "count": 1
+      },
+      {
+        "date": "2025-04-17",
+        "count": 1
+      },
+      {
+        "date": "2025-06-24",
+        "count": 1
+      },
+      {
+        "date": "2025-06-30",
+        "count": 1
+      },
+      {
+        "date": "2025-07-25",
+        "count": 1
+      },
+      {
+        "date": "2025-07-28",
+        "count": 1
+      },
+      {
+        "date": "2025-09-17",
+        "count": 1
+      },
+      {
+        "date": "2026-01-05",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "back to friends",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-03-15",
+        "count": 1
+      },
+      {
+        "date": "2025-03-28",
+        "count": 1
+      },
+      {
+        "date": "2025-05-03",
+        "count": 1
+      },
+      {
+        "date": "2025-05-13",
+        "count": 1
+      },
+      {
+        "date": "2025-05-23",
+        "count": 1
+      },
+      {
+        "date": "2025-05-30",
+        "count": 1
+      },
+      {
+        "date": "2025-07-03",
+        "count": 1
+      },
+      {
+        "date": "2025-08-03",
+        "count": 1
+      },
+      {
+        "date": "2025-09-25",
+        "count": 1
+      },
+      {
+        "date": "2025-09-28",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "Sparks",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2024-07-22",
+        "count": 1
+      },
+      {
+        "date": "2025-01-05",
+        "count": 1
+      },
+      {
+        "date": "2025-05-20",
+        "count": 1
+      },
+      {
+        "date": "2025-06-26",
+        "count": 1
+      },
+      {
+        "date": "2025-07-11",
+        "count": 1
+      },
+      {
+        "date": "2025-08-24",
+        "count": 1
+      },
+      {
+        "date": "2025-10-05",
+        "count": 1
+      },
+      {
+        "date": "2025-11-11",
+        "count": 1
+      },
+      {
+        "date": "2025-11-16",
+        "count": 1
+      },
+      {
+        "date": "2025-11-19",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "That's So True",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2024-12-01",
+        "count": 1
+      },
+      {
+        "date": "2024-12-06",
+        "count": 1
+      },
+      {
+        "date": "2024-12-11",
+        "count": 1
+      },
+      {
+        "date": "2024-12-18",
+        "count": 1
+      },
+      {
+        "date": "2024-12-19",
+        "count": 1
+      },
+      {
+        "date": "2024-12-26",
+        "count": 1
+      },
+      {
+        "date": "2025-01-03",
+        "count": 1
+      },
+      {
+        "date": "2025-01-30",
+        "count": 1
+      },
+      {
+        "date": "2025-03-23",
+        "count": 1
+      },
+      {
+        "date": "2025-12-31",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "Let Down",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-05-24",
+        "count": 1
+      },
+      {
+        "date": "2025-06-04",
+        "count": 1
+      },
+      {
+        "date": "2025-08-13",
+        "count": 1
+      },
+      {
+        "date": "2025-08-15",
+        "count": 2
+      },
+      {
+        "date": "2025-08-18",
+        "count": 1
+      },
+      {
+        "date": "2025-09-08",
+        "count": 1
+      },
+      {
+        "date": "2025-09-17",
+        "count": 1
+      },
+      {
+        "date": "2025-10-12",
+        "count": 1
+      },
+      {
+        "date": "2025-11-06",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "Suave",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-04-20",
+        "count": 1
+      },
+      {
+        "date": "2025-04-24",
+        "count": 2
+      },
+      {
+        "date": "2025-04-28",
+        "count": 1
+      },
+      {
+        "date": "2025-04-30",
+        "count": 1
+      },
+      {
+        "date": "2025-05-06",
+        "count": 1
+      },
+      {
+        "date": "2025-05-07",
+        "count": 1
+      },
+      {
+        "date": "2025-05-08",
+        "count": 1
+      },
+      {
+        "date": "2025-05-19",
+        "count": 1
+      },
+      {
+        "date": "2025-06-25",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "My Darling",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-04-01",
+        "count": 1
+      },
+      {
+        "date": "2025-04-08",
+        "count": 1
+      },
+      {
+        "date": "2025-04-14",
+        "count": 1
+      },
+      {
+        "date": "2025-04-17",
+        "count": 1
+      },
+      {
+        "date": "2025-04-21",
+        "count": 1
+      },
+      {
+        "date": "2025-04-26",
+        "count": 1
+      },
+      {
+        "date": "2025-05-06",
+        "count": 1
+      },
+      {
+        "date": "2025-05-18",
+        "count": 1
+      },
+      {
+        "date": "2025-05-25",
+        "count": 1
+      },
+      {
+        "date": "2025-10-01",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "name": "We Hug Now",
+    "totalVideos": 10,
+    "posts": [
+      {
+        "date": "2025-03-13",
+        "count": 1
+      },
+      {
+        "date": "2025-03-14",
+        "count": 1
+      },
+      {
+        "date": "2025-04-05",
+        "count": 1
+      },
+      {
+        "date": "2025-05-05",
+        "count": 1
+      },
+      {
+        "date": "2025-05-06",
+        "count": 1
+      },
+      {
+        "date": "2025-05-08",
+        "count": 1
+      },
+      {
+        "date": "2025-05-29",
+        "count": 1
+      },
+      {
+        "date": "2025-06-05",
+        "count": 2
+      },
+      {
+        "date": "2025-07-17",
+        "count": 1
+      }
     ]
   }
 ]
@@ -1338,14 +2547,6 @@
     const bpmValues = data.map((item) => item.bpm);
     const bpmMin = Math.min(...bpmValues);
     const bpmMax = Math.max(...bpmValues);
-    const controls = [
-      { key: "original", label: "TikTok Top 10" },
-      { key: "postDate", label: "Newest Post" },
-      { key: "bpm", label: "Highest BPM" },
-      { key: "energy", label: "Most Energy" },
-      { key: "danceability", label: "Most Danceable" },
-      { key: "happiness", label: "Happiest" }
-    ];
     const timelineMetricControls = [
       { key: "bpm", label: "BPM" },
       { key: "energy", label: "Energy" },
@@ -1372,33 +2573,296 @@
     };
 
     const songVideoCategories = {
-      "Pretty Little Baby": ["Wholesome/Emotional","Lip Sync","Animals","Lip Sync","Animals","Animals","Aesthetic","Aesthetic","Animals","Celebrity"],
-      "Hold My Hand":        ["Humor","Animals","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Humor"],
-      "Rock That Body":      ["Animals","Lip Sync","Lip Sync","Advertisement","Lip Sync","Hair + Makeup","Advertisement","Lip Sync","Lip Sync","Lip Sync"],
-      "Azul":                ["Wholesome/Emotional","Dance","Dance","Dance","Dance","Dance","Tutorial","Dance","Lip Sync","Dance"],
-      "Dame Un Grrr":        ["Animals","Animals","Lip Sync","Lip Sync","Lip Sync","Hair + Makeup","Edit","Animals","Animals","Animals"],
-      "APT.":                ["Animals","Dance","Celebrity","Celebrity","Celebrity","Dance","Celebrity","Lip Sync","Wholesome/Emotional","Animals"],
-      "Te Quería Ver":       ["Dance","Dance","Dance","Dance","Dance","Dance","Dance","Lip Sync","Dance","Lip Sync"],
-      "Stecu Stecu":         ["Humor","Dance","Lip Sync","Dance","Dance","Dance","Dance","Dance","Humor","Dance"],
-      "Anxiety":             ["Celebrity","Humor","Dance","Humor","Celebrity","Dance","Hair + Makeup","Humor","Dance","Humor"],
-      "Sailor Song":         ["Wholesome/Emotional","Wholesome/Emotional","Humor","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Aesthetic","Wholesome/Emotional","Art","Wholesome/Emotional"]
-    };
+      "Pretty Little Baby": [
+            "Wholesome/Emotional",
+            "Lip Sync",
+            "Animals",
+            "Lip Sync",
+            "Animals",
+            "Animals",
+            "Aesthetic",
+            "Aesthetic",
+            "Animals",
+            "Tutorial"
+      ],
+      "Hold My Hand": [
+            "Humor",
+            "Animals",
+            "Humor",
+            "Humor",
+            "Humor",
+            "Humor",
+            "Humor",
+            "Humor",
+            "Humor",
+            "Humor"
+      ],
+      "Rock That Body": [
+            "Animals",
+            "Lip Sync",
+            "Lip Sync",
+            "Edit",
+            "Lip Sync",
+            "Hair + Makeup",
+            "Unboxing",
+            "Lip Sync",
+            "Lip Sync",
+            "Lip Sync"
+      ],
+      "Azul": [
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Tutorial",
+            "Dance",
+            "Dance",
+            "Dance"
+      ],
+      "Dame Un Grrr": [
+            "Animals",
+            "Animals",
+            "Lip Sync",
+            "Lip Sync",
+            "Lip Sync",
+            "Hair + Makeup",
+            "Edit",
+            "Animals",
+            "Animals",
+            "Animals"
+      ],
+      "APT.": [
+            "Animals",
+            "Dance",
+            "Lip Sync",
+            "Dance",
+            "Dance",
+            "Lip Sync",
+            "Lip Sync",
+            "Dance",
+            "Animals",
+            "Dance"
+      ],
+      "Te Quería Ver": [
+            "Dance",
+            "Humor",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Lip Sync",
+            "Dance",
+            "Lip Sync",
+            "Lip Sync",
+            "Lip Sync"
+      ],
+      "Stecu Stecu": [
+            "Humor",
+            "Dance",
+            "Lip Sync",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Humor",
+            "Dance"
+      ],
+      "Anxiety": [
+            "Dance",
+            "Humor",
+            "Dance",
+            "Humor",
+            "Humor",
+            "Dance",
+            "Hair + Makeup",
+            "Humor",
+            "Dance",
+            "Humor"
+      ],
+      "Sailor Song": [
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Humor",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Aesthetic",
+            "Wholesome/Emotional",
+            "Art",
+            "Wholesome/Emotional"
+      ],
+      "Shake it To The Max (FLY) (Remix)": [
+            "Humor",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Art",
+            "Dance",
+            "Humor",
+            "Dance",
+            "Humor",
+            "Humor"
+      ],
+      "ocean eyes": [
+            "Animals",
+            "Aesthetic",
+            "Aesthetic",
+            "Aesthetic",
+            "Tutorial",
+            "Humor",
+            "Aesthetic",
+            "Humor",
+            "Humor",
+            "Animals"
+      ],
+      "No One Noticed": [
+            "Aesthetic",
+            "Wholesome/Emotional",
+            "Humor",
+            "Animals",
+            "Wholesome/Emotional",
+            "Humor",
+            "Animals",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional"
+      ],
+      "back to friends": [
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Aesthetic",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Lip Sync",
+            "Wholesome/Emotional",
+            "Aesthetic",
+            "Aesthetic"
+      ],
+      "Sparks": [
+            "Animals",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Animals",
+            "Aesthetic",
+            "Wholesome/Emotional",
+            "Aesthetic",
+            "Wholesome/Emotional",
+            "Animals"
+      ],
+      "That's So True": [
+            "Lip Sync",
+            "Lip Sync",
+            "Edit",
+            "Lip Sync",
+            "Lip Sync",
+            "Edit",
+            "Wholesome/Emotional",
+            "Humor",
+            "Lip Sync",
+            "Lip Sync"
+      ],
+      "Let Down": [
+            "Animals",
+            "Humor",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Animals",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional"
+      ],
+      "Suave": [
+            "Dance",
+            "Dance",
+            "Dance",
+            "Dance",
+            "Humor",
+            "Aesthetic",
+            "Dance",
+            "Humor",
+            "Dance",
+            "Dance"
+      ],
+      "My Darling": [
+            "Edit",
+            "Edit",
+            "Dance",
+            "Humor",
+            "Humor",
+            "Dance",
+            "Aesthetic",
+            "Dance",
+            "Dance",
+            "Dance"
+      ],
+      "We Hug Now": [
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Animals",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional",
+            "Wholesome/Emotional"
+      ]
+};
 
-    const CAT_CIRCLE_POSITIONS = [
-      { x: 0, y: -20 }, { x: 20, y: 0 }, { x: 0, y: 20 }, { x: -20, y: 0 },
-      { x: 0, y: -42 }, { x: 36.4, y: -21 }, { x: 36.4, y: 21 },
-      { x: 0, y: 42 }, { x: -36.4, y: 21 }, { x: -36.4, y: -21 }
-    ];
+    const CAT_CIRCLE_ANGLES = [-90, -18, 54, 126, -162, -54, 18, 90, 162, -126];
+    const CAT_CIRCLE_FRACTIONS = [0.62, 0.54, 0.46, 0.38, 0.3, 0.24, 0.18];
+    const starColorOpacity = 0.46;
 
     function catColor(cat) {
       return CAT_COLORS[cat] || CAT_COLORS["default"];
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function categoryCountsMarkup(videoCats) {
+      const counts = videoCats.reduce((acc, category) => {
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {});
+      const entries = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+      if (!entries.length) {
+        return "";
+      }
+      return `
+        <div class="category-counts" aria-label="Video category counts">
+          <div class="category-count-heading">Video categories</div>
+          <div class="category-count-list">
+            ${entries.map(([category, count]) => `
+              <span class="category-count">
+                <span class="category-count-dot" style="background:${catColor(category)};"></span>
+                <span><strong>${count}</strong> ${escapeHtml(category)}</span>
+              </span>
+            `).join("")}
+          </div>
+        </div>
+      `;
     }
 
     const controlsEl = document.getElementById("controls");
     const timelineControlsEl = document.getElementById("timeline-controls");
     const timelineScrollEl = document.getElementById("timeline-scroll");
     const timelineLegendEl = document.getElementById("timeline-legend");
+    const trendGroupsEl = document.getElementById("trend-groups");
     const gridEl = document.getElementById("grid");
+    const catLegendEls = document.querySelectorAll("[data-cat-legend]");
     const overviewStatsEl = document.getElementById("overview-stats");
     const overviewSvgEl = document.getElementById("overview-svg");
     const overviewNoteEl = document.getElementById("overview-note");
@@ -1428,6 +2892,14 @@
     });
     let activeTimelineMetric = "bpm";
     let timelineScrollInitialized = false;
+    const controls = [
+      { key: "original", label: "TikTok Top 20" },
+      { key: "longestTrend", label: "Longest Trend" },
+      { key: "bpm", label: "Highest BPM" },
+      { key: "energy", label: "Most Energy" },
+      { key: "danceability", label: "Most Danceable" },
+      { key: "happiness", label: "Happiest" }
+    ];
 
     function averageFor(key) {
       return Math.round(data.reduce((sum, item) => sum + item[key], 0) / data.length);
@@ -1452,6 +2924,59 @@
       }
       const date = new Date(`${dateString}T00:00:00`);
       return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function expandedPostDates(item) {
+      const series = timelineByName.get(item.name);
+      return (series?.posts || [])
+        .flatMap((post) => {
+          const date = parsePostDate(post.date);
+          const count = Math.max(0, Number(post.count) || 0);
+          return date ? Array.from({ length: count }, () => date) : [];
+        })
+        .sort((a, b) => a - b);
+    }
+
+    function maxPostsWithinWindow(dates, windowDays) {
+      const dayMs = 24 * 60 * 60 * 1000;
+      let max = 0;
+      let end = 0;
+      for (let start = 0; start < dates.length; start += 1) {
+        while (end < dates.length && (dates[end] - dates[start]) / dayMs < windowDays) {
+          end += 1;
+        }
+        max = Math.max(max, end - start);
+      }
+      return max;
+    }
+
+    function trendStats(item) {
+      const dates = expandedPostDates(item);
+      const dayMs = 24 * 60 * 60 * 1000;
+      const total = dates.length;
+      const spanDays = total > 1 ? Math.round((dates[dates.length - 1] - dates[0]) / dayMs) + 1 : total;
+      const maxThirtyDayPosts = maxPostsWithinWindow(dates, 30);
+      const thirtyDayShare = total ? maxThirtyDayPosts / total : 0;
+      return { spanDays, total, maxThirtyDayPosts, thirtyDayShare };
+    }
+
+    function trendProfile(item) {
+      const { spanDays, total, maxThirtyDayPosts, thirtyDayShare } = trendStats(item);
+      const isOneHitWonder = total > 0 && thirtyDayShare >= 0.8;
+      const kind = isOneHitWonder ? "one-hit" : "long";
+      const isLongTrend = kind === "long";
+      return {
+        kind,
+        label: isLongTrend ? "Long-Lasting Trend" : "One-Hit Wonder",
+        detail: isLongTrend ? `${spanDays || 0}-day run` : `${maxThirtyDayPosts}/${total} in 30 days`,
+        spanDays,
+        timelineDash: isLongTrend ? "10 7" : "2.5 4",
+        clusterDash: isLongTrend ? "8 8" : "3 5"
+      };
+    }
+
+    function trendBadge(profile) {
+      return `<span class="trend-badge" data-trend="${profile.kind}">${profile.label}</span>`;
     }
 
     function bpmNormalized(value) {
@@ -1575,6 +3100,90 @@
       };
     }
 
+    function crossProduct(ax, ay, bx, by) {
+      return ax * by - ay * bx;
+    }
+
+    function pointInPolygon([px, py], polygon) {
+      let inside = false;
+      for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index, index += 1) {
+        const [x1, y1] = polygon[index];
+        const [x2, y2] = polygon[previous];
+        const crossesY = (y1 > py) !== (y2 > py);
+        const xAtY = ((x2 - x1) * (py - y1)) / ((y2 - y1) || 1) + x1;
+        if (crossesY && px < xAtY) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    }
+
+    function distanceToSegment(px, py, ax, ay, bx, by) {
+      const dx = bx - ax;
+      const dy = by - ay;
+      const lengthSquared = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSquared));
+      const x = ax + t * dx;
+      const y = ay + t * dy;
+      return Math.hypot(px - x, py - y);
+    }
+
+    function distanceToPolygonEdge([px, py], polygon) {
+      return polygon.reduce((nearest, point, index) => {
+        const next = polygon[(index + 1) % polygon.length];
+        return Math.min(nearest, distanceToSegment(px, py, point[0], point[1], next[0], next[1]));
+      }, Infinity);
+    }
+
+    function rayDistanceToPolygon(polygon, angle) {
+      const dx = Math.cos(angle);
+      const dy = Math.sin(angle);
+      let nearest = Infinity;
+      polygon.forEach((point, index) => {
+        const next = polygon[(index + 1) % polygon.length];
+        const sx = next[0] - point[0];
+        const sy = next[1] - point[1];
+        const denominator = crossProduct(dx, dy, sx, sy);
+        if (Math.abs(denominator) < 0.00001) {
+          return;
+        }
+        const t = crossProduct(point[0], point[1], sx, sy) / denominator;
+        const u = crossProduct(point[0], point[1], dx, dy) / denominator;
+        if (t > 0 && u >= 0 && u <= 1) {
+          nearest = Math.min(nearest, t);
+        }
+      });
+      return Number.isFinite(nearest) ? nearest : 0;
+    }
+
+    function categoryCircleMarkup(geometry, videoCats, desiredRadius = 18, blurPadding = 5) {
+      const polygon = geometry.points;
+      return CAT_CIRCLE_ANGLES.map((degrees, index) => {
+        const angle = (degrees * Math.PI) / 180;
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
+        const boundaryDistance = rayDistanceToPolygon(polygon, angle);
+        let selected = null;
+        for (const fraction of CAT_CIRCLE_FRACTIONS) {
+          const point = [dx * boundaryDistance * fraction, dy * boundaryDistance * fraction];
+          if (!pointInPolygon(point, polygon)) {
+            continue;
+          }
+          const safeRadius = distanceToPolygonEdge(point, polygon);
+          if (safeRadius >= desiredRadius + blurPadding) {
+            selected = { point, safeRadius };
+            break;
+          }
+          if (!selected || safeRadius > selected.safeRadius) {
+            selected = { point, safeRadius };
+          }
+        }
+        selected ||= { point: [0, 0], safeRadius: distanceToPolygonEdge([0, 0], polygon) };
+        const radius = Math.max(3, Math.min(desiredRadius, selected.safeRadius - blurPadding));
+        return `<circle cx="${selected.point[0].toFixed(1)}" cy="${selected.point[1].toFixed(1)}" r="${radius.toFixed(1)}" fill="${catColor(videoCats[index] || "")}" opacity="${starColorOpacity}"></circle>`;
+      }).join("");
+    }
+
     function smallDataStarPoints(item, cx, cy) {
       const geometry = starGeometry(item, 6.4, 3.4, 4);
       return pointString(geometry.points.map(([x, y]) => [cx + x, cy + y]));
@@ -1594,19 +3203,15 @@
       ]);
     }
 
-    function cardHue(item) {
-      return Math.round(190 + item.happiness * 0.45);
-    }
-
     function sortedData(mode) {
       if (mode === "original") {
         return [...data];
       }
-      if (mode === "postDate") {
+      if (mode === "longestTrend") {
         return [...data].sort((a, b) => {
-          const aTime = Date.parse(a.postDate || "");
-          const bTime = Date.parse(b.postDate || "");
-          return bTime - aTime || a.name.localeCompare(b.name);
+          const aStats = trendStats(a);
+          const bStats = trendStats(b);
+          return bStats.spanDays - aStats.spanDays || aStats.thirtyDayShare - bStats.thirtyDayShare || a.name.localeCompare(b.name);
         });
       }
       return [...data].sort((a, b) => b[mode] - a[mode] || a.name.localeCompare(b.name));
@@ -1642,7 +3247,12 @@
     }
 
     function bindTooltips() {
-      const wraps = [...gridEl.querySelectorAll(".viz-wrap")];
+      const wraps = [trendGroupsEl, gridEl]
+        .filter(Boolean)
+        .flatMap((root) => [...root.querySelectorAll(".viz-wrap")]);
+      if (!wraps.length) {
+        return;
+      }
       const wrapRects = wraps.map((wrap) => ({ wrap, rect: wrap.getBoundingClientRect() }));
       const minLeft = Math.min(...wrapRects.map(({ rect }) => rect.left));
       const maxRight = Math.max(...wrapRects.map(({ rect }) => rect.right));
@@ -1650,9 +3260,10 @@
 
       wrapRects.forEach(({ wrap, rect: initialRect }) => {
         const tooltip = wrap.querySelector(".tooltip");
-        if (!tooltip) {
+        if (!tooltip || wrap.dataset.tooltipBound === "true") {
           return;
         }
+        wrap.dataset.tooltipBound = "true";
 
         if (Math.abs(initialRect.left - minLeft) <= edgeTolerance) {
           wrap.dataset.tooltipEdge = "leftmost";
@@ -1695,16 +3306,32 @@
           tooltip.style.top = `${top}px`;
         }
 
-        wrap.addEventListener("mouseenter", (event) => {
+        function showTooltip(event) {
           tooltip.classList.add("is-visible");
+          tooltip.setAttribute("aria-hidden", "false");
           moveTooltip(event);
-        });
+        }
+
+        function showCenteredTooltip() {
+          const rect = wrap.getBoundingClientRect();
+          showTooltip({
+            clientX: rect.left + rect.width / 2,
+            clientY: rect.top + rect.height / 2
+          });
+        }
+
+        function hideTooltip() {
+          tooltip.classList.remove("is-visible");
+          tooltip.setAttribute("aria-hidden", "true");
+        }
+
+        wrap.addEventListener("mouseenter", showTooltip);
 
         wrap.addEventListener("mousemove", moveTooltip);
 
-        wrap.addEventListener("mouseleave", () => {
-          tooltip.classList.remove("is-visible");
-        });
+        wrap.addEventListener("mouseleave", hideTooltip);
+        wrap.addEventListener("focus", showCenteredTooltip);
+        wrap.addEventListener("blur", hideTooltip);
       });
     }
 
@@ -1869,6 +3496,7 @@
       const layers = timelineLayerData.map(({ row, posts }) => {
         const metricValue = timelineMetricValue(row.item, metricKey);
         const color = timelineMetricColor(row.item, metricKey);
+        const trend = trendProfile(row.item);
         const barFill = hexToRgba(color, 0.1 + metricValue * 0.2);
         const starPositions = [];
         const barsAndStars = posts.map((post) => {
@@ -1878,7 +3506,7 @@
           const stars = Array.from({ length: post.count }, (_, i) => {
             const y = scaleY(i + 1);
             starPositions.push({ x: postX, y });
-            return `<polygon points="${smallDataStarPoints(row.item, postX, y)}" fill="${hexToRgba(palette.offWhite, 0.92)}" stroke="${hexToRgba(color, 0.96)}" stroke-width="1.2" stroke-linejoin="round"></polygon>`;
+            return `<polygon points="${smallDataStarPoints(row.item, postX, y)}" fill="${hexToRgba(palette.offWhite, 0.72)}" stroke="${hexToRgba(color, starColorOpacity)}" stroke-width="1.2" stroke-linejoin="round"></polygon>`;
           }).join("");
           return `<rect x="${postX - barHalfW}" y="${barTop}" width="${barHalfW * 2}" height="${barBase - barTop}" fill="${barFill}" stroke="${hexToRgba(color, 0.28)}" stroke-width="0.5" rx="2"></rect>${stars}`;
         }).join("");
@@ -1890,16 +3518,18 @@
           const ecy = (Math.min(...ys) + Math.max(...ys)) / 2;
           const erx = Math.max((Math.max(...xs) - Math.min(...xs)) / 2 + barHalfW + 14, 14);
           const ery = Math.max((Math.max(...ys) - Math.min(...ys)) / 2 + 20, 20);
-          groupEllipse = `<ellipse cx="${ecx}" cy="${ecy}" rx="${erx}" ry="${ery}" fill="${hexToRgba(color, 0.05)}" stroke="${hexToRgba(color, 0.44)}" stroke-width="1.4" stroke-dasharray="5 4"></ellipse>`;
+          groupEllipse = `<ellipse cx="${ecx}" cy="${ecy}" rx="${erx}" ry="${ery}" fill="${hexToRgba(color, 0.05)}" stroke="${hexToRgba(color, 0.44)}" stroke-width="1.4" stroke-dasharray="${trend.timelineDash}"></ellipse>`;
         }
         return `${groupEllipse}${barsAndStars}`;
       }).join("");
       const legend = timelineRows.map((row) => {
         const color = timelineMetricColor(row.item, metricKey);
+        const trend = trendProfile(row.item);
         return `
           <div class="timeline-legend-item">
             <span class="timeline-legend-swatch" style="background:${hexToRgba(color, 0.14)}; color:${color};"></span>
             <span>${row.item.name}</span>
+            ${trendBadge(trend)}
           </div>
         `;
       }).join("");
@@ -1907,18 +3537,22 @@
       const lastDateLabel = formatPostDate(new Date(maxTimeRaw).toISOString().slice(0, 10));
       const metricLabel = timelineMetricControls.find((control) => control.key === metricKey)?.label || "Metric";
       if (overviewNoteEl) {
-        overviewNoteEl.textContent = `Each bar shows exactly how many videos were posted on that date. Stars stack vertically — one star per video. Dashed ovals group all posts from the same song. Scroll left to reach the earlier 2024 posts.`;
+        overviewNoteEl.textContent = `Each bar shows exactly how many videos were posted on that date. Long-lasting trends use wider dashed ovals; one-hit wonders use tighter dashed ovals. Scroll left to reach the earlier 2024 posts.`;
       }
       if (timelineLegendEl) {
         timelineLegendEl.innerHTML = legend;
       }
 
+      const trendCounts = data.reduce((counts, item) => {
+        counts[trendProfile(item).kind] += 1;
+        return counts;
+      }, { long: 0, "one-hit": 0 });
       overviewStatsEl.innerHTML = `
         <div class="overview-stat"><span class="overview-value">${data.length}</span><span class="overview-label">Sounds</span></div>
         <div class="overview-stat"><span class="overview-value">${totalInstances}</span><span class="overview-label">Clip Instances</span></div>
         <div class="overview-stat"><span class="overview-value">${bpmMin}-${bpmMax}</span><span class="overview-label">BPM Range</span></div>
-        <div class="overview-stat"><span class="overview-value">${averageFor("energy")}</span><span class="overview-label">Avg Energy</span></div>
-        <div class="overview-stat"><span class="overview-value">${averageFor("danceability")}</span><span class="overview-label">Avg Danceability</span></div>
+        <div class="overview-stat"><span class="overview-value">${trendCounts.long}</span><span class="overview-label">Long-Lasting Trends</span></div>
+        <div class="overview-stat"><span class="overview-value">${trendCounts["one-hit"]}</span><span class="overview-label">One-Hit Wonders</span></div>
       `;
 
       overviewSvgEl.setAttribute("viewBox", `0 0 ${chartWidth} ${svgHeight}`);
@@ -1989,6 +3623,10 @@
       if (!introScreenEl) {
         return;
       }
+      if (!introScreenEl.classList.contains("is-active-view")) {
+        introScreenEl.style.opacity = "";
+        return;
+      }
 
       const fadeDistance = Math.max(introScreenEl.offsetHeight * 0.72, window.innerHeight * 0.55);
       const progress = Math.max(0, Math.min(window.scrollY / fadeDistance, 1));
@@ -2019,21 +3657,180 @@
       window.addEventListener("resize", requestUpdate);
     }
 
+    function renderGroupedStars() {
+      const groupedItems = [
+        { kind: "one-hit", label: "One-Hit Wonder", items: [] },
+        { kind: "long", label: "Long-Lasting Trend", items: [] }
+      ];
+      data.forEach((item) => {
+        const profile = trendProfile(item);
+        const group = groupedItems.find((entry) => entry.kind === profile.kind);
+        if (group) {
+          group.items.push(item);
+        }
+      });
+
+      function seededRandom(seedText) {
+        let seed = 1779033703 ^ seedText.length;
+        for (let index = 0; index < seedText.length; index += 1) {
+          seed = Math.imul(seed ^ seedText.charCodeAt(index), 3432918353);
+          seed = (seed << 13) | (seed >>> 19);
+        }
+        return () => {
+          seed = Math.imul(seed ^ (seed >>> 16), 2246822507);
+          seed = Math.imul(seed ^ (seed >>> 13), 3266489909);
+          seed ^= seed >>> 16;
+          return (seed >>> 0) / 4294967296;
+        };
+      }
+
+      function clusterPositions(items, groupKind) {
+        const placed = [];
+        const minDistance = groupKind === "long" ? 30 : 27;
+        const clusterSpread = groupKind === "long" ? 46 : 38;
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        items.forEach((item, index) => {
+          const random = seededRandom(`${groupKind}-${item.name}-${index}`);
+          let best = null;
+          let bestDistance = -1;
+          for (let attempt = 0; attempt < 400; attempt += 1) {
+            const angle = random() * Math.PI * 2;
+            const radius = Math.sqrt(random()) * clusterSpread;
+            const candidate = {
+              x: clamp(50 + Math.cos(angle) * radius, 9, 91),
+              y: clamp(50 + Math.sin(angle) * radius * 0.9, 11, 89)
+            };
+            const nearest = placed.length
+              ? Math.min(...placed.map((point) => Math.hypot(candidate.x - point.x, (candidate.y - point.y) * 1.08)))
+              : Infinity;
+            if (nearest > bestDistance) {
+              bestDistance = nearest;
+              best = candidate;
+            }
+            if (nearest >= minDistance) {
+              break;
+            }
+          }
+          placed.push({
+            ...best,
+            scale: 1 + random() * 0.1,
+            rotate: Math.round(random() * 84 - 42),
+            floatDuration: (4.6 + random() * 1.4).toFixed(2),
+            floatDelay: (-random() * 3.5).toFixed(2),
+            floatDistance: Math.round(5 + random() * 6)
+          });
+        });
+        return placed;
+      }
+
+      function escapeSvgText(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function songNameLines(name) {
+        const words = name.split(/\s+/);
+        const lines = [];
+        let current = "";
+        words.forEach((word) => {
+          const next = current ? `${current} ${word}` : word;
+          if (next.length > 13 && current) {
+            lines.push(current);
+            current = word;
+          } else {
+            current = next;
+          }
+        });
+        if (current) {
+          lines.push(current);
+        }
+        if (lines.length <= 3) {
+          return lines;
+        }
+        return [
+          lines[0],
+          lines[1],
+          lines.slice(2).join(" ")
+        ];
+      }
+
+      function songNameSvgText(name) {
+        const lines = songNameLines(name);
+        const fontSize = lines.length > 3 ? 14 : lines.length > 2 ? 15 : 17;
+        const lineGap = fontSize + 2;
+        const startY = -((lines.length - 1) * lineGap) / 2 + 6;
+        return `
+          <text class="trend-star-name" x="0" y="${startY}" font-size="${fontSize}">
+            ${lines.map((line, index) => `<tspan x="0" dy="${index === 0 ? 0 : lineGap}">${escapeSvgText(line)}</tspan>`).join("")}
+          </text>
+        `;
+      }
+
+      function renderStarCard(item, index, position) {
+        const stroke = `rgba(243, 237, 232, 0.76)`;
+        const geometry = starGeometry(item, 92, 30, 46);
+        const clipId = `trend-star-clip-${index}`;
+        const outlinePoints = pointString(geometry.points);
+        const videoCats = songVideoCategories[item.name] || [];
+        const trend = trendProfile(item);
+        return `
+          <article class="card" data-card-key="${item.name}" data-trend="${trend.kind}" style="--stroke:${stroke}; --cluster-x:${position.x}%; --cluster-y:${position.y}%; --cluster-scale:${position.scale}; --star-rotate:${position.rotate}deg; --float-duration:${position.floatDuration}s; --float-delay:${position.floatDelay}s; --float-distance:-${position.floatDistance}px;" aria-label="${item.name} by ${item.artist}">
+            <div class="viz-wrap" tabindex="0">
+              <svg viewBox="0 0 240 240" role="img" aria-label="${item.name} audio star">
+                <defs>
+                  <clipPath id="${clipId}">
+                    <polygon points="${outlinePoints}"></polygon>
+                  </clipPath>
+                </defs>
+                <g transform="translate(120 120)">
+                  <g clip-path="url(#${clipId})">
+                    <polygon points="${outlinePoints}" fill="rgba(243,237,232,0.05)"></polygon>
+                    <g style="filter: blur(6px);">
+                      ${categoryCircleMarkup(geometry, videoCats)}
+                    </g>
+                  </g>
+                  <polygon class="star-outline" points="${outlinePoints}"></polygon>
+                  ${songNameSvgText(item.name)}
+                </g>
+              </svg>
+            </div>
+          </article>
+        `;
+      }
+
+      let cardIndex = 0;
+      trendGroupsEl.innerHTML = groupedItems.map((group) => {
+        const positions = clusterPositions(group.items, group.kind);
+        return `
+          <section class="trend-group" data-trend="${group.kind}" aria-label="${group.label}">
+            <div class="trend-group-header">
+              <h2 class="trend-group-title">${group.label}</h2>
+              <span class="trend-group-count">${group.items.length} songs</span>
+            </div>
+            <div class="trend-star-list">
+              ${group.items.map((item, index) => renderStarCard(item, cardIndex++, positions[index])).join("")}
+            </div>
+          </section>
+        `;
+      }).join("");
+
+    }
+
     function render(mode = "original") {
       const previousPositions = captureCardPositions();
       renderControls(mode);
       const items = sortedData(mode);
       gridEl.innerHTML = items.map((item, index) => {
-        const artworkUrl = artworkByName[item.name];
         const stroke = `rgba(243, 237, 232, 0.76)`;
-        const halo = `rgba(243, 237, 232, 0.08)`;
         const geometry = starGeometry(item, 92, 30, 46);
-        const clipId = `star-clip-${index}`;
-        const starId = `star-shape-${index}`;
+        const clipId = `rank-star-clip-${index}`;
         const outlinePoints = pointString(geometry.points);
         const videoCats = songVideoCategories[item.name] || [];
+        const trend = trendProfile(item);
         return `
-          <article class="card" data-card-key="${item.name}" style="--stroke:${stroke};">
+          <article class="card" data-card-key="${item.name}" data-trend="${trend.kind}" style="--stroke:${stroke};">
             <div class="viz-wrap">
               <svg viewBox="0 0 240 240" role="img" aria-label="${item.name} star showing BPM, energy, danceability, and happiness">
                 <defs>
@@ -2048,8 +3845,8 @@
                   <polygon class="guide" points="${guidePoints(62, 30)}"></polygon>
                   <g clip-path="url(#${clipId})">
                     <polygon points="${outlinePoints}" fill="rgba(243,237,232,0.05)"></polygon>
-                    <g style="filter: blur(8px);">
-                      ${CAT_CIRCLE_POSITIONS.map((pos, i) => `<circle cx="${pos.x}" cy="${pos.y}" r="52" fill="${catColor(videoCats[i] || "")}" opacity="1"></circle>`).join("")}
+                    <g style="filter: blur(6px);">
+                      ${categoryCircleMarkup(geometry, videoCats)}
                     </g>
                   </g>
                   <polygon class="star-outline" points="${outlinePoints}"></polygon>
@@ -2061,16 +3858,12 @@
                 </g>
               </svg>
               <div class="tooltip" role="tooltip" aria-hidden="true">
-                ${artworkUrl ? `<img class="tooltip-cover" src="${artworkUrl}" alt="${item.name} cover art">` : ""}
-                <div class="tooltip-row"><span class="tooltip-label">Post Date</span><span class="tooltip-value">${formatPostDate(item.postDate)}</span></div>
-                <div class="tooltip-row"><span class="tooltip-label">BPM</span><span class="tooltip-value">${item.bpm}</span></div>
-                <div class="tooltip-row"><span class="tooltip-label">Energy</span><span class="tooltip-value">${item.energy}/100</span></div>
-                <div class="tooltip-row"><span class="tooltip-label">Danceability</span><span class="tooltip-value">${item.danceability}/100</span></div>
-                <div class="tooltip-row"><span class="tooltip-label">Happiness</span><span class="tooltip-value">${item.happiness}/100</span></div>
+                ${categoryCountsMarkup(videoCats)}
               </div>
             </div>
             <h2 class="title">${item.name}</h2>
             <div class="artist">${item.artist}</div>
+            ${trendBadge(trend)}
           </article>
         `;
       }).join("");
@@ -2091,112 +3884,146 @@
       }
     });
 
-    function packDotPositions(count, spacing) {
-      if (count <= 0) return [];
-      const positions = [{ x: 0, y: 0 }];
-      let ring = 1;
-      while (positions.length < count) {
-        const r = spacing * ring;
-        const dotsInRing = Math.max(1, Math.round(2 * Math.PI * r / spacing));
-        for (let i = 0; i < dotsInRing && positions.length < count; i++) {
-          const angle = (2 * Math.PI * i) / dotsInRing - Math.PI / 2;
-          positions.push({ x: r * Math.cos(angle), y: r * Math.sin(angle) });
-        }
-        ring++;
-      }
-      return positions;
-    }
-
-    function clusterDotPoints(item, cx, cy) {
-      const scale = 1.8;
-      const geometry = starGeometry(item, 6.4 * scale, 3.4 * scale, 4 * scale);
-      return pointString(geometry.points.map(([x, y]) => [cx + x, cy + y]));
-    }
-
-    function songDominantColor(item) {
-      const scored = [
-        { color: palette.tangerine, value: bpmNormalized(item.bpm) },
-        { color: palette.kleinBlue, value: item.energy / 100 },
-        { color: palette.aquamarine, value: item.danceability / 100 },
-        { color: palette.fuchsia, value: item.happiness / 100 }
-      ];
-      return scored.sort((a, b) => b.value - a.value)[0].color;
-    }
-
-    function renderClusterView() {
-      const clusterGridEl = document.getElementById("cluster-grid");
-      if (!clusterGridEl) return;
-
-      const dotSpacing = 28;
-      const dotRadius = 13;
-      const svgPad = 20;
-
-      clusterGridEl.innerHTML = data.map((item) => {
-        const series = timelineByName.get(item.name);
-        const totalVideos = series?.totalVideos || 0;
-        const positions = packDotPositions(totalVideos, dotSpacing);
-
-        const maxR = positions.reduce((m, p) => Math.max(m, Math.hypot(p.x, p.y)), 0);
-        const containerR = Math.max(maxR + dotRadius + 6, 24);
-        const svgSize = Math.round((containerR + svgPad) * 2);
-        const cx = svgSize / 2;
-        const cy = svgSize / 2;
-
-        const color = songDominantColor(item);
-
-        const guideRings = [];
-        for (let r = dotSpacing; r < containerR; r += dotSpacing) {
-          guideRings.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${hexToRgba(color, 0.1)}" stroke-width="1" stroke-dasharray="3 5"/>`);
-        }
-
-        const axes = `
-          <line x1="${cx}" y1="${cy - containerR + 2}" x2="${cx}" y2="${cy + containerR - 2}" stroke="${hexToRgba(color, 0.09)}" stroke-width="1"/>
-          <line x1="${cx - containerR + 2}" y1="${cy}" x2="${cx + containerR - 2}" y2="${cy}" stroke="${hexToRgba(color, 0.09)}" stroke-width="1"/>
-        `;
-
-        const dots = positions.map((pos) => {
-          const x = cx + pos.x;
-          const y = cy + pos.y;
-          return `<polygon points="${clusterDotPoints(item, x, y)}" fill="${hexToRgba(color, 0.18)}" stroke="${hexToRgba(color, 0.88)}" stroke-width="1" stroke-linejoin="round"/>`;
-        }).join("");
-
-        const plural = totalVideos !== 1 ? "s" : "";
-        return `
-          <div class="cluster-card">
-            <svg width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}"
-                 role="img" aria-label="${item.name}: ${totalVideos} video${plural}">
-              <circle cx="${cx}" cy="${cy}" r="${containerR}"
-                fill="${hexToRgba(color, 0.05)}"
-                stroke="${hexToRgba(color, 0.2)}"
-                stroke-width="1"
-                stroke-dasharray="4 7"
-              />
-              ${axes}
-              ${guideRings.join("")}
-              ${dots}
-            </svg>
-            <div class="cluster-name">${item.name}</div>
-            <div class="cluster-meta">${item.artist} · ${totalVideos} video${plural}</div>
-          </div>
-        `;
+    function renderAverageStar() {
+      const svg = document.getElementById("average-star");
+      if (!svg) return;
+      const avg = {
+        bpm: data.reduce((a, s) => a + s.bpm, 0) / data.length,
+        energy: data.reduce((a, s) => a + s.energy, 0) / data.length,
+        danceability: data.reduce((a, s) => a + s.danceability, 0) / data.length,
+        happiness: data.reduce((a, s) => a + s.happiness, 0) / data.length
+      };
+      const geo = starGeometry(avg, 92, 30, 46);
+      const outline = pointString(geo.points);
+      const allCats = Object.values(songVideoCategories).flat();
+      let seed = 7;
+      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      const circles = allCats.map((cat) => {
+        const angle = rand() * Math.PI * 2;
+        const r = Math.sqrt(rand()) * 56;
+        const cx = (Math.cos(angle) * r).toFixed(1);
+        const cy = (Math.sin(angle) * r).toFixed(1);
+        return `<circle cx="${cx}" cy="${cy}" r="22" fill="${catColor(cat)}" opacity="0.08"></circle>`;
       }).join("");
+      svg.innerHTML = `
+        <defs>
+          <clipPath id="avg-star-clip">
+            <polygon points="${outline}"></polygon>
+          </clipPath>
+        </defs>
+        <g transform="translate(132 130)">
+          <line x1="0" y1="-104" x2="0" y2="104" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
+          <line x1="-104" y1="0" x2="104" y2="0" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
+          <polygon points="${guidePoints(92, 46)}" fill="none" stroke="rgba(186,177,177,0.18)" stroke-width="1"></polygon>
+          <polygon points="${guidePoints(62, 30)}" fill="none" stroke="rgba(186,177,177,0.12)" stroke-width="1"></polygon>
+          <g clip-path="url(#avg-star-clip)">
+            <polygon points="${outline}" fill="rgba(243,237,232,0.05)"></polygon>
+            <g style="filter: blur(6px);">${circles}</g>
+          </g>
+          <polygon points="${outline}" fill="none" stroke="rgba(243,237,232,0.85)" stroke-width="1.6" stroke-linejoin="round"></polygon>
+          <circle cx="0" cy="0" r="6" fill="none" stroke="rgba(244,238,229,0.9)" stroke-width="1.4" stroke-dasharray="2.2 2.2"></circle>
+          <text x="0" y="-114" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">BPM</text>
+          <text x="112" y="4" text-anchor="start" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">ENERGY</text>
+          <text x="0" y="122" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">DANCEABILITY</text>
+          <text x="-112" y="4" text-anchor="end" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">HAPPINESS</text>
+        </g>
+      `;
     }
 
-    renderBottomOverview();
-    initializeIntroFade();
     initializeSectionReveal();
+    renderGroupedStars();
     render();
-    renderClusterView();
+    renderAverageStar();
 
-    const catLegendEl = document.getElementById("cat-legend");
-    if (catLegendEl) {
+    function setupTrendViewSwap() {
+      const stage = document.getElementById("trend-stars-stage");
+      const trendScreen = document.getElementById("trend-screen");
+      const starsScreen = document.getElementById("stars-screen");
+      const gridEl = document.getElementById("grid");
+      if (!stage || !trendScreen || !starsScreen || !gridEl) return;
+
+      function captureTrendRects() {
+        const trendStars = Array.from(trendScreen.querySelectorAll("[data-card-key]"));
+        const trendRects = new Map();
+        trendStars.forEach((el) => {
+          const key = el.dataset.cardKey;
+          if (!key) return;
+          trendRects.set(key, el.getBoundingClientRect());
+        });
+        return trendRects;
+      }
+
+      function playFlip(trendRects) {
+        const gridStars = Array.from(gridEl.querySelectorAll("[data-card-key]"));
+        gridStars.forEach((grid, idx) => {
+          const key = grid.dataset.cardKey;
+          const fromRect = trendRects.get(key);
+          if (!fromRect) return;
+          const toRect = grid.getBoundingClientRect();
+          const dx = (fromRect.left + fromRect.width / 2) - (toRect.left + toRect.width / 2);
+          const dy = (fromRect.top + fromRect.height / 2) - (toRect.top + toRect.height / 2);
+          const sx = fromRect.width / Math.max(toRect.width, 1);
+          if (typeof grid.animate !== "function") return;
+          grid.animate([
+            { transform: `translate(${dx}px, ${dy}px) scale(${sx})`, opacity: 0.95 },
+            { transform: "translate(0, 0) scale(1)", opacity: 1 }
+          ], {
+            duration: 1100,
+            delay: idx * 28,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "both"
+          });
+        });
+      }
+
+      function setView(view, options = {}) {
+        const showStars = view === "stars";
+        const trendRects = options.animate ? captureTrendRects() : null;
+
+        trendScreen.classList.toggle("is-active-view", !showStars);
+        starsScreen.classList.toggle("is-active-view", showStars);
+        trendScreen.setAttribute("aria-hidden", showStars ? "true" : "false");
+        starsScreen.setAttribute("aria-hidden", showStars ? "false" : "true");
+        (showStars ? starsScreen : trendScreen).classList.add("is-visible");
+        if (introScreenEl && showStars) {
+          introScreenEl.style.opacity = "";
+        }
+
+        if (options.updateHash && window.history?.replaceState) {
+          window.history.replaceState(null, "", showStars ? "#stars-screen" : "#trend-screen");
+        }
+
+        if (showStars && trendRects) {
+          requestAnimationFrame(() => playFlip(trendRects));
+        }
+      }
+
+      document.querySelectorAll("[data-view-target='stars']").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          setView("stars", { animate: true, updateHash: true });
+        });
+      });
+
+      setView("trend");
+      if (window.location.hash === "#stars-screen" || window.location.hash === "#trend-screen") {
+        if (window.history?.replaceState) {
+          window.history.replaceState(null, "", "#trend-screen");
+        }
+        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+      }
+    }
+    setupTrendViewSwap();
+
+    if (catLegendEls.length) {
       const usedCats = new Set(Object.values(songVideoCategories).flat());
-      catLegendEl.innerHTML = [...usedCats].sort().map((cat) => `
+      const legendHtml = [...usedCats].sort().map((cat) => `
         <div class="cat-legend-item">
           <span class="cat-legend-dot" style="background:${catColor(cat)};"></span>
           <span>${cat}</span>
         </div>
       `).join("");
+      catLegendEls.forEach((el) => { el.innerHTML = legendHtml; });
     }
   </script>
 </body>
