@@ -1,934 +1,1205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Song Section Circles</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #1a1a1a;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      padding: 2rem;
-      color: #fff;
-    }
-    h1 {
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 20px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 16px;
-      margin-bottom: 28px;
-    }
-    .leg-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-    }
-    .leg-swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-    .grid-view { transition: opacity 0.3s; }
-    .row {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      margin-bottom: 32px;
-    }
-    .song-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 180px;
-    }
-    .detail-view {
-      display: none;
-      flex-direction: column;
-      align-items: flex-start;
-      padding-top: 8px;
-    }
-    .detail-view.visible { display: flex; }
-    .detail-layout {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: flex-start;
-      gap: 28px;
-      width: 100%;
-      max-width: 1080px;
-      flex-wrap: wrap;
-    }
-    .clip-list-panel {
-      width: 280px;
-      max-height: 320px;
-      overflow-y: auto;
-      border: 0.5px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.03);
-      padding: 10px;
-    }
-    .clip-list-panel.collapsed { display: none; }
-    .clip-list-toggle {
-      background: none;
-      border: 0.5px solid rgba(255,255,255,0.28);
-      color: rgba(255,255,255,0.86);
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: inherit;
-      align-self: flex-start;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
-    }
-    .clip-list-toggle:hover {
-      color: #fff;
-      border-color: rgba(255,255,255,0.75);
-      background: rgba(255,255,255,0.08);
-    }
-    .clip-list-title {
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 8px;
-    }
-    .clip-list-empty {
-      font-size: 11px;
-      color: rgba(255,255,255,0.45);
-      padding: 8px 4px;
-    }
-    .clip-list-item {
-      border: 0.5px solid rgba(255,255,255,0.16);
-      border-radius: 8px;
-      padding: 7px 9px;
-      margin-bottom: 7px;
-      background: rgba(255,255,255,0.02);
-    }
-    .clip-list-item:last-child { margin-bottom: 0; }
-    .clip-list-time {
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .clip-list-meta {
-      font-size: 10px;
-      color: rgba(255,255,255,0.58);
-      line-height: 1.35;
-    }
-    .back-btn {
-      background: none;
-      border: 0.5px solid rgba(255,255,255,0.4);
-      color: rgba(255,255,255,0.9);
-      font-size: 12px;
-      padding: 6px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      margin-bottom: 24px;
-      align-self: flex-start;
-      font-family: inherit;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
-    }
-    .back-btn:hover {
-      color: #fff;
-      border-color: rgba(255,255,255,0.8);
-      background: rgba(255,255,255,0.08);
-    }
-    #clip-tooltip {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      background: #111;
-      border: 0.5px solid rgba(255,255,255,0.15);
-      border-radius: 8px;
-      padding: 8px 12px;
-      pointer-events: none;
-    }
-    .tip-title { font-size: 11px; font-weight: 500; color: #fff; margin-bottom: 4px; }
-    .tip-row { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-    .tip-sections { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
-    .tip-sec-pill {
-      font-size: 9px;
-      padding: 2px 7px;
-      border-radius: 10px;
-      font-weight: 500;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Hit Wonder Trends</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    color: #e8e8e8;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ─── SMALL MULTIPLES VIEW ─── */
+  #small-multiples {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px;
+    transition: opacity 0.5s ease;
+  }
+
+  .view-header {
+    margin-bottom: 28px;
+  }
+
+  .view-title {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .view-heading {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .sort-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+  }
+
+  .sort-label {
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .sort-btn {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #888;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .sort-btn:hover, .sort-btn.active {
+    background: #222;
+    border-color: #444;
+    color: #e8e8e8;
+  }
+
+  #circles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 20px;
+    flex: 1;
+    padding: 8px 0;
+  }
+
+  .song-circle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .song-circle-wrap svg {
+    overflow: visible;
+  }
+
+  .song-circle {
+    transition: transform 0.2s ease;
+    transform-origin: center;
+  }
+
+  .song-circle-wrap:hover .song-circle {
+    transform: scale(1.06);
+  }
+
+  .circle-bg {
+    fill: #161616;
+    stroke: #333;
+    stroke-width: 1.5;
+    transition: stroke 0.2s, fill 0.2s;
+  }
+
+  .song-circle-wrap:hover .circle-bg {
+    stroke: #666;
+    fill: #1e1e1e;
+  }
+
+  .rank-badge {
+    fill: #2a2a2a;
+    font-size: 9px;
+    font-family: 'SF Mono', monospace;
+    fill: #555;
+    letter-spacing: 0.05em;
+  }
+
+  .circle-title {
+    fill: #e8e8e8;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-anchor: middle;
+  }
+
+  .circle-artist {
+    fill: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-anchor: middle;
+  }
+
+  .circle-genre {
+    fill: #3a3a3a;
+    font-size: 8px;
+    font-family: 'SF Mono', monospace;
+    text-anchor: middle;
+    letter-spacing: 0.08em;
+  }
+
+  /* Clip density arc */
+  .clip-arc {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0.5;
+  }
+
+  /* ─── SINGLE SONG VIEW ─── */
+  #song-view {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  #song-view.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Top content area (scrollable middle) */
+  #song-top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px 16px;
+    min-height: 0;
+  }
+
+  .song-view-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    background: none;
+    border: 1px solid #2a2a2a;
+    color: #555;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .back-btn:hover {
+    border-color: #444;
+    color: #aaa;
+  }
+
+  .song-meta h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.1;
+  }
+
+  .song-meta .artist {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .song-meta .genre-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    border: 1px solid #2a2a2a;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  /* Main song view layout — circle left, clips right */
+  #song-main {
+    display: flex;
+    flex: 1;
+    gap: 32px;
+    min-height: 0;
+  }
+
+  /* Left: circle only */
+  #song-left {
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    flex-shrink: 0;
+  }
+
+  #song-circle-svg-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  #song-circle-svg {
+    overflow: visible;
+  }
+
+  /* Right: TikTok clips panel */
+  #clips-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  #clips-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  #clips-panel-header span {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #444;
+  }
+
+  #clip-count {
+    font-size: 9px;
+    color: #333;
+    font-family: 'SF Mono', monospace;
+  }
+
+  #clips-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #clips-list::-webkit-scrollbar { width: 4px; }
+  #clips-list::-webkit-scrollbar-track { background: transparent; }
+  #clips-list::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+  /* ─── FULL-WIDTH TIMELINE BAR (bottom) ─── */
+  #timeline-area {
+    flex-shrink: 0;
+    background: #0a0a0a;
+    border-top: 1px solid #1a1a1a;
+    padding: 14px 48px 20px;
+  }
+
+  /* Density heatmap row — colored clip segments stacked */
+  #density-row {
+    position: relative;
+    height: 28px;
+    margin-bottom: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #0d0d0d;
+  }
+
+  .density-seg {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 2px;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  /* Scrubber row */
+  #scrubber-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  #timeline-track {
+    position: relative;
+    flex: 1;
+    height: 6px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    cursor: pointer;
+    overflow: visible;
+  }
+
+  #timeline-track:hover { background: #222; }
+
+  #timeline-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #3a3a3a;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  #timeline-head {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e8e8e8;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px #0a0a0a;
+    transition: left 0.08s linear;
+  }
+
+  #timeline-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #3a3a3a;
+    letter-spacing: 0.1em;
+    margin-bottom: 5px;
+    font-family: 'SF Mono', monospace;
+  }
+
+  #timeline-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ctrl-btn {
+    background: #111;
+    border: 1px solid #222;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .ctrl-btn:hover {
+    border-color: #444;
+    color: #ddd;
+    background: #1a1a1a;
+  }
+
+  .ctrl-btn.play-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+    color: #e8e8e8;
+    border-color: #2a2a2a;
+  }
+
+  #time-display {
+    font-size: 10px;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  #song-top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px 16px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .clip-card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 5px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .clip-card:hover {
+    border-color: #2a2a2a;
+    background: #141414;
+  }
+
+  .clip-card.active {
+    border-color: #3a3a3a;
+    background: #161616;
+  }
+
+  .clip-number {
+    font-size: 9px;
+    color: #333;
+    font-family: 'SF Mono', monospace;
+    width: 18px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .clip-timestamp {
+    font-size: 11px;
+    color: #888;
+    font-family: 'SF Mono', monospace;
+    letter-spacing: 0.05em;
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .clip-timestamp.active-ts { color: #e8e8e8; }
+
+  .clip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  .clip-category {
+    font-size: 10px;
+    color: #555;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .clip-link {
+    font-size: 9px;
+    color: #333;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .clip-link:hover { color: #888; }
+
+  /* Active now indicator */
+  .now-playing-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .now-playing-bar .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #e8e8e8;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Zoom transition overlay */
+  #zoom-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  #zoom-circle {
+    position: fixed;
+    border-radius: 50%;
+    background: #161616;
+    border: 1.5px solid #333;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: none;
+    z-index: 100;
+  }
+</style>
 </head>
 <body>
 
-  <h1>TikTok Song Clip Placement</h1>
-  <div class="legend" id="legend"></div>
-
-  <div class="grid-view" id="gridView">
-    <div class="row" id="row1"></div>
-    <div class="row" id="row2"></div>
+<!-- SMALL MULTIPLES VIEW -->
+<div id="small-multiples">
+  <div class="view-header">
+    <div class="view-title">TikTok Data Visualization</div>
+    <div class="view-heading">ONE HIT WONDER TRENDS</div>
+    <div class="sort-bar">
+      <span class="sort-label">Sort by</span>
+      <button class="sort-btn active" id="sort-rank">Rank</button>
+      <button class="sort-btn" id="sort-clips">Clip Density</button>
+      <button class="sort-btn" id="sort-genre">Genre</button>
+    </div>
   </div>
+  <div id="circles-grid"></div>
+</div>
 
-  <div class="detail-view" id="detailView">
-    <button class="back-btn" id="backBtn">← back to all songs</button>
-    <div class="detail-layout" id="detailLayout">
-      <button class="clip-list-toggle" id="clipListToggle">hide clips</button>
-      <div class="clip-list-panel" id="detailClipList"></div>
-      <div id="detailCard"></div>
+<!-- SINGLE SONG VIEW -->
+<div id="song-view">
+
+  <!-- Top content: header + circle + clips -->
+  <div id="song-top">
+    <div class="song-view-header">
+      <div class="song-meta">
+        <h1 id="sv-title">—</h1>
+        <div class="artist" id="sv-artist">—</div>
+        <div class="genre-tag" id="sv-genre">—</div>
+      </div>
+      <button class="back-btn" id="back-btn">← All Songs</button>
+    </div>
+
+    <div id="song-main">
+      <!-- Left: circle -->
+      <div id="song-left">
+        <div id="song-circle-svg-wrap">
+          <svg id="song-circle-svg" width="180" height="180"></svg>
+        </div>
+      </div>
+
+      <!-- Right: clips panel -->
+      <div id="clips-panel">
+        <div id="clips-panel-header">
+          <span>TikTok Clips</span>
+          <span id="clip-count">0 clips</span>
+        </div>
+        <div class="now-playing-bar" id="now-playing-bar" style="display:none">
+          <div class="dot"></div>
+          <span id="now-playing-text">Now at clip —</span>
+        </div>
+        <div id="clips-list"></div>
+      </div>
     </div>
   </div>
 
-  <div id="clip-tooltip">
-    <div class="tip-title"    id="tip-title"></div>
-    <div class="tip-row"      id="tip-time"></div>
-    <div class="tip-row"      id="tip-tiktoks"></div>
-    <div class="tip-sections" id="tip-sections"></div>
+  <!-- Full-width timeline pinned to bottom -->
+  <div id="timeline-area">
+    <div id="density-row"></div>
+    <div id="timeline-label">
+      <span id="tl-current">0:00</span>
+      <span id="tl-total">—</span>
+    </div>
+    <div id="scrubber-row">
+      <div id="timeline-controls">
+        <button class="ctrl-btn play-btn" id="play-btn" title="Play / Pause">▶</button>
+        <button class="ctrl-btn" id="skip-btn" title="Skip to next clip">⏭</button>
+        <button class="ctrl-btn" id="restart-btn" title="Restart">↺</button>
+      </div>
+      <div id="timeline-track">
+        <div id="timeline-fill"></div>
+        <div id="timeline-head"></div>
+      </div>
+      <span id="time-display">0:00 / —</span>
+    </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-  <script>
-  const NON_CLIP_OPACITY = 0.55;
-  const MARKER_STICKOUT = 0.012;
-  const ZOOM_MS = 420;
-  const DETAIL_TEXT_FADE_MS = 220;
-  const DETAIL_TEXT_MOVE_MS = 300;
-  const AUDIO_SOURCES = {
-    "Pretty Little Baby": "songs/pretty_little_baby.mp3",
-    "APT.": "songs/APT.mp3",
-    "No One Noticed": "songs/no_one_noticed.mp3",
-    "back to friends": "songs/back_to_friends.mp3",
-    "Sparks": "songs/sparks.mp3",
-  };
-  const SONG_ORDER = [
-    "Pretty Little Baby",
-    "APT.",
-    "No One Noticed",
-    "back to friends",
-    "Sparks",
-  ];
-  const SONG_DISPLAY_NAMES = {};
-  let ALL_DATA = [];
-  let activeAudio = null;
-  let activePlayBtn = null;
-  let activeProgressMarker = null;
-  let activeProgressGeom = null;
-  let activeProgressRAF = null;
-  let activeTimeLabel = null;
-  let isClipListCollapsed = true;
+</div>
 
-  const SECTION_COLORS = {
-    intro:        "#aaaaaa",
-    verse:        "#00f2ea",
-    prechorus:    "#a855f7",
-    chorus:       "#ff0050",
-    postchorus:   "#ff6b9d",
-    bridge:       "#ffd700",
-    refrain:      "#ff4500",
-    postrefrain:  "#ff9a3c",
-    interlude:    "#69c9d0",
-    instrumental: "#c0f0c0",
-    outro:        "#555555",
-  };
+<!-- Zoom overlay -->
+<div id="zoom-overlay">
+  <div id="zoom-circle" style="display:none"></div>
+</div>
 
-  function clipKey(start, end) { return `${start}-${end}`; }
+<audio id="song-audio" preload="none"></audio>
 
-  function normalizeSongData(song) {
-    const displayName = SONG_DISPLAY_NAMES[song.name] || song.name;
-    const grouped = new Map();
-    (song.clips || []).forEach((clip) => {
-      if (clip.start == null || clip.end == null || clip.end <= clip.start) return;
-      const key = clipKey(clip.start, clip.end);
-      if (!grouped.has(key)) {
-        grouped.set(key, { start: clip.start, end: clip.end, instances: 0 });
-      }
-      grouped.get(key).instances += 1;
-    });
-    const clips = [...grouped.values()].sort((a, b) => a.start - b.start || a.end - b.end);
-    return {
-      name: displayName,
-      artist: song.artist,
-      duration: song.duration,
-      sections: song.sections || [],
-      clips,
-    };
-  }
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const SONGS = [
+  {"rank":1,"name":"Pretty Little Baby","artist":"Connie Francis","length":"2:22","genre":"Pop","clips":[{"file":"PrettyLittleBaby_1","timestamp":"0:31 - 0:47","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@amarianiyaa/video/7504118311492373802"},{"file":"PrettyLittleBaby_2","timestamp":"0:31 - 0:44","category":"Lip Sync","link":"https://www.tiktok.com/@christiecharm/video/7498816166710791442"},{"file":"PrettyLittleBaby_3","timestamp":"0:31 - 1:37","category":"Animals","link":"https://www.tiktok.com/@oceanicglow3/video/7535666693339630903"},{"file":"PrettyLittleBaby_4","timestamp":"0:31 - 0:40","category":"Lip Sync","link":"https://www.tiktok.com/@ciklalyfernandez06/video/7500459815567789358"},{"file":"PrettyLittleBaby_5","timestamp":"0:31 - 0:43","category":"Animals","link":"https://www.tiktok.com/@brijoles_/video/7503685598272589099"},{"file":"PrettyLittleBaby_6","timestamp":"0:31 - 0:40","category":"Animals","link":"https://www.tiktok.com/@bubblesbobita/video/7507252992047992107"},{"file":"PrettyLittleBaby_7","timestamp":"0:31 - 0:44","category":"Aesthetic","link":"https://www.tiktok.com/@sammielys/video/7512585614978649390"},{"file":"PrettyLittleBaby_8","timestamp":"0:31 - 1:32","category":"Aesthetic","link":"https://www.tiktok.com/@couture.to.the.max/video/7514349771985833262"},{"file":"PrettyLittleBaby_9","timestamp":"0:31 - 1:31","category":"Animals","link":"https://www.tiktok.com/@animalsbehaviour/video/7530143812136602911"},{"file":"PrettyLittleBaby_10","timestamp":"0:31 - 0:46","category":"Tutorial","link":"https://www.tiktok.com/@brookemonk_/video/7504411471988804894"}]},
+  {"rank":2,"name":"Hold My Hand","artist":"Jess Glynne","length":"3:47","genre":"Dancehall","clips":[{"file":"HoldMyHand_1","timestamp":"0:49 - 0:54","category":"Humor","link":"https://www.tiktok.com/@bben9450/video/7523242837467598102"},{"file":"HoldMyHand_2","timestamp":"0:49 - 0:55","category":"Animals","link":"https://www.tiktok.com/@ogsyde/video/7533031324186086678"},{"file":"HoldMyHand_3","timestamp":"0:49 - 1:11","category":"Humor","link":"https://www.tiktok.com/@eagleyes2/video/7539696675376450830"},{"file":"HoldMyHand_4","timestamp":"0:49 - 0:54","category":"Humor","link":"https://www.tiktok.com/@lovedby4bxnia/video/7529657626947374349"},{"file":"HoldMyHand_5","timestamp":"0:49 - 0:56","category":"Humor","link":"https://www.tiktok.com/@outdoor_comp/video/7529744962682948870"},{"file":"HoldMyHand_6","timestamp":"0:49 - 0:57","category":"Humor","link":"https://www.tiktok.com/@d5l1ko/video/7523981366543879446"},{"file":"HoldMyHand_7","timestamp":"0:49 - 0:57","category":"Humor","link":"https://www.tiktok.com/@nenepet99/video/7518009850849447175"},{"file":"HoldMyHand_8","timestamp":"0:49 - 1:02","category":"Humor","link":"https://www.tiktok.com/@abigailmstowe/video/7516946864562965762"},{"file":"HoldMyHand_9","timestamp":"0:49 - 0:58","category":"Humor","link":"https://www.tiktok.com/@sawyers.8._/video/7541049936268233990"},{"file":"HoldMyHand_10","timestamp":"0:49 - 0:58","category":"Humor","link":"https://www.tiktok.com/@dvolchenko08/video/7527751737021713670"}]},
+  {"rank":3,"name":"Rock That Body","artist":"Black Eyed Peas","length":"3:56","genre":"Electropop","clips":[{"file":"RockThatBody_1","timestamp":"0:30 - 0:41","category":"Animals","link":"https://www.tiktok.com/t/ZTk6emP8N/"},{"file":"RockThatBody_2","timestamp":"0:26 - 0:41","category":"Lip Sync","link":"https://www.tiktok.com/@aselmustafaeva7/video/7535857596809645330"},{"file":"RockThatBody_3","timestamp":"0:26 - 0:39","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkuvruMD/"},{"file":"RockThatBody_4","timestamp":"0:31 - 0:45","category":"Edit","link":"https://www.tiktok.com/t/ZTkuvjubS/"},{"file":"RockThatBody_5","timestamp":"0:26 - 0:37","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkuv5uKF/"},{"file":"RockThatBody_6","timestamp":"1:03 - 2:03","category":"Hair + Makeup","link":"https://www.tiktok.com/t/ZTkuvu7HB/"},{"file":"RockThatBody_7","timestamp":"0:26 - 0:34","category":"Unboxing","link":"https://www.tiktok.com/t/ZTkuvBxPD/"},{"file":"RockThatBody_8","timestamp":"0:26 - 0:37","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkuvUxtB/"},{"file":"RockThatBody_9","timestamp":"0:26 - 0:41","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkuvkJqF/"},{"file":"RockThatBody_10","timestamp":"0:26 - 0:41","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkuvEunW/"}]},
+  {"rank":4,"name":"Azul","artist":"J Balvin","length":"3:26","genre":"Reggaeton","clips":[{"file":"Azul_1","timestamp":"0:26 - 0:38","category":"Dance","link":"https://www.tiktok.com/t/ZTk6dYaNt/"},{"file":"Azul_2","timestamp":"0:26 - 0:36","category":"Dance","link":"https://www.tiktok.com/@sirrr.r/video/7472452094134373654"},{"file":"Azul_3","timestamp":"0:26 - 0:36","category":"Dance","link":"https://www.tiktok.com/t/ZTkuc3RRp/"},{"file":"Azul_4","timestamp":"0:26 - 0:37","category":"Dance","link":"https://www.tiktok.com/t/ZTkucnS59/"},{"file":"Azul_5","timestamp":"0:26 - 0:36","category":"Dance","link":"https://www.tiktok.com/t/ZTkucQBBd/"},{"file":"Azul_6","timestamp":"0:26 - 0:37","category":"Dance","link":"https://www.tiktok.com/t/ZTku3UPnu/"},{"file":"Azul_7","timestamp":"0:26 - 1:26","category":"Tutorial","link":"https://www.tiktok.com/t/ZTku38Y3D/"},{"file":"Azul_8","timestamp":"0:26 - 0:41","category":"Dance","link":"https://www.tiktok.com/t/ZTku3rp7M/"},{"file":"Azul_9","timestamp":"0:26 - 0:32","category":"Dance","link":"https://www.tiktok.com/t/ZTkbfCvhh/"},{"file":"Azul_10","timestamp":"0:26 - 0:38","category":"Dance","link":"https://www.tiktok.com/t/ZTkbPhBtC/"}]},
+  {"rank":5,"name":"Dame Un Grrr","artist":"Fantomel and Kate Linn","length":"2:13","genre":"Pop","clips":[{"file":"DameUnGrrr_1","timestamp":"0:00 - 0:06","category":"Animals","link":"https://www.tiktok.com/t/ZTk6B4FbT/"},{"file":"DameUnGrrr_2","timestamp":"0:00 - 0:06","category":"Animals","link":"https://www.tiktok.com/t/ZTkhWV5um/"},{"file":"DameUnGrrr_3","timestamp":"0:00 - 0:09","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkhW5gQa/"},{"file":"DameUnGrrr_4","timestamp":"0:00 - 0:09","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkhWSsUL/"},{"file":"DameUnGrrr_5","timestamp":"0:00 - 0:11","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkhWuMH6/"},{"file":"DameUnGrrr_7","timestamp":"0:00 - 0:09","category":"Edit","link":"https://www.tiktok.com/t/ZTkhWbwac/"},{"file":"DameUnGrrr_8","timestamp":"0:00 - 0:09","category":"Animals","link":"https://www.tiktok.com/t/ZTkkbc47E/"},{"file":"DameUnGrrr_9","timestamp":"0:00 - 0:06","category":"Animals","link":"https://www.tiktok.com/t/ZTkkbGpy9/"},{"file":"DameUnGrrr_10","timestamp":"0:00 - 0:06","category":"Animals","link":"https://www.tiktok.com/t/ZTkkbmyCR/"}]},
+  {"rank":6,"name":"APT.","artist":"ROSÉ & Bruno Mars","length":"2:49","genre":"Pop","clips":[{"file":"APT_1","timestamp":"0:06 - 0:16","category":"Animals","link":"https://www.tiktok.com/@mooo_ayz_yy/video/7427451081657191726"},{"file":"APT_2","timestamp":"0:30 - 0:51","category":"Dance","link":"https://www.tiktok.com/t/ZTkkbxWgG/"},{"file":"APT_3","timestamp":"0:06 - 0:18","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkkbxmFU/"},{"file":"APT_4","timestamp":"0:06 - 0:12","category":"Dance","link":"https://www.tiktok.com/t/ZTkkgLj3B/"},{"file":"APT_5","timestamp":"0:29 - 0:52","category":"Dance","link":"https://www.tiktok.com/t/ZTkkgLuh1/"},{"file":"APT_6","timestamp":"0:32 - 0:59","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkkgYwyt/"},{"file":"APT_7","timestamp":"2:09 - 2:30","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkkgjgJv/"},{"file":"APT_8","timestamp":"0:29 - 0:52","category":"Dance","link":"https://www.tiktok.com/t/ZTkkgFLUB/"},{"file":"APT_9","timestamp":"0:03 - 0:13","category":"Animals","link":"https://www.tiktok.com/t/ZTkb5mSUC/"},{"file":"APT_10","timestamp":"0:30 - 0:51","category":"Dance","link":"https://www.tiktok.com/t/ZTkb5jsGK/"}]},
+  {"rank":7,"name":"Te Quería Ver","artist":"Alemán & Neton Vega","length":"2:56","genre":"Reggaeton","clips":[{"file":"TeQueriaVer_1","timestamp":"1:33 - 1:47","category":"Dance","link":"https://www.tiktok.com/@beth...cast/video/7488521489092726021"},{"file":"TeQueriaVer_2","timestamp":"1:33 - 1:42","category":"Humor","link":"https://www.tiktok.com/t/ZTkBcuHQn/"},{"file":"TeQueriaVer_3","timestamp":"1:33 - 1:48","category":"Dance","link":"https://www.tiktok.com/t/ZTkBcMMDs/"},{"file":"TeQueriaVer_4","timestamp":"1:33 - 1:48","category":"Dance","link":"https://www.tiktok.com/t/ZTkBcamvt/"},{"file":"TeQueriaVer_5","timestamp":"1:33 - 1:48","category":"Dance","link":"https://www.tiktok.com/t/ZTkBcN528/"},{"file":"TeQueriaVer_6","timestamp":"1:24 - 1:39","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkBck2rh/"},{"file":"TeQueriaVer_7","timestamp":"1:33 - 1:52","category":"Dance","link":"https://www.tiktok.com/t/ZTkBcNCVq/"},{"file":"TeQueriaVer_9","timestamp":"1:33 - 1:46","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkBcjKAD/"},{"file":"TeQueriaVer_10","timestamp":"0:08 - 0:23","category":"Lip Sync","link":"https://www.tiktok.com/t/ZTkBcu2KT/"}]},
+  {"rank":8,"name":"Stecu Stecu","artist":"Faris Adam","length":"3:43","genre":"Pop","clips":[{"file":"StecuStecu_1","timestamp":"2:49 - 3:03","category":"Humor","link":"https://www.tiktok.com/@jennifer.coppen/video/7485991142891261190"},{"file":"StecuStecu_2","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@jennifer.coppen/video/7490484729775459602"},{"file":"StecuStecu_3","timestamp":"2:35 - 2:49","category":"Lip Sync","link":"https://www.tiktok.com/@jennifer.coppen/video/7492692270190251269"},{"file":"StecuStecu_4","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@thebaldys_fam/video/7490197963042458887"},{"file":"StecuStecu_5","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@flaviozaviera_/video/7490217855015800071"},{"file":"StecuStecu_6","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@davinakaramoy/video/7491546954745351442"},{"file":"StecuStecu_7","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@szzuuulaak/video/7490154562121125128"},{"file":"StecuStecu_8","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@fujiiian/video/7492074055357566215"},{"file":"StecuStecu_9","timestamp":"2:49 - 3:03","category":"Humor","link":"https://www.tiktok.com/@andrewxbarrett/video/7490073692081294599"},{"file":"StecuStecu_10","timestamp":"2:35 - 3:00","category":"Dance","link":"https://www.tiktok.com/@concheetah/video/7488926383003979016"}]},
+  {"rank":9,"name":"Anxiety","artist":"Doechii","length":"4:09","genre":"Pop Rap","clips":[{"file":"Anxiety_1","timestamp":"1:29 - 1:45","category":"Dance","link":"https://www.tiktok.com/@willsmith/video/7481699258819693870"},{"file":"Anxiety_2","timestamp":"1:21 - 1:41","category":"Humor","link":"https://www.tiktok.com/@my4c0re/video/7475110913058622763"},{"file":"Anxiety_3","timestamp":"1:29 - 1:45","category":"Dance","link":"https://www.tiktok.com/@eat_official5/video/7483054384453111041"},{"file":"Anxiety_4","timestamp":"1:21 - 1:41","category":"Humor","link":"https://www.tiktok.com/@hbomaxbr/video/7479060321546652933"},{"file":"Anxiety_5","timestamp":"1:29 - 1:45","category":"Humor","link":"https://www.tiktok.com/@raye/video/7479537744583085334"},{"file":"Anxiety_6","timestamp":"1:21 - 1:41","category":"Dance","link":"https://www.tiktok.com/@imgustavosena/video/7478426894061358341"},{"file":"Anxiety_7","timestamp":"1:26 - 2:25","category":"Hair + Makeup","link":"https://www.tiktok.com/@legohugs/video/7490310692440902943"},{"file":"Anxiety_8","timestamp":"1:18 - 1:36","category":"Humor","link":"https://www.tiktok.com/@fatima.v.l/video/7480216622511213830"},{"file":"Anxiety_9","timestamp":"1:29 - 1:45","category":"Dance","link":"https://www.tiktok.com/@rae.revord/video/7483186537467776302"},{"file":"Anxiety_10","timestamp":"1:29 - 1:55","category":"Humor","link":"https://www.tiktok.com/@satisfyingyourmom/video/7480257680058109227"}]},
+  {"rank":10,"name":"Sailor Song","artist":"Gigi Perez","length":"3:31","genre":"Indie Folk","clips":[{"file":"SailorSong_1","timestamp":"2:50 - 3:02","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@.lara._.888/video/7480603649069026582"},{"file":"SailorSong_2","timestamp":"0:55 - 1:14","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@maddyspamms/video/7440114969770839339"},{"file":"SailorSong_3","timestamp":"0:55 - 1:14","category":"Humor","link":"https://www.tiktok.com/@cayden_lol/video/7411291930442698026"},{"file":"SailorSong_4","timestamp":"0:55 - 1:14","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@cozy.zapas/video/7495676477103557910"},{"file":"SailorSong_5","timestamp":"0:24 - 1:14","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@breannakate04/video/7445534367914413342"},{"file":"SailorSong_6","timestamp":"0:44 - 1:14","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@ainsley999/video/7474369439861886250"},{"file":"SailorSong_7","timestamp":"1:04 - 1:14","category":"Aesthetic","link":"https://www.tiktok.com/@thatblue__2ndgen/video/7407248529036561695"},{"file":"SailorSong_8","timestamp":"2:18 - 2:30","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@grandadfrankk/video/7455792115981896993"}]},
+  {"rank":11,"name":"Shake it To The Max","artist":"MOLIY, Silent Addy, Skillibeng","length":"2:58","genre":"Hip-Hop","clips":[{"file":"ShakeItToTheMax_1","timestamp":"0:07 - 0:19","category":"Humor","link":"https://www.tiktok.com/@mrbeast/video/7505849400019717406"},{"file":"ShakeItToTheMax_2","timestamp":"0:05 - 0:20","category":"Dance","link":"https://www.tiktok.com/@iamurhope/video/7499046713152277778"},{"file":"ShakeItToTheMax_3","timestamp":"0:05 - 0:20","category":"Dance","link":"https://www.tiktok.com/@neafeas/video/7512863113734016274"},{"file":"ShakeItToTheMax_4","timestamp":"0:05 - 0:20","category":"Dance","link":"https://www.tiktok.com/@sulumotion/video/7499857937783885062"},{"file":"ShakeItToTheMax_5","timestamp":"0:06 - 0:14","category":"Art","link":"https://www.tiktok.com/@sofiamins_art/video/7501473416105626882"},{"file":"ShakeItToTheMax_6","timestamp":"0:05 - 0:20","category":"Dance","link":"https://www.tiktok.com/@nianaguerrero/video/7507657768602586375"},{"file":"ShakeItToTheMax_7","timestamp":"0:05 - 0:20","category":"Humor","link":"https://www.tiktok.com/@playsidegg/video/7511413105948233016"},{"file":"ShakeItToTheMax_8","timestamp":"0:05 - 0:20","category":"Dance","link":"https://www.tiktok.com/@barbaramirezzz/video/7489308145542532383"},{"file":"ShakeItToTheMax_9","timestamp":"0:05 - 0:20","category":"Humor","link":"https://www.tiktok.com/@leegookin/video/7505070383473741063"},{"file":"ShakeItToTheMax_10","timestamp":"0:05 - 0:30","category":"Humor","link":"https://www.tiktok.com/@collageofus/video/7495006964989185302"}]},
+  {"rank":12,"name":"ocean eyes","artist":"Billie Eilish","length":"3:20","genre":"Contemporary R&B","clips":[{"file":"OceanEyes_1","timestamp":"1:48 - 1:59","category":"Animals","link":"https://www.tiktok.com/t/ZTkhsAGkB/"},{"file":"OceanEyes_2","timestamp":"1:48 - 1:54","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkhs9bDD/"},{"file":"OceanEyes_3","timestamp":"1:48 - 1:53","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkhnnTdV/"},{"file":"OceanEyes_4","timestamp":"1:48 - 1:56","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkhnPrcB/"},{"file":"OceanEyes_5","timestamp":"1:48 - 1:58","category":"Tutorial","link":"https://www.tiktok.com/t/ZTkhna3TS/"},{"file":"OceanEyes_6","timestamp":"1:48 - 1:54","category":"Humor","link":"https://www.tiktok.com/t/ZTkhn5RX6/"},{"file":"OceanEyes_7","timestamp":"1:48 - 1:54","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkhn5mXC/"},{"file":"OceanEyes_8","timestamp":"1:48 - 2:02","category":"Humor","link":"https://www.tiktok.com/t/ZTkhnP3vg/"},{"file":"OceanEyes_9","timestamp":"1:48 - 1:57","category":"Humor","link":"https://www.tiktok.com/@oliver6060/video/7549223301264969015"},{"file":"OceanEyes_10","timestamp":"1:48 - 1:58","category":"Animals","link":"https://www.tiktok.com/t/ZTkbPnJcS/"}]},
+  {"rank":13,"name":"No One Noticed","artist":"The Marias","length":"4:44","genre":"Alternative/Indie","clips":[{"file":"NoOneNoticed_1","timestamp":"2:33 - 2:48","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkks1Bnk/"},{"file":"NoOneNoticed_2","timestamp":"2:09 - 2:29","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkksfgTr/"},{"file":"NoOneNoticed_3","timestamp":"3:18 - 3:28","category":"Humor","link":"https://www.tiktok.com/t/ZTkksPXut/"},{"file":"NoOneNoticed_4","timestamp":"2:09 - 2:29","category":"Animals","link":"https://www.tiktok.com/t/ZTkkshkwk/"},{"file":"NoOneNoticed_5","timestamp":"2:09 - 2:29","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkks4nmY/"},{"file":"NoOneNoticed_6","timestamp":"3:18 - 3:28","category":"Humor","link":"https://www.tiktok.com/t/ZTkksbD1H/"},{"file":"NoOneNoticed_7","timestamp":"3:41 - 4:08","category":"Animals","link":"https://www.tiktok.com/t/ZTkksooCS/"},{"file":"NoOneNoticed_8","timestamp":"2:33 - 2:48","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkkGXTRr/"},{"file":"NoOneNoticed_9","timestamp":"2:09 - 2:29","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkkGWjJt/"},{"file":"NoOneNoticed_10","timestamp":"3:41 - 4:08","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkkp3VRX/"}]},
+  {"rank":14,"name":"back to friends","artist":"sombr","length":"3:19","genre":"Alternative/indie","clips":[{"file":"BackToFriends_1","timestamp":"1:04 - 1:16","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@austineeee_/video/7555170953857109255"},{"file":"BackToFriends_2","timestamp":"2:15 - 2:31","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@zaynazaan1/video/7553903939591113991"},{"file":"BackToFriends_3","timestamp":"1:19 - 1:34","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@thousandmiles_09/video/7534399227598802194"},{"file":"BackToFriends_4","timestamp":"2:15 - 2:31","category":"Aesthetic","link":"https://www.tiktok.com/@isabels_flores/video/7507734997646855467"},{"file":"BackToFriends_5","timestamp":"1:19 - 1:34","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@aldisyhptraa_/video/7510272057804983557"},{"file":"BackToFriends_6","timestamp":"2:15 - 2:31","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@iievavsvet/video/7486936862481714454"},{"file":"BackToFriends_7","timestamp":"1:08 - 1:25","category":"Lip Sync","link":"https://www.tiktok.com/@sombr/video/7522965481066646815"},{"file":"BackToFriends_8","timestamp":"2:15 - 2:31","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@sombr/video/7482143273478311199"},{"file":"BackToFriends_9","timestamp":"1:19 - 1:34","category":"Aesthetic","link":"https://www.tiktok.com/@not.megaa/video/7503864486638423318"},{"file":"BackToFriends_10","timestamp":"1:19 - 1:34","category":"Aesthetic","link":"https://www.tiktok.com/@ponder_sonder/video/7500305340399897887"}]},
+  {"rank":15,"name":"Sparks","artist":"Coldplay","length":"3:46","genre":"Alternative rock","clips":[{"file":"Sparks_1","timestamp":"0:53 - 1:10","category":"Animals","link":"https://www.tiktok.com/t/ZTkSJuUbc/"},{"file":"Sparks_2","timestamp":"0:39 - 2:59","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSJ3mjM/"},{"file":"Sparks_3","timestamp":"0:53 - 1:54","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSeRjVn/"},{"file":"Sparks_4","timestamp":"0:53 - 1:54","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSeXNjD/"},{"file":"Sparks_5","timestamp":"0:00 - 2:56","category":"Animals","link":"https://www.tiktok.com/t/ZTkSeHdHQ/"},{"file":"Sparks_6","timestamp":"0:53 - 1:12","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkSeQ67C/"},{"file":"Sparks_7","timestamp":"0:53 - 1:17","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSd9JAg/"},{"file":"Sparks_8","timestamp":"2:18 - 2:33","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkSdaEMt/"},{"file":"Sparks_9","timestamp":"2:18 - 2:33","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSdaGks/"},{"file":"Sparks_10","timestamp":"0:53 - 1:54","category":"Animals","link":"https://www.tiktok.com/t/ZTkSdSJkG/"}]},
+  {"rank":16,"name":"That's So True","artist":"Gracie Abrams","length":"2:46","genre":"Folk-pop","clips":[{"file":"ThatsSoTrue_1","timestamp":"0:44 - 1:11","category":"Lip Sync","link":"https://www.tiktok.com/@jennyhan/video/7449877349627170094"},{"file":"ThatsSoTrue_2","timestamp":"0:43 - 1:27","category":"Lip Sync","link":"https://www.tiktok.com/@victoriajustice/video/7445420910644841774"},{"file":"ThatsSoTrue_3","timestamp":"0:00 - 2:14","category":"Edit","link":"https://www.tiktok.com/@xoghibli/video/7447187042141850885"},{"file":"ThatsSoTrue_4","timestamp":"0:35 - 0:41","category":"Lip Sync","link":"https://www.tiktok.com/@aqeelaaz_/video/7465597019298548997"},{"file":"ThatsSoTrue_5","timestamp":"0:43 - 1:06","category":"Lip Sync","link":"https://www.tiktok.com/@emily.blaire/video/7485111498902179079"},{"file":"ThatsSoTrue_6","timestamp":"1:41 - 1:54","category":"Edit","link":"https://www.tiktok.com/@iamurhope/video/7589958261168688392"},{"file":"ThatsSoTrue_7","timestamp":"1:05 - 1:26","category":"Wholesome/Emotional","link":"https://www.tiktok.com/@tteeniee/video/7443462278688574766"},{"file":"ThatsSoTrue_8","timestamp":"0:43 - 0:56","category":"Humor","link":"https://www.tiktok.com/@drkk2023/video/7455847118717177106"},{"file":"ThatsSoTrue_9","timestamp":"0:43 - 0:57","category":"Lip Sync","link":"https://www.tiktok.com/@charlidamelio/video/7450344932721724718"},{"file":"ThatsSoTrue_10","timestamp":"1:42 - 1:54","category":"Lip Sync","link":"https://www.tiktok.com/@looooooooch/video/7452619477687995666"}]},
+  {"rank":17,"name":"Let Down","artist":"Radiohead","length":"4:59","genre":"Alternative rock","clips":[{"file":"LetDown_1","timestamp":"3:42 - 4:34","category":"Animals","link":"https://www.tiktok.com/t/ZTkSqgtT5/"},{"file":"LetDown_2","timestamp":"3:40 - 3:47","category":"Humor","link":"https://www.tiktok.com/t/ZTkSbGa49/"},{"file":"LetDown_3","timestamp":"3:40 - 3:52","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSgym62/"},{"file":"LetDown_4","timestamp":"3:40 - 3:50","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSp1Qf8/"},{"file":"LetDown_5","timestamp":"3:40 - 3:47","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSp8nJ9/"},{"file":"LetDown_6","timestamp":"3:40 - 3:50","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSgW9P1/"},{"file":"LetDown_7","timestamp":"3:51 - 4:03","category":"Animals","link":"https://www.tiktok.com/t/ZTkSprhnb/"},{"file":"LetDown_8","timestamp":"4:00 - 4:10","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSpd4TB/"},{"file":"LetDown_9","timestamp":"3:40 - 3:54","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkSpa1Y8/"},{"file":"LetDown_10","timestamp":"3:40 - 3:54","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkA1Qxmw/"}]},
+  {"rank":18,"name":"Suave","artist":"El Alfa","length":"3:30","genre":"Dembow","clips":[{"file":"Suave_1","timestamp":"1:10 - 1:34","category":"Dance","link":"https://www.tiktok.com/t/ZTkQDhdJs/"},{"file":"Suave_2","timestamp":"1:10 - 1:25","category":"Dance","link":"https://www.tiktok.com/t/ZTkQDSLhR/"},{"file":"Suave_3","timestamp":"1:10 - 1:32","category":"Dance","link":"https://www.tiktok.com/t/ZTkQDSPpd/"},{"file":"Suave_4","timestamp":"1:10 - 1:33","category":"Dance","link":"https://www.tiktok.com/t/ZTkQDSA9P/"},{"file":"Suave_5","timestamp":"1:10 - 1:20","category":"Humor","link":"https://www.tiktok.com/t/ZTkQUeeaU/"},{"file":"Suave_6","timestamp":"0:59 - 1:12","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkQUdCHy/"},{"file":"Suave_7","timestamp":"1:10 - 1:25","category":"Dance","link":"https://www.tiktok.com/t/ZTkQU1Xr3/"},{"file":"Suave_8","timestamp":"1:10 - 1:33","category":"Humor","link":"https://www.tiktok.com/t/ZTkQDvq8s/"},{"file":"Suave_9","timestamp":"1:10 - 1:23","category":"Dance","link":"https://www.tiktok.com/t/ZTkQDXQqG/"},{"file":"Suave_10","timestamp":"1:10 - 1:34","category":"Dance","link":"https://www.tiktok.com/t/ZTkQUr5ea/"}]},
+  {"rank":19,"name":"My Darling","artist":"Chella","length":"2:30","genre":"Afrobeats","clips":[{"file":"MyDarling_1","timestamp":"0:03 - 0:23","category":"Edit","link":"https://www.tiktok.com/t/ZTkQUA9Wb/"},{"file":"MyDarling_2","timestamp":"0:03 - 0:23","category":"Edit","link":"https://www.tiktok.com/t/ZTkQUmuPY/"},{"file":"MyDarling_3","timestamp":"0:03 - 0:27","category":"Dance","link":"https://www.tiktok.com/t/ZTkQUHaYN/"},{"file":"MyDarling_4","timestamp":"0:03 - 0:11","category":"Humor","link":"https://www.tiktok.com/t/ZTkQUsYkt/"},{"file":"MyDarling_5","timestamp":"0:03 - 1:04","category":"Humor","link":"https://www.tiktok.com/t/ZTkQU7sMJ/"},{"file":"MyDarling_6","timestamp":"0:03 - 0:27","category":"Dance","link":"https://www.tiktok.com/t/ZTkQUCAp4/"},{"file":"MyDarling_7","timestamp":"0:03 - 0:32","category":"Aesthetic","link":"https://www.tiktok.com/t/ZTkQUVjbQ/"},{"file":"MyDarling_8","timestamp":"0:03 - 0:18","category":"Dance","link":"https://www.tiktok.com/t/ZTkQUnFLA/"},{"file":"MyDarling_9","timestamp":"0:03 - 0:18","category":"Dance","link":"https://www.tiktok.com/t/ZTkQU3Hdm/"},{"file":"MyDarling_10","timestamp":"0:03 - 0:25","category":"Dance","link":"https://www.tiktok.com/t/ZTkQUpmtQ/"}]},
+  {"rank":20,"name":"We Hug Now","artist":"Sydney Rose","length":"4:08","genre":"Alternative/Indie","clips":[{"file":"WeHugNow_1","timestamp":"3:19 - 3:27","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQamRKt/"},{"file":"WeHugNow_2","timestamp":"3:19 - 3:27","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaFr8g/"},{"file":"WeHugNow_3","timestamp":"3:19 - 3:34","category":"Animals","link":"https://www.tiktok.com/t/ZTkQaUAy1/"},{"file":"WeHugNow_4","timestamp":"3:19 - 3:25","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaAmPD/"},{"file":"WeHugNow_5","timestamp":"3:19 - 3:28","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaFXN5/"},{"file":"WeHugNow_6","timestamp":"3:19 - 3:28","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQauK7W/"},{"file":"WeHugNow_7","timestamp":"3:20 - 3:37","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaF3DL/"},{"file":"WeHugNow_8","timestamp":"3:19 - 3:40","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQahvJG/"},{"file":"WeHugNow_9","timestamp":"3:19 - 3:34","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQamDee/"},{"file":"WeHugNow_10","timestamp":"3:28 - 4:08","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQasnho/"}]}
+];
 
-  async function loadAllData() {
-    const res = await fetch("clips.json");
-    if (!res.ok) throw new Error(`Failed to load clips.json (${res.status})`);
-    const raw = await res.json();
-    const byName = new Map((raw || []).map((song) => [song.name, song]));
-    ALL_DATA = SONG_ORDER.map((name) => byName.get(name)).filter(Boolean).map(normalizeSongData);
-  }
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function parseTime(s) {
+  if (!s) return 0;
+  const parts = s.trim().split(':');
+  if (parts.length === 2) return parseInt(parts[0]) * 60 + parseFloat(parts[1]);
+  return 0;
+}
 
-  const tooltip    = document.getElementById("clip-tooltip");
-  const tipTitle   = document.getElementById("tip-title");
-  const tipTime    = document.getElementById("tip-time");
-  const tipTiktoks = document.getElementById("tip-tiktoks");
-  const tipSecEl   = document.getElementById("tip-sections");
+function parseLength(l) {
+  if (!l) return 180;
+  return parseTime(l);
+}
 
-  function fmtTime(s) {
-    return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
-  }
-  function truncateWithEllipsis(str, maxChars) {
-    const s = String(str || "");
-    return s.length <= maxChars ? s : s.slice(0, Math.max(1, maxChars - 1)) + "…";
-  }
-  function titleTwoLines(name, maxCharsPerLine) {
-    const words = String(name || "").trim().split(/\s+/).filter(Boolean);
-    const zwsp = "\u200b";
-    if (!words.length) return ["", zwsp];
-    const full = words.join(" ");
-    if (full.length <= maxCharsPerLine) return [full, zwsp];
-    let line1 = words[0];
-    for (let i = 1; i < words.length; i++) {
-      const cand = `${line1} ${words[i]}`;
-      if (cand.length <= maxCharsPerLine) line1 = cand;
-      else {
-        const line2 = words.slice(i).join(" ");
-        return [
-          line1.length > maxCharsPerLine ? truncateWithEllipsis(line1, maxCharsPerLine) : line1,
-          line2.length > maxCharsPerLine ? truncateWithEllipsis(line2, maxCharsPerLine) : line2,
-        ];
-      }
-    }
-    return [truncateWithEllipsis(line1, maxCharsPerLine), zwsp];
-  }
-  function getSectionsForClip(sections, clip) {
-    const types = new Set();
-    sections.forEach(sec => { if (clip.end > sec.start && clip.start < sec.end) types.add(sec.type); });
-    return [...types];
-  }
-  function renderDetailClipList(song) {
-    const panel = document.getElementById("detailClipList");
-    if (!panel) return;
-    const clips = (song.clips || []).filter(c => c.start !== null && c.end !== null && c.end > c.start);
-    let html = `<div class="clip-list-title">clips (${clips.length})</div>`;
-    if (!clips.length) {
-      panel.innerHTML = html + `<div class="clip-list-empty">No clips found for this song.</div>`;
-      return;
-    }
-    clips.forEach((clip) => {
-      const sections = getSectionsForClip(song.sections || [], clip);
-      const sectionText = sections.length ? sections.join(", ") : "none";
-      html += `
-        <div class="clip-list-item">
-          <div class="clip-list-time">${fmtTime(clip.start)} - ${fmtTime(clip.end)}</div>
-          <div class="clip-list-meta">
-            duration ${Math.round(clip.end - clip.start)}s<br/>
-            ${clip.instances || 0} TikToks<br/>
-            ${sectionText}
-          </div>
-        </div>
-      `;
-    });
-    panel.innerHTML = html;
-  }
-  function syncClipListCollapsedUI() {
-    const panel = document.getElementById("detailClipList");
-    const btn = document.getElementById("clipListToggle");
-    if (!panel || !btn) return;
-    panel.classList.toggle("collapsed", isClipListCollapsed);
-    btn.textContent = isClipListCollapsed ? "show clips" : "hide clips";
-  }
-  function showTip(e, clip, sections) {
-    tipTitle.textContent   = `clip  ${fmtTime(clip.start)} – ${fmtTime(clip.end)}`;
-    tipTime.textContent    = `duration: ${Math.round(clip.end - clip.start)}s`;
-    tipTiktoks.textContent = `seen in ${clip.instances} of 10 TikToks`;
-    tipSecEl.innerHTML = "";
-    getSectionsForClip(sections, clip).forEach(type => {
-      const pill = document.createElement("span");
-      pill.className = "tip-sec-pill";
-      const color = SECTION_COLORS[type] || "#ccc";
-      pill.style.background = color + "33";
-      pill.style.color      = color;
-      pill.style.border     = `0.5px solid ${color}66`;
-      pill.textContent = type;
-      tipSecEl.appendChild(pill);
-    });
-    tooltip.style.display = "block";
-    moveTip(e);
-  }
-  function moveTip(e) { tooltip.style.left = (e.clientX + 14) + "px"; tooltip.style.top = (e.clientY - 36) + "px"; }
-  function hideTip() { tooltip.style.display = "none"; }
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
 
-  function normalizeSongName(name) { return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, ""); }
-  function getAudioSrcForSong(song) {
-    if (AUDIO_SOURCES[song.name]) return AUDIO_SOURCES[song.name];
-    const target = normalizeSongName(song.name);
-    const match = Object.entries(AUDIO_SOURCES).find(([k]) => normalizeSongName(k) === target);
-    return match ? match[1] : null;
-  }
+// Parse clip start times per song
+function getClipStartTimes(song) {
+  const starts = new Set();
+  song.clips.forEach(c => {
+    const [start] = c.timestamp.split(' - ');
+    starts.add(parseTime(start));
+  });
+  return [...starts].sort((a, b) => a - b);
+}
 
-  function setProgressMarkerTime(seconds, duration) {
-    if (!activeProgressMarker || !activeProgressGeom || !duration) return;
-    const clamped = Math.max(0, Math.min(seconds, duration));
-    const angle = (clamped / duration) * 360;
-    const [x1, y1] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.innerR, angle);
-    const [x2, y2] = polarToXY(activeProgressGeom.cx, activeProgressGeom.cy, activeProgressGeom.outerR, angle);
-    if (activeProgressGeom.outlineEl) {
-      activeProgressGeom.outlineEl.setAttribute("x1", x1);
-      activeProgressGeom.outlineEl.setAttribute("y1", y1);
-      activeProgressGeom.outlineEl.setAttribute("x2", x2);
-      activeProgressGeom.outlineEl.setAttribute("y2", y2);
-    }
-    activeProgressMarker.setAttribute("x1", x1);
-    activeProgressMarker.setAttribute("y1", y1);
-    activeProgressMarker.setAttribute("x2", x2);
-    activeProgressMarker.setAttribute("y2", y2);
-  }
+// Category color palette (subtle)
+const CAT_COLORS = {
+  'Animals': '#4a9e6b',
+  'Humor': '#c4773a',
+  'Dance': '#6a7ec4',
+  'Lip Sync': '#b06ab3',
+  'Aesthetic': '#8a7a6a',
+  'Wholesome/Emotional': '#6aacb3',
+  'Tutorial': '#9a8a4a',
+  'Edit': '#7a6aaa',
+  'Hair + Makeup': '#c48a6a',
+  'Art': '#6a9ab3',
+  'Unboxing': '#8a6a7a',
+  'default': '#4a4a4a'
+};
 
-  function setTimeLabel(seconds, duration) {
-    if (!activeTimeLabel || !duration) return;
-    activeTimeLabel.textContent = `${fmtTime(Math.max(0, Math.min(seconds, duration)))} / ${fmtTime(duration)}`;
-  }
+function catColor(cat) {
+  return CAT_COLORS[cat] || CAT_COLORS.default;
+}
 
-  function stopProgressLoop() {
-    if (activeProgressRAF !== null) { cancelAnimationFrame(activeProgressRAF); activeProgressRAF = null; }
-  }
+// ─── SMALL MULTIPLES ────────────────────────────────────────────────────────
+let currentSort = 'rank';
+let displayOrder = [...SONGS];
 
-  function runProgressLoop() {
-    stopProgressLoop();
-    const tick = () => {
-      if (activeAudio && !activeAudio.paused) {
-        const vizDuration = Number(activeAudio.dataset.songDuration) || Number(activeAudio.duration) || 0;
-        setProgressMarkerTime(activeAudio.currentTime, vizDuration);
-        setTimeLabel(activeAudio.currentTime, vizDuration);
-        activeProgressRAF = requestAnimationFrame(tick);
-      }
-    };
-    activeProgressRAF = requestAnimationFrame(tick);
-  }
+function sortSongs(by) {
+  currentSort = by;
+  if (by === 'rank') displayOrder = [...SONGS].sort((a, b) => a.rank - b.rank);
+  else if (by === 'clips') displayOrder = [...SONGS].sort((a, b) => b.clips.length - a.clips.length);
+  else if (by === 'genre') displayOrder = [...SONGS].sort((a, b) => a.genre.localeCompare(b.genre));
+  renderGrid();
+}
 
-  function stopActiveAudio() {
-    stopProgressLoop();
-    if (activeAudio) {
-      activeAudio.pause();
-      activeAudio.currentTime = 0;
-      activeAudio = null;
-    }
-    if (activePlayBtn) { activePlayBtn.textContent = "▶"; activePlayBtn = null; }
-    activeProgressMarker = null;
-    activeProgressGeom = null;
-    activeTimeLabel = null;
-  }
+function renderGrid() {
+  const grid = document.getElementById('circles-grid');
+  grid.innerHTML = '';
 
-  function ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
-    const src = getAudioSrcForSong(song);
-    if (!src) return null;
+  displayOrder.forEach((song, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'song-circle-wrap';
+    wrap.dataset.rank = song.rank;
 
-    activeProgressMarker = progressMarker;
-    activeProgressGeom   = progressGeom;
-    activeTimeLabel      = timeLabel;
-
-    if (activeAudio && activeAudio.dataset.src === src) {
-      if (playBtn) activePlayBtn = playBtn;
-      return activeAudio;
-    }
-
-    stopActiveAudio();
-
-    const audio = new Audio(src);
-    audio.preload = "auto";
-    audio.dataset.src = src;
-    audio.dataset.songDuration = String(song.duration);
-
-    activeAudio          = audio;
-    activePlayBtn        = playBtn || activePlayBtn;
-    activeProgressMarker = progressMarker;
-    activeProgressGeom   = progressGeom;
-    activeTimeLabel      = timeLabel;
-
-    setProgressMarkerTime(0, song.duration);
-    setTimeLabel(0, song.duration);
-
-    audio.addEventListener("play", () => {
-      if (activePlayBtn) activePlayBtn.textContent = "⏸";
-      runProgressLoop();
-    });
-    audio.addEventListener("pause", () => {
-      if (activePlayBtn && !audio.ended) activePlayBtn.textContent = "▶";
-      stopProgressLoop();
-    });
-    audio.addEventListener("ended", () => {
-      if (activePlayBtn) activePlayBtn.textContent = "▶";
-      stopProgressLoop();
-      setProgressMarkerTime(0, song.duration);
-      setTimeLabel(0, song.duration);
-      activeAudio = null; activePlayBtn = null;
-      activeProgressMarker = null; activeProgressGeom = null; activeTimeLabel = null;
-    });
-    audio.addEventListener("error", () => {
-      if (activePlayBtn) activePlayBtn.textContent = "▶";
-      stopProgressLoop();
-      setProgressMarkerTime(0, song.duration);
-      setTimeLabel(0, song.duration);
-      activeAudio = null; activePlayBtn = null;
-      activeProgressMarker = null; activeProgressGeom = null; activeTimeLabel = null;
-    });
-
-    return audio;
-  }
-
-  function toggleClipDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel) {
-    const audio = ensureDetailAudio(song, playBtn, progressMarker, progressGeom, timeLabel);
-    if (!audio) return;
-    if (audio.paused) {
-      audio.play().catch(() => {
-        if (activePlayBtn) activePlayBtn.textContent = "▶";
-        stopProgressLoop();
-      });
-    } else {
-      audio.pause();
-      stopProgressLoop();
-    }
-  }
-
-  function polarToXY(cx, cy, r, angleDeg) {
-    const rad = (angleDeg - 90) * Math.PI / 180;
-    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
-  }
-  function describeArc(cx, cy, r, a0, a1) {
-    const [sx, sy] = polarToXY(cx, cy, r, a0);
-    const [ex, ey] = polarToXY(cx, cy, r, a1);
-    return `M ${sx} ${sy} A ${r} ${r} 0 ${(a1 - a0) > 180 ? 1 : 0} 1 ${ex} ${ey}`;
-  }
-
-  function buildSVG(song, size, isDetail) {
+    const size = 110;
+    const r = 46;
     const cx = size / 2, cy = size / 2;
-    const r      = size * 0.33;
-    const thinW  = size * 0.027;
-    const thickW = size * 0.072;
-    const ns     = "http://www.w3.org/2000/svg";
 
-    const svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
-    svg.setAttribute("width", "100%");
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-    const dur        = song.duration;
-    const detailPlayBtnRef = isDetail ? { current: null } : null;
-    const validClips = (song.clips || []).filter(c => c.start !== null && c.end !== null);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.className.baseVal = 'song-circle';
 
-    // Build a sorted list of all boundary points on the timeline:
-    // section boundaries + exact clip start/end timestamps.
-    // This ensures thick arcs start and end at the EXACT clip timestamps,
-    // not rounded to the nearest second.
-    const boundaries = new Set();
-    song.sections.forEach(sec => { boundaries.add(sec.start); boundaries.add(sec.end); });
-    validClips.forEach(clip => { boundaries.add(clip.start); boundaries.add(clip.end); });
-    const sortedBoundaries = [...boundaries].sort((a, b) => a - b);
-    const clipHoverOverlayByIndex = [];
-    const setClipOverlayVisible = (clipIndex, visible) => {
-      const overlayEls = clipHoverOverlayByIndex[clipIndex];
-      if (!overlayEls) return;
-      overlayEls.forEach((el) => {
-        if (visible) svg.appendChild(el); // bring hovered overlay to top visual layer
-        el.setAttribute("opacity", visible ? "0.98" : "0");
-      });
-    };
-    const getActiveClipsAt = (time) => validClips.filter(clip => time >= clip.start && time < clip.end);
-    const getInstanceCountAt = (time) => getActiveClipsAt(time).reduce((sum, clip) => sum + (clip.instances || 0), 0);
-    let maxInstanceCount = 0;
-    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
-      const segStart = sortedBoundaries[i];
-      const segEnd = sortedBoundaries[i + 1];
-      if (segEnd - segStart < 0.01) continue;
-      const mid = (segStart + segEnd) / 2;
-      maxInstanceCount = Math.max(maxInstanceCount, getInstanceCountAt(mid));
-    }
+    // Main circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+    circle.className.baseVal = 'circle-bg';
+    g.appendChild(circle);
 
-    // For each segment between consecutive boundaries, determine its section color
-    // and whether it falls inside a clip, then draw the arc.
-    for (let i = 0; i < sortedBoundaries.length - 1; i++) {
-      const segStart = sortedBoundaries[i];
-      const segEnd   = sortedBoundaries[i + 1];
-      if (segEnd - segStart < 0.01) continue;
-
-      const mid = (segStart + segEnd) / 2;
-
-      // Find which section this segment belongs to
-      const sec = song.sections.find(s => mid >= s.start && mid < s.end);
-      if (!sec) continue;
-      const color = SECTION_COLORS[sec.type] || "#ccc";
-
-      const activeClipEntries = validClips
-        .map((clip, ci) => ({ clip, ci }))
-        .filter(({ clip }) => mid >= clip.start && mid < clip.end);
-      const activeClips = activeClipEntries.map(({ clip }) => clip);
-      const isClip = activeClipEntries.length > 0;
-      const instanceCount = activeClips.reduce((sum, clip) => sum + (clip.instances || 0), 0);
-      const widthRatio = (!isClip || maxInstanceCount <= 0) ? 0 : Math.min(1, instanceCount / maxInstanceCount);
-      const segStrokeW = thinW + (thickW - thinW) * widthRatio;
-      const primaryClipEntry = isClip
-        ? activeClipEntries.reduce((best, curr) => ((curr.clip.instances || 0) > (best.clip.instances || 0) ? curr : best), activeClipEntries[0])
-        : null;
-      const primaryClip = primaryClipEntry ? primaryClipEntry.clip : null;
-      const primaryClipIndex = primaryClipEntry ? primaryClipEntry.ci : -1;
-
-      const a0 = (segStart / dur) * 360;
-      const a1 = (segEnd   / dur) * 360;
-      if (a1 - a0 < 0.1) continue;
-
-      const arc = document.createElementNS(ns, "path");
-      arc.setAttribute("d",             describeArc(cx, cy, r, a0, a1));
-      arc.setAttribute("stroke",        color);
-      arc.setAttribute("stroke-width",  segStrokeW);
-      arc.setAttribute("fill",          "none");
-      arc.setAttribute("stroke-linecap","butt");
-      arc.setAttribute("opacity",       isClip ? "1" : String(NON_CLIP_OPACITY));
-      svg.appendChild(arc);
-
-      if (isClip) {
-        const hit = document.createElementNS(ns, "path");
-        hit.setAttribute("d",            describeArc(cx, cy, r, a0, a1));
-        hit.setAttribute("stroke",       "transparent");
-        hit.setAttribute("stroke-width", segStrokeW + 10);
-        hit.setAttribute("fill",         "none");
-        hit.style.cursor = "pointer";
-        hit.addEventListener("mouseenter", e => {
-          setClipOverlayVisible(primaryClipIndex, true);
-          showTip(e, primaryClip, song.sections);
-        });
-        hit.addEventListener("mousemove",  moveTip);
-        hit.addEventListener("mouseleave", () => {
-          setClipOverlayVisible(primaryClipIndex, false);
-          hideTip();
-        });
-        svg.appendChild(hit);
+    // Title text (multi-line wrapping)
+    const words = song.name.split(' ');
+    const maxChars = 10;
+    let lines = [];
+    let currentLine = '';
+    words.forEach(w => {
+      if ((currentLine + ' ' + w).trim().length <= maxChars) {
+        currentLine = (currentLine + ' ' + w).trim();
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = w;
       }
-    }
+    });
+    if (currentLine) lines.push(currentLine);
 
-    validClips.forEach((clip, ci) => {
-      const clipStartA = (clip.start / dur) * 360;
-      const clipEndA = (clip.end / dur) * 360;
-      if (clipEndA - clipStartA < 0.1) return;
-      const overlayBandW = thickW;
-      const edgeInnerR = r - overlayBandW / 2;
-      const edgeOuterR = r + overlayBandW / 2;
-      const borderW = Math.max(1, size * 0.006);
+    const lineH = 11;
+    const titleY = cy - (lines.length - 1) * lineH / 2 - 6;
 
-      const innerArc = document.createElementNS(ns, "path");
-      innerArc.setAttribute("d",             describeArc(cx, cy, edgeInnerR, clipStartA, clipEndA));
-      innerArc.setAttribute("stroke",        "#ffffff");
-      innerArc.setAttribute("stroke-width",  borderW);
-      innerArc.setAttribute("fill",          "none");
-      innerArc.setAttribute("stroke-linecap","butt");
-      innerArc.setAttribute("opacity",       "0");
-      innerArc.setAttribute("pointer-events","none");
-      svg.appendChild(innerArc);
-
-      const outerArc = document.createElementNS(ns, "path");
-      outerArc.setAttribute("d",             describeArc(cx, cy, edgeOuterR, clipStartA, clipEndA));
-      outerArc.setAttribute("stroke",        "#ffffff");
-      outerArc.setAttribute("stroke-width",  borderW);
-      outerArc.setAttribute("fill",          "none");
-      outerArc.setAttribute("stroke-linecap","butt");
-      outerArc.setAttribute("opacity",       "0");
-      outerArc.setAttribute("pointer-events","none");
-      svg.appendChild(outerArc);
-
-      const [sx1, sy1] = polarToXY(cx, cy, edgeInnerR, clipStartA);
-      const [sx2, sy2] = polarToXY(cx, cy, edgeOuterR, clipStartA);
-      const startEdge = document.createElementNS(ns, "line");
-      startEdge.setAttribute("x1", sx1); startEdge.setAttribute("y1", sy1);
-      startEdge.setAttribute("x2", sx2); startEdge.setAttribute("y2", sy2);
-      startEdge.setAttribute("stroke", "#ffffff");
-      startEdge.setAttribute("stroke-width", borderW);
-      startEdge.setAttribute("stroke-linecap", "butt");
-      startEdge.setAttribute("opacity", "0");
-      startEdge.setAttribute("pointer-events", "none");
-      svg.appendChild(startEdge);
-
-      const [ex1, ey1] = polarToXY(cx, cy, edgeInnerR, clipEndA);
-      const [ex2, ey2] = polarToXY(cx, cy, edgeOuterR, clipEndA);
-      const endEdge = document.createElementNS(ns, "line");
-      endEdge.setAttribute("x1", ex1); endEdge.setAttribute("y1", ey1);
-      endEdge.setAttribute("x2", ex2); endEdge.setAttribute("y2", ey2);
-      endEdge.setAttribute("stroke", "#ffffff");
-      endEdge.setAttribute("stroke-width", borderW);
-      endEdge.setAttribute("stroke-linecap", "butt");
-      endEdge.setAttribute("opacity", "0");
-      endEdge.setAttribute("pointer-events", "none");
-      svg.appendChild(endEdge);
-
-      clipHoverOverlayByIndex[ci] = [innerArc, outerArc, startEdge, endEdge];
+    lines.forEach((line, li) => {
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', cx);
+      t.setAttribute('y', titleY + li * lineH);
+      t.setAttribute('font-size', '10');
+      t.className.baseVal = 'circle-title';
+      t.textContent = line;
+      g.appendChild(t);
     });
 
-    // Start marker
-    const markerInnerR = r - thickW / 2 - size * MARKER_STICKOUT;
-    const markerOuterR = r + thickW / 2 + size * MARKER_STICKOUT;
-    const [ix, iy] = polarToXY(cx, cy, markerInnerR, 0);
-    const [ox, oy] = polarToXY(cx, cy, markerOuterR, 0);
-    const mkOutline = document.createElementNS(ns, "line");
-    mkOutline.setAttribute("x1", ix); mkOutline.setAttribute("y1", iy);
-    mkOutline.setAttribute("x2", ox); mkOutline.setAttribute("y2", oy);
-    mkOutline.setAttribute("stroke", "#000000"); mkOutline.setAttribute("stroke-width", size * 0.02);
-    mkOutline.setAttribute("stroke-linecap", "round"); mkOutline.setAttribute("opacity", "0.6");
-    svg.appendChild(mkOutline);
-    const mk = document.createElementNS(ns, "line");
-    mk.setAttribute("x1", ix); mk.setAttribute("y1", iy);
-    mk.setAttribute("x2", ox); mk.setAttribute("y2", oy);
-    mk.setAttribute("stroke", "#ffffff"); mk.setAttribute("stroke-width", size * 0.014);
-    mk.setAttribute("stroke-linecap", "round"); mk.setAttribute("opacity", "0.8");
-    svg.appendChild(mk);
+    // Artist
+    const artistEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    artistEl.setAttribute('x', cx);
+    artistEl.setAttribute('y', titleY + lines.length * lineH + 2);
+    artistEl.setAttribute('font-size', '7.5');
+    artistEl.className.baseVal = 'circle-artist';
+    const shortArtist = song.artist.length > 14 ? song.artist.substring(0, 13) + '…' : song.artist;
+    artistEl.textContent = shortArtist;
+    g.appendChild(artistEl);
 
-    let progressMarker = null;
-    const markerGeom = { cx, cy, innerR: markerInnerR, outerR: markerOuterR };
+    // Rank
+    const rankEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    rankEl.setAttribute('x', cx);
+    rankEl.setAttribute('y', cy + r - 8);
+    rankEl.setAttribute('font-size', '8');
+    rankEl.setAttribute('fill', '#444');
+    rankEl.setAttribute('text-anchor', 'middle');
+    rankEl.setAttribute('font-family', 'SF Mono, monospace');
+    rankEl.textContent = `#${song.rank}`;
+    g.appendChild(rankEl);
 
-    if (isDetail) {
-      const progressOutline = document.createElementNS(ns, "line");
-      progressOutline.setAttribute("stroke", "#000000");
-      progressOutline.setAttribute("stroke-width", size * 0.019);
-      progressOutline.setAttribute("stroke-linecap", "round");
-      progressOutline.setAttribute("opacity", "0.85");
-      svg.appendChild(progressOutline);
+    svg.appendChild(g);
+    wrap.appendChild(svg);
+    grid.appendChild(wrap);
 
-      progressMarker = document.createElementNS(ns, "line");
-      progressMarker.setAttribute("stroke", "#ffffff");
-      progressMarker.setAttribute("stroke-width", size * 0.013);
-      progressMarker.setAttribute("stroke-linecap", "round");
-      progressMarker.setAttribute("opacity", "0.95");
-      svg.appendChild(progressMarker);
+    wrap.addEventListener('click', () => zoomIntoSong(song, wrap));
+  });
+}
 
-      const [px1, py1] = polarToXY(cx, cy, markerGeom.innerR, 0);
-      const [px2, py2] = polarToXY(cx, cy, markerGeom.outerR, 0);
-      progressOutline.setAttribute("x1", px1); progressOutline.setAttribute("y1", py1);
-      progressOutline.setAttribute("x2", px2); progressOutline.setAttribute("y2", py2);
-      progressMarker.setAttribute("x1", px1);  progressMarker.setAttribute("y1", py1);
-      progressMarker.setAttribute("x2", px2);  progressMarker.setAttribute("y2", py2);
-      markerGeom.outlineEl = progressOutline;
-    }
+// Sort buttons
+document.getElementById('sort-rank').addEventListener('click', function() {
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  this.classList.add('active');
+  sortSongs('rank');
+});
+document.getElementById('sort-clips').addEventListener('click', function() {
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  this.classList.add('active');
+  sortSongs('clips');
+});
+document.getElementById('sort-genre').addEventListener('click', function() {
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  this.classList.add('active');
+  sortSongs('genre');
+});
 
-    // Center text layout
-    const titleFS = isDetail ? size * 0.05 : size * 0.055;
-    const timeFS  = isDetail ? size * 0.034 : 0;
-    const artFS   = isDetail ? size * 0.039 : size * 0.042;
-    const titleLH = titleFS * 1.30;
-    const gapStack = size * 0.016;
-    const maxTitleChars = Math.max(10, Math.floor(size * (isDetail ? 0.115 : 0.098)));
-    const [titleLine1, titleLine2] = titleTwoLines(song.name, maxTitleChars);
-    const zwsp = "\u200b";
+// ─── ZOOM TRANSITION ────────────────────────────────────────────────────────
+function zoomIntoSong(song, wrapEl) {
+  const rect = wrapEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const startR = rect.width / 2;
 
-    let titleY1, titleY2, timeY, controlsY, artistY;
-    if (isDetail) {
-      controlsY = cy + size * 0.12;
-      artistY   = controlsY + size * 0.068;
-      timeY     = controlsY - size * 0.088;
-      titleY2   = timeY - size * 0.072;
-      titleY1   = titleY2 - titleLH;
-      const minTitleY = cy - size * 0.30;
-      if (titleY1 < minTitleY) {
-        const shift = minTitleY - titleY1;
-        titleY1 += shift; titleY2 += shift;
-        timeY = Math.min(timeY + shift, controlsY - size * 0.07);
-      }
-    } else {
-      artistY = cy + size * 0.105;
-      titleY2 = artistY - gapStack - artFS * 0.32 - titleLH;
-      titleY1 = titleY2 - titleLH;
-      const minTitleY = cy - size * 0.29;
-      if (titleY1 < minTitleY) {
-        const shift = minTitleY - titleY1;
-        titleY1 += shift; titleY2 += shift;
-      }
-    }
+  const zc = document.getElementById('zoom-circle');
+  zc.style.display = 'block';
+  zc.style.left = cx + 'px';
+  zc.style.top = cy + 'px';
+  zc.style.width = (startR * 2) + 'px';
+  zc.style.height = (startR * 2) + 'px';
+  zc.style.transition = 'none';
 
-    const titleEl = document.createElementNS(ns, "text");
-    titleEl.setAttribute("data-role", "title");
-    titleEl.setAttribute("text-anchor", "middle");
-    titleEl.setAttribute("font-size",   titleFS);
-    titleEl.setAttribute("font-weight", "500");
-    titleEl.setAttribute("fill",        "rgba(255,255,255,0.9)");
-    titleEl.setAttribute("x", cx);
-    titleEl.setAttribute("y", titleY1);
-    const tspan1 = document.createElementNS(ns, "tspan");
-    tspan1.setAttribute("x", cx); tspan1.setAttribute("dy", "0");
-    tspan1.textContent = titleLine1;
-    titleEl.appendChild(tspan1);
-    const tspan2 = document.createElementNS(ns, "tspan");
-    tspan2.setAttribute("x", cx); tspan2.setAttribute("dy", String(titleLH));
-    if (titleLine2 === zwsp) { tspan2.textContent = zwsp; tspan2.setAttribute("fill", "transparent"); }
-    else { tspan2.textContent = titleLine2; }
-    titleEl.appendChild(tspan2);
-    if (!isDetail) {
-      titleEl.style.cursor = "pointer";
-      titleEl.style.textDecoration = "underline";
-      titleEl.style.textDecorationColor = "rgba(255,255,255,0.3)";
-      titleEl.addEventListener("click",      () => zoomIn(song, svg));
-      titleEl.addEventListener("mouseenter", () => titleEl.setAttribute("fill", "#fff"));
-      titleEl.addEventListener("mouseleave", () => titleEl.setAttribute("fill", "rgba(255,255,255,0.9)"));
-    }
-    svg.appendChild(titleEl);
+  // Force reflow
+  zc.getBoundingClientRect();
 
-    let timeLabel = null;
-    if (isDetail) {
-      timeLabel = document.createElementNS(ns, "text");
-      timeLabel.setAttribute("data-role", "time");
-      timeLabel.setAttribute("x", cx); timeLabel.setAttribute("y", timeY);
-      timeLabel.setAttribute("text-anchor", "middle");
-      timeLabel.setAttribute("font-size", timeFS);
-      timeLabel.setAttribute("font-weight", "500");
-      timeLabel.setAttribute("fill", "rgba(255,255,255,0.78)");
-      timeLabel.textContent = `${fmtTime(0)} / ${fmtTime(song.duration)}`;
-      svg.appendChild(timeLabel);
-    }
+  const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
+  zc.style.transition = 'width 0.55s cubic-bezier(0.4,0,0.2,1), height 0.55s cubic-bezier(0.4,0,0.2,1)';
+  zc.style.width = maxDim + 'px';
+  zc.style.height = maxDim + 'px';
 
-    if (isDetail) {
-      const bSp = size * 0.11, bSz = size * 0.075;
-      const dimFill = "rgba(255,255,255,0.22)";
-      const normalFill = (isPlay) => isPlay ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.65)";
+  setTimeout(() => {
+    document.getElementById('small-multiples').style.opacity = '0';
+    document.getElementById('small-multiples').style.pointerEvents = 'none';
+    openSongView(song);
 
-      function addCtrl(x, icon, fs, isPlay, onClick, enabled) {
-        const btn = document.createElementNS(ns, "text");
-        btn.setAttribute("data-role", "control");
-        btn.setAttribute("x", x); btn.setAttribute("y", controlsY);
-        btn.setAttribute("text-anchor", "middle"); btn.setAttribute("font-size", fs);
-        btn.setAttribute("fill", enabled ? normalFill(isPlay) : dimFill);
-        btn.setAttribute("cursor", enabled ? "pointer" : "default");
-        btn.textContent = icon;
-        if (enabled && onClick) btn.addEventListener("click", onClick);
-        btn.addEventListener("mouseenter", () => { if (enabled) btn.setAttribute("fill", "#fff"); });
-        btn.addEventListener("mouseleave", () => { btn.setAttribute("fill", enabled ? normalFill(isPlay) : dimFill); });
-        svg.appendChild(btn);
-        return btn;
-      }
-
-      const playBtn = addCtrl(cx, "▶", bSz, true, () => {
-        toggleClipDetailAudio(song, playBtn, progressMarker, markerGeom, timeLabel);
-      }, true);
-      if (detailPlayBtnRef) detailPlayBtnRef.current = playBtn;
-      addCtrl(cx - bSp, "⏮", bSz * 0.9, false, null, false);
-      addCtrl(cx + bSp, "⏭", bSz * 0.9, false, null, false);
-    }
-
-    const art = document.createElementNS(ns, "text");
-    art.setAttribute("data-role", "artist");
-    art.setAttribute("x", cx); art.setAttribute("y", artistY);
-    art.setAttribute("text-anchor", "middle"); art.setAttribute("font-size", artFS);
-    art.setAttribute("fill", "rgba(255,255,255,0.3)");
-    art.textContent = truncateWithEllipsis(song.artist, Math.max(12, Math.floor(size * 0.11)));
-    svg.appendChild(art);
-
-    return svg;
-  }
-
-  function zoomIn(song, sourceSvg) {
-    stopActiveAudio();
-    const gv  = document.getElementById("gridView");
-    const dv  = document.getElementById("detailView");
-    const dc  = document.getElementById("detailCard");
-    const clipListPanel = document.getElementById("detailClipList");
-    const leg = document.getElementById("legend");
-    const targetSize = 380;
-    dc.innerHTML = "";
-    if (clipListPanel) clipListPanel.scrollTop = 0;
-    renderDetailClipList(song);
-    syncClipListCollapsedUI();
-    const big = buildSVG(song, targetSize, true);
-    big.style.maxWidth = `${targetSize}px`;
-    big.style.visibility = "hidden";
-    dc.appendChild(big);
-    dv.classList.add("visible");
-    dv.style.opacity = "0";
-
-    const animateDetailTextIn = () => {
-      const titleEls   = big.querySelectorAll('text[data-role="title"]');
-      const artistEls  = big.querySelectorAll('text[data-role="artist"]');
-      const timeEls    = big.querySelectorAll('text[data-role="time"]');
-      const controlEls = big.querySelectorAll('text[data-role="control"]');
-      const titleShift = targetSize * 0.055;
-      titleEls.forEach(el => { el.style.opacity = "0"; el.style.transform = `translateY(${titleShift}px)`; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
-      artistEls.forEach(el => { el.style.opacity = "0"; el.style.transform = `translateY(-${titleShift}px)`; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
-      timeEls.forEach(el => { el.style.opacity = "0"; el.style.transition = `opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
-      controlEls.forEach(el => { el.style.opacity = "0"; el.style.transform = "scale(0.94)"; el.style.transformOrigin = "center center"; el.style.transition = `transform ${DETAIL_TEXT_MOVE_MS}ms ease, opacity ${DETAIL_TEXT_FADE_MS}ms ease`; });
-      requestAnimationFrame(() => {
-        [...titleEls, ...artistEls, ...timeEls, ...controlEls].forEach(el => { el.style.opacity = "1"; el.style.transform = "translateY(0) scale(1)"; });
-      });
-    };
-
-    const canAnimate = sourceSvg && sourceSvg.getBoundingClientRect;
-    if (canAnimate) {
-      const from = sourceSvg.getBoundingClientRect();
-      const ghostWrap = document.createElement("div");
-      ghostWrap.style.cssText = `position:fixed;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;z-index:1000;pointer-events:none;transition:left ${ZOOM_MS}ms ease,top ${ZOOM_MS}ms ease,width ${ZOOM_MS}ms ease,height ${ZOOM_MS}ms ease,opacity ${ZOOM_MS}ms ease;`;
-      const ghostSvg = sourceSvg.cloneNode(true);
-      ghostSvg.style.cssText = "width:100%;height:100%;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.35));";
-      ghostWrap.appendChild(ghostSvg);
-      document.body.appendChild(ghostWrap);
-      gv.style.opacity = "0"; gv.style.display = "none"; leg.style.opacity = "0.4";
-      requestAnimationFrame(() => {
-        const to = big.getBoundingClientRect();
-        leg.style.transition = `opacity ${ZOOM_MS}ms ease`;
-        dv.style.transition  = `opacity ${ZOOM_MS}ms ease`;
-        dv.style.opacity = "1";
-        ghostWrap.style.left = `${to.left}px`; ghostWrap.style.top = `${to.top}px`;
-        ghostWrap.style.width = `${to.width}px`; ghostWrap.style.height = `${to.height}px`;
-      });
-      setTimeout(() => { big.style.visibility = "visible"; animateDetailTextIn(); ghostWrap.remove(); }, ZOOM_MS + 30);
-    } else {
-      gv.style.opacity = "0";
-      setTimeout(() => {
-        gv.style.display = "none"; leg.style.opacity = "0.4";
-        big.style.visibility = "visible"; animateDetailTextIn();
-        dv.style.transition = "opacity 0.3s"; dv.style.opacity = "1";
-      }, 250);
-    }
-  }
-
-  document.getElementById("backBtn").addEventListener("click", () => {
-    stopActiveAudio();
-    const gv  = document.getElementById("gridView");
-    const dv  = document.getElementById("detailView");
-    const leg = document.getElementById("legend");
-    dv.style.opacity = "0";
     setTimeout(() => {
-      dv.classList.remove("visible"); leg.style.opacity = "1";
-      gv.style.display = "block"; gv.style.opacity = "0";
-      requestAnimationFrame(() => { gv.style.transition = "opacity 0.3s"; gv.style.opacity = "1"; });
-    }, 250);
-  });
-  document.getElementById("clipListToggle").addEventListener("click", () => {
-    isClipListCollapsed = !isClipListCollapsed;
-    syncClipListCollapsedUI();
-  });
+      zc.style.transition = 'none';
+      zc.style.display = 'none';
+      document.getElementById('song-view').classList.add('visible');
+    }, 120);
+  }, 400);
+}
 
-  function buildCard(song) {
-    const card = document.createElement("div");
-    card.className = "song-card";
-    card.appendChild(buildSVG(song, 180, false));
-    return card;
+function zoomOut() {
+  stopPlayback();
+  document.getElementById('song-view').classList.remove('visible');
+
+  setTimeout(() => {
+    document.getElementById('small-multiples').style.opacity = '1';
+    document.getElementById('small-multiples').style.pointerEvents = 'all';
+  }, 300);
+}
+
+document.getElementById('back-btn').addEventListener('click', zoomOut);
+
+// ─── AUDIO ───────────────────────────────────────────────────────────────────
+const audioEl = document.getElementById('song-audio');
+
+const SONG_FILES = {
+  1:  'songs/pretty_little_baby.mp3',
+  2:  'songs/Hold My Hand.mp3',
+  3:  'songs/Rock That Body.mp3',
+  4:  'songs/Azul.mp3',
+  5:  'songs/DAME UN GRR.mp3',
+  6:  'songs/APT.mp3',
+  7:  'songs/Te Queria Ver.mp3',
+  8:  'songs/Stecu Stecu.mp3',
+  9:  'songs/Anxiety.mp3',
+  10: 'songs/Sailor Song.mp3',
+  11: 'songs/SHAKE IT TO THE MAX.mp3',
+  12: 'songs/Ocean Eyes.mp3',
+  13: 'songs/no_one_noticed.mp3',
+  14: 'songs/back_to_friends.mp3',
+  15: 'songs/sparks.mp3',
+  16: 'songs/Thats So True.mp3',
+  17: 'songs/Let Down.mp3',
+  18: 'songs/Suave.mp3',
+  19: 'songs/My Darling.mp3',
+  20: 'songs/We Hug Now.mp3'
+};
+
+// ─── SONG VIEW ───────────────────────────────────────────────────────────────
+let currentSong = null;
+let playTimer = null;
+let currentTimeSec = 0;
+let isPlaying = false;
+let songDuration = 0;
+let clipStartTimes = [];
+let activeClipIdx = -1;
+let processedClips = [];
+
+function parseClips(song) {
+  return song.clips.map((c, i) => {
+    const parts = c.timestamp.split(' - ');
+    return {
+      ...c,
+      startSec: parseTime(parts[0]),
+      endSec: parts[1] ? parseTime(parts[1]) : parseTime(parts[0]) + 15,
+      index: i
+    };
+  }).sort((a, b) => a.startSec - b.startSec);
+}
+
+function openSongView(song) {
+  currentSong = song;
+  currentTimeSec = 0;
+  isPlaying = false;
+  activeClipIdx = -1;
+  songDuration = parseLength(song.length);
+  clipStartTimes = getClipStartTimes(song);
+  processedClips = parseClips(song);
+
+  document.getElementById('sv-title').textContent = song.name;
+  document.getElementById('sv-artist').textContent = song.artist;
+  document.getElementById('sv-genre').textContent = song.genre;
+  document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('tl-total').textContent = fmtTime(songDuration);
+  document.getElementById('clip-count').textContent = `${song.clips.length} clips`;
+
+  const songFile = SONG_FILES[song.rank];
+  if (songFile) {
+    audioEl.src = songFile;
+    audioEl.load();
+    audioEl.currentTime = 0;
+  } else {
+    audioEl.removeAttribute('src');
   }
 
-  async function init() {
-    await loadAllData();
-    const legendEl = document.getElementById("legend");
-    const row1 = document.getElementById("row1");
-    const row2 = document.getElementById("row2");
-    legendEl.innerHTML = ""; row1.innerHTML = ""; row2.innerHTML = "";
-    const usedTypes = [...new Set(ALL_DATA.flatMap(s => s.sections.map(t => t.type)))].sort();
-    usedTypes.forEach(type => {
-      const color = SECTION_COLORS[type] || "#ccc";
-      const item = document.createElement("div");
-      item.className = "leg-item";
-      item.innerHTML = `<span class="leg-swatch" style="background:${color}"></span>${type}`;
-      legendEl.appendChild(item);
+  renderSongCircle(song);
+  renderClipsList(song);
+  renderTimelineTicks(song);
+  updateTimeline();
+}
+
+function renderSongCircle(song) {
+  const svg = document.getElementById('song-circle-svg');
+  svg.innerHTML = '';
+  const size = 180;
+  const r = 78;
+  const cx = size / 2, cy = size / 2;
+  svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+
+  // Main circle outline only
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+  circle.setAttribute('fill', 'none');
+  circle.setAttribute('stroke', '#2a2a2a');
+  circle.setAttribute('stroke-width', '1.5');
+  svg.appendChild(circle);
+
+  // Playhead arc
+  const playArc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  playArc.setAttribute('id', 'sv-play-arc');
+  playArc.setAttribute('fill', 'none');
+  playArc.setAttribute('stroke', '#444');
+  playArc.setAttribute('stroke-width', '1.5');
+  playArc.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(playArc);
+
+  // Playhead dot
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('id', 'sv-playhead-dot');
+  dot.setAttribute('r', '4');
+  dot.setAttribute('fill', '#e8e8e8');
+  dot.setAttribute('cx', cx);
+  dot.setAttribute('cy', cy - r);
+  svg.appendChild(dot);
+
+  // Center text
+  const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  title.setAttribute('x', cx);
+  title.setAttribute('y', cy - 4);
+  title.setAttribute('text-anchor', 'middle');
+  title.setAttribute('fill', '#888');
+  title.setAttribute('font-size', '10');
+  title.setAttribute('font-family', 'SF Mono, monospace');
+  title.setAttribute('letter-spacing', '0.05em');
+  title.textContent = fmtTime(0);
+  title.setAttribute('id', 'sv-center-time');
+  svg.appendChild(title);
+}
+
+function updateSongCircle() {
+  if (!currentSong) return;
+  const totalLen = songDuration;
+  const t = currentTimeSec;
+  const angle = (t / totalLen) * 2 * Math.PI - Math.PI / 2;
+  const r = 78;
+  const cx = 90, cy = 90;
+
+  // Playhead dot
+  const dot = document.getElementById('sv-playhead-dot');
+  if (dot) {
+    dot.setAttribute('cx', cx + r * Math.cos(angle));
+    dot.setAttribute('cy', cy + r * Math.sin(angle));
+  }
+
+  // Arc from start to current
+  const startAngle = -Math.PI / 2;
+  const x1 = cx + r * Math.cos(startAngle);
+  const y1 = cy + r * Math.sin(startAngle);
+  const x2 = cx + r * Math.cos(angle);
+  const y2 = cy + r * Math.sin(angle);
+  const largeArc = (angle - startAngle + 2 * Math.PI) % (2 * Math.PI) > Math.PI ? 1 : 0;
+  const playArc = document.getElementById('sv-play-arc');
+  if (playArc && t > 0) {
+    playArc.setAttribute('d', `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`);
+  }
+
+  // Center time
+  const ct = document.getElementById('sv-center-time');
+  if (ct) ct.textContent = fmtTime(t);
+
+
+}
+
+function renderClipsList(song) {
+  const list = document.getElementById('clips-list');
+  list.innerHTML = '';
+  processedClips.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'clip-card';
+    card.id = `clip-card-${i}`;
+    card.innerHTML = `
+      <span class="clip-number">${c.index + 1}</span>
+      <span class="clip-timestamp" id="clip-ts-${i}">${c.timestamp}</span>
+      <span class="clip-dot" style="background:${catColor(c.category)}"></span>
+      <span class="clip-category">${c.category}</span>
+      <a class="clip-link" href="${c.link}" target="_blank" rel="noopener">↗ TikTok</a>
+    `;
+    card.addEventListener('click', () => {
+      currentTimeSec = c.startSec;
+      if (audioEl.src) audioEl.currentTime = currentTimeSec;
+      updateTimeline();
+      updateSongCircle();
+      checkClipActivation();
     });
-    ALL_DATA.slice(0, 3).forEach(s => row1.appendChild(buildCard(s)));
-    ALL_DATA.slice(3, 5).forEach(s => row2.appendChild(buildCard(s)));
-  }
-
-  init().catch((err) => {
-    console.error(err);
-    document.body.insertAdjacentHTML("beforeend", `<p style="margin-top:16px;color:#ff7b7b;font-size:12px;">Unable to load clip data: ${err.message}</p>`);
+    list.appendChild(card);
   });
-  </script>
+}
+
+function renderTimelineTicks(song) {
+  const row = document.getElementById('density-row');
+  row.innerHTML = '';
+
+  const totalLen = parseLength(song.length);
+
+  // Draw each clip as a colored filled segment (start→end).
+  // Overlapping clips naturally stack via mix-blend-mode:screen → bright clusters.
+  processedClips.forEach(c => {
+    const leftPct  = (c.startSec / totalLen) * 100;
+    const widthPct = Math.max(0.4, ((c.endSec - c.startSec) / totalLen) * 100);
+    const seg = document.createElement('div');
+    seg.className = 'density-seg';
+    seg.style.left    = leftPct + '%';
+    seg.style.width   = widthPct + '%';
+    seg.style.background = catColor(c.category);
+    seg.style.opacity = '0.55';
+    seg.title = `${c.category}: ${c.timestamp}`;
+    row.appendChild(seg);
+  });
+}
+
+function updateTimeline() {
+  const pct = songDuration > 0 ? (currentTimeSec / songDuration) * 100 : 0;
+  document.getElementById('timeline-fill').style.width = pct + '%';
+  document.getElementById('timeline-head').style.left = pct + '%';
+  document.getElementById('tl-current').textContent = fmtTime(currentTimeSec);
+  document.getElementById('time-display').textContent = `${fmtTime(currentTimeSec)} / ${fmtTime(songDuration)}`;
+}
+
+function checkClipActivation() {
+  let newIdx = -1;
+  processedClips.forEach((c, i) => {
+    if (currentTimeSec >= c.startSec && currentTimeSec <= c.endSec) {
+      newIdx = i;
+    }
+  });
+
+  if (newIdx !== activeClipIdx) {
+    // Deactivate old
+    if (activeClipIdx >= 0) {
+      const old = document.getElementById(`clip-card-${activeClipIdx}`);
+      if (old) old.classList.remove('active');
+      const ots = document.getElementById(`clip-ts-${activeClipIdx}`);
+      if (ots) ots.classList.remove('active-ts');
+    }
+    activeClipIdx = newIdx;
+    if (newIdx >= 0) {
+      const card = document.getElementById(`clip-card-${newIdx}`);
+      if (card) {
+        card.classList.add('active');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const ts = document.getElementById(`clip-ts-${newIdx}`);
+        if (ts) ts.classList.add('active-ts');
+      }
+      const np = document.getElementById('now-playing-bar');
+      np.style.display = 'inline-flex';
+      document.getElementById('now-playing-text').textContent = `Clip ${newIdx + 1} — ${processedClips[newIdx].category}`;
+    } else {
+      document.getElementById('now-playing-bar').style.display = 'none';
+    }
+  }
+}
+
+// Playback
+function tick() {
+  if (!isPlaying) return;
+  currentTimeSec = audioEl.currentTime;
+  updateTimeline();
+  updateSongCircle();
+  checkClipActivation();
+
+  if (audioEl.ended || currentTimeSec >= songDuration) {
+    stopPlayback();
+    return;
+  }
+  playTimer = requestAnimationFrame(tick);
+}
+
+function startPlayback() {
+  if (currentTimeSec >= songDuration) currentTimeSec = 0;
+  if (audioEl.src) {
+    audioEl.currentTime = currentTimeSec;
+    audioEl.play().catch(() => {});
+  }
+  isPlaying = true;
+  playTimer = requestAnimationFrame(tick);
+  document.getElementById('play-btn').textContent = '⏸';
+}
+
+function stopPlayback() {
+  isPlaying = false;
+  if (playTimer) cancelAnimationFrame(playTimer);
+  playTimer = null;
+  if (audioEl.src) audioEl.pause();
+  document.getElementById('play-btn').textContent = '▶';
+}
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  if (isPlaying) stopPlayback(); else startPlayback();
+});
+
+document.getElementById('skip-btn').addEventListener('click', () => {
+  const next = clipStartTimes.find(t => t > currentTimeSec + 0.1);
+  if (next !== undefined) {
+    currentTimeSec = next;
+    if (audioEl.src) audioEl.currentTime = currentTimeSec;
+    updateTimeline();
+    updateSongCircle();
+    checkClipActivation();
+  }
+});
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  stopPlayback();
+  currentTimeSec = 0;
+  if (audioEl.src) audioEl.currentTime = 0;
+  updateTimeline();
+  updateSongCircle();
+  checkClipActivation();
+});
+
+// Click on timeline to seek
+document.getElementById('timeline-track').addEventListener('click', function(e) {
+  const rect = this.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  currentTimeSec = Math.max(0, Math.min(pct * songDuration, songDuration));
+  if (audioEl.src) audioEl.currentTime = currentTimeSec;
+  updateTimeline();
+  updateSongCircle();
+  checkClipActivation();
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderGrid();
+</script>
 </body>
 </html>
