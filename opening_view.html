@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Viz — Colored Swarm, Scroll to Circle</title>
+<title>TikTok Viz — Calendar Swarm → One-Hit vs Long-Lasting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* TikTok Sans — drop the .woff2 file into a ./fonts/ folder to enable. */
-  /* If absent, the browser falls back through the font-family chain below. */
   @font-face {
     font-family: 'TikTok Sans';
     src: url('./fonts/TikTokSans-Regular.woff2') format('woff2');
@@ -60,9 +58,8 @@
     max-width: 1400px;
   }
   h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; }
-  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 0; max-width: 720px; line-height: 1.5; }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 0; max-width: 760px; line-height: 1.5; }
 
-  /* Layout with sticky SVG and scroll-driven state */
   .main {
     display: grid;
     grid-template-columns: 1fr 240px;
@@ -71,47 +68,36 @@
     max-width: 1400px;
   }
 
-  /* Sticky viz column — SVG stays in view while user scrolls through the trigger zone */
-  .viz-col {
-    position: relative;
-  }
+  .viz-col { position: relative; }
   .sticky-wrap {
     position: sticky;
     top: 16px;
-    height: 640px;
+    height: 660px;
   }
   svg { display: block; }
 
-  /* Scroll-trigger zone: when this section scrolls past, the circle forms */
-  .scroll-zone {
-    height: 100vh;
-    margin-top: 40px;
-    padding: 0 24px;
+  .scroll-hint-bar {
+    height: 20px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    pointer-events: none;
   }
-  .scroll-step {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    padding: 16px 20px;
-    max-width: 520px;
-    font-size: 13px;
-    line-height: 1.5;
+  .scroll-hint-bar span {
+    position: absolute;
+    font-size: 11px;
     color: var(--muted);
+    letter-spacing: 0.06em;
+    transition: opacity 0.25s ease;
+    white-space: nowrap;
   }
-  .scroll-step strong { color: var(--ink); }
 
-  /* Footer space after circle forms */
-  .after-circle {
-    height: 40vh;
-    padding: 40px 72px;
-    color: var(--muted);
-    font-size: 12px;
-    font-style: italic;
-    max-width: 600px;
+  .scroll-zone {
+    height: 110vh;
+    margin-top: 40px;
   }
+  .after-circle { height: 30vh; }
 
   .axis-line { stroke: var(--ink); stroke-width: 1; }
   .month-tick { stroke: var(--line); stroke-width: 0.5; }
@@ -129,34 +115,76 @@
 
   .dot { cursor: pointer; transition: fill 0.4s ease; }
 
-  .axis-group, .grid-group {
-    transition: opacity 0.5s ease;
-  }
+  .axis-group, .grid-group { transition: opacity 0.5s ease; }
 
-  .circle-title {
-    text-anchor: middle;
+  .cluster-labels {
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
   }
-  .circle-title.visible { opacity: 1; }
-  .circle-title-main {
-    font-size: 22px;
-    font-weight: 600;
-    fill: var(--ink);
-  }
-  .circle-title-sub {
-    font-size: 12px;
-    fill: var(--muted);
-  }
-  .circle-title-tiny {
+  .cluster-labels.visible { opacity: 1; }
+  .cluster-label-tiny {
     font-size: 9px;
     fill: var(--muted);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .cluster-label-main {
+    font-size: 18px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: middle;
+  }
+  .cluster-label-sub {
+    font-size: 11px;
+    fill: var(--muted);
+    text-anchor: middle;
   }
 
-  /* Legend */
+  .insight-panel {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .insight-panel.visible { opacity: 1; }
+  .insight-section-title {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    fill: var(--ink);
+    text-anchor: middle;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .insight-divider { stroke: var(--line); stroke-width: 0.6; }
+  .insight-label {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    fill: var(--muted);
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+  .insight-value {
+    font-size: 22px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .insight-onehit { fill: #F037A5; }
+  .insight-long { fill: #93E9DE; }
+  .insight-vs {
+    font-size: 9px;
+    fill: var(--muted);
+    text-anchor: middle;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .insight-caption {
+    font-size: 10px;
+    fill: var(--muted);
+    text-anchor: middle;
+    font-style: italic;
+  }
+
   .legend-panel {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -215,10 +243,9 @@
     border-radius: 2px;
     vertical-align: middle;
   }
-  .data-badge.partial {
-    border-color: var(--line);
-    color: var(--muted);
-  }
+  .data-badge.partial { border-color: var(--line); color: var(--muted); }
+  .data-badge.cls-onehit { border-color: #F037A5; color: #F037A5; }
+  .data-badge.cls-long { border-color: #93E9DE; color: #93E9DE; }
   .legend-swatch {
     width: 12px;
     height: 12px;
@@ -286,7 +313,6 @@
     border-top: 1px solid var(--line);
   }
 
-  /* Progress indicator on the side */
   .scroll-progress {
     position: fixed;
     left: 0;
@@ -304,8 +330,7 @@
 <div class="scroll-progress" id="scrollProg"></div>
 
 <div class="intro">
-  <h1>Timeline Swarm → Scroll to Circle</h1>
-  <div class="subtitle">Each dot is a TikTok. X = post date, Y = view count, size = like count, color = song. Select a song, then scroll down to fly those dots into a circle.<br><span style="color:var(--muted); font-size:11px;">Showing 170 of 200 TikToks — songs #18, #19, #20 have no date/view data in the source and are excluded.</span></div>
+  <h1>Looped: Inside the Audio Fingerprint of TikTok's Biggest Songs</h1>
 </div>
 
 <div id="tooltip" class="tooltip"></div>
@@ -314,23 +339,15 @@
   <div class="viz-col">
     <div class="sticky-wrap">
       <svg id="swarm" width="1100" height="640"></svg>
-    </div>
-
-    <div class="scroll-zone" id="scrollZone">
-      <div class="scroll-step">
-        <strong>Step 1.</strong> Select a song at right to see that song's TikToks in color while everything else fades.
-      </div>
-      <div class="scroll-step">
-        <strong>Step 2.</strong> Keep scrolling — the selected dots will sweep inward and form a circle, ready for the next view (repetition/waveform).
-      </div>
-      <div class="scroll-step">
-        <strong>Step 3.</strong> Scroll back up to return the dots to their timeline positions.
+      <div class="scroll-hint-bar">
+        <span id="hintDown">↓ scroll to split into one-hit wonders &amp; long-lasting trends</span>
+        <span id="hintUp" style="opacity:0">↑ scroll up to return to the calendar</span>
       </div>
     </div>
 
-    <div class="after-circle">
-      (The waveform / repetition view would appear below this point in the final build, built on top of the circle just formed.)
-    </div>
+    <div class="scroll-zone" id="scrollZone"></div>
+
+    <div class="after-circle"></div>
   </div>
 
   <div>
@@ -344,57 +361,143 @@
         · y = view count (higher = more views)<br>
         · size = like count<br>
         · color = song<br><br>
-        Select a song, then scroll to form the circle.
+        <strong style="color:var(--ink)">Scroll splits songs into:</strong><br>
+        · <span style="color:#F037A5">one-hit wonder</span> — ≥80% of its TikToks fall within a single 30-day window<br>
+        · <span style="color:#93E9DE">long-lasting</span> — spread across more than a month
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// Load data from external JSON file.
-// If you open this file directly (file://) the browser will block fetch;
-// run a local server from this folder instead. See README for one-liners.
-fetch('./data.json')
+// Load CSV. If you open this file directly (file://) the browser will block fetch;
+// run a local server from this folder instead (e.g. python3 -m http.server).
+fetch('./dataset.csv')
   .then(r => {
-    if (!r.ok) throw new Error('Could not load data.json (status ' + r.status + ')');
-    return r.json();
+    if (!r.ok) throw new Error('Could not load dataset.csv (status ' + r.status + ')');
+    return r.text();
   })
-  .then(data => main(data))
+  .then(text => main(parseDataset(text)))
   .catch(err => {
     document.body.innerHTML = `
       <div style="padding:40px;font-family:'TikTok Sans','DM Sans',sans-serif;color:#F3EDE8;background:#191414;min-height:100vh;">
         <h1>Could not load data</h1>
         <p>${err.message}</p>
-        <p style="color:#BAB1B1">Make sure you're running a local server (e.g. <code>python3 -m http.server</code> or the VS Code "Live Server" extension) rather than opening index.html directly.</p>
+        <p style="color:#BAB1B1">Make sure you're running a local server (e.g. <code>python3 -m http.server</code> or the VS Code "Live Server" extension) rather than opening the file directly.</p>
       </div>`;
   });
 
+// ---------------- CSV PARSING ----------------
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c === '\r') { /* skip */ }
+      else field += c;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function parseDate(s) {
+  if (!s) return null;
+  const parts = s.trim().split('/').filter(p => p !== '');
+  if (parts.length !== 3) return null;
+  let m = parseInt(parts[0], 10);
+  let d = parseInt(parts[1], 10);
+  let y = parseInt(parts[2], 10);
+  if (isNaN(m) || isNaN(d) || isNaN(y)) return null;
+  if (y < 100) y += 2000;
+  const mm = String(m).padStart(2, '0');
+  const dd = String(d).padStart(2, '0');
+  return `${y}-${mm}-${dd}`;
+}
+
+// Parse "115.5M", "164,800", "21.4", etc. into a millions value where appropriate.
+function parseMillions(s) {
+  if (s == null) return NaN;
+  const t = String(s).trim();
+  if (!t) return NaN;
+  const cleaned = t.replace(/,/g, '');
+  if (/[Mm]$/.test(cleaned)) return parseFloat(cleaned.slice(0, -1));
+  if (/[Kk]$/.test(cleaned)) return parseFloat(cleaned.slice(0, -1)) / 1000;
+  return parseFloat(cleaned);
+}
+
+function parseDataset(text) {
+  const rows = parseCSV(text);
+  // rows[0] = section grouping, rows[1] = real headers
+  const headers = rows[1].map(h => h.trim());
+  const idx = h => headers.indexOf(h);
+  const I = {
+    rank: idx('Song Rank'),
+    name: idx('Name'),
+    artist: idx('Artist'),
+    category: idx('Category'),
+    date: idx('Post Date'),
+    views: idx('View Count (M)'),
+    viewsRaw: idx('View Count'),
+    likes: idx('Like Count (M)'),
+    likesRaw: idx('Like Count'),
+    creator: idx('Creator'),
+    video: idx('Video File Name'),
+    link: idx('Link'),
+    genre: idx('Genre'),
+    releaseYear: idx('Release Year'),
+    followers: idx('Follower Count'),
+  };
+  const out = [];
+  for (let r = 2; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || !row.length) continue;
+    const rank = parseInt(row[I.rank], 10);
+    if (!rank) continue;
+    const date = parseDate(row[I.date]);
+    let v = parseFloat(row[I.views]);
+    if (!isFinite(v) || v <= 0) v = parseMillions(row[I.viewsRaw]);
+    let l = parseFloat(row[I.likes]);
+    if (!isFinite(l) || l <= 0) l = parseMillions(row[I.likesRaw]);
+    const ry = parseInt(row[I.releaseYear], 10);
+    const fol = parseFloat((row[I.followers] || '').replace(/,/g, ''));
+    out.push({
+      rank,
+      name: (row[I.name] || '').trim(),
+      artist: (row[I.artist] || '').trim(),
+      category: (row[I.category] || '').trim(),
+      date,
+      metric: isFinite(v) ? v : null,
+      metric_type: 'views',
+      views: isFinite(v) ? v : null,
+      likes: isFinite(l) ? l : null,
+      creator: (row[I.creator] || '').trim(),
+      video: (row[I.video] || '').trim(),
+      link: (row[I.link] || '').trim(),
+      genre: (row[I.genre] || '').trim(),
+      releaseYear: isFinite(ry) ? ry : null,
+      followers: isFinite(fol) ? fol : null,
+    });
+  }
+  return out;
+}
+
 function main(DATA) {
 
-// 20-song palette designed to coexist with the project's reserved accent colors
-// (citric #CDFE34, tangerine #FF4632, klein blue #4100F5, aquamarine #93E9DE, fuchsia #F037A5).
-// These song colors are distinct from those hues so meaning doesn't collide in later views.
 const COLORS = [
-  '#E8B04A', // 1  warm gold
-  '#7FB3D5', // 2  soft steel blue
-  '#D16BA5', // 3  dusty rose
-  '#9BC95A', // 4  spring green
-  '#F5D547', // 5  sunflower
-  '#A38FCC', // 6  lavender
-  '#F29E8E', // 7  peach
-  '#5DBFB0', // 8  seafoam
-  '#E17A47', // 9  burnt orange
-  '#6C92D8', // 10 denim
-  '#C4A381', // 11 sand
-  '#C77DCB', // 12 lilac
-  '#7AB87A', // 13 sage
-  '#F0B25A', // 14 amber
-  '#8E9DAB', // 15 slate
-  '#EE8FA9', // 16 salmon pink
-  '#5EB5C9', // 17 cyan-teal
-  '#C9D06E', // 18 olive
-  '#9481C4', // 19 periwinkle
-  '#E89970', // 20 coral
+  '#E8B04A', '#7FB3D5', '#D16BA5', '#9BC95A', '#F5D547',
+  '#A38FCC', '#F29E8E', '#5DBFB0', '#E17A47', '#6C92D8',
+  '#C4A381', '#C77DCB', '#7AB87A', '#F0B25A', '#8E9DAB',
+  '#EE8FA9', '#5EB5C9', '#C9D06E', '#9481C4', '#E89970',
 ];
 const GRAY = '#4a4444';
 
@@ -407,41 +510,103 @@ function showTip(e, html) {
 }
 function hideTip() { tooltip.style.opacity = 0; }
 
-const MIN = new Date('2024-01-01').getTime();
-const MAX = new Date('2025-12-31').getTime();
-const clean = DATA.filter(d => d.date && d.metric != null);
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+
+const clean = DATA.filter(d => d.date && d.metric != null && d.metric > 0);
 clean.forEach(d => d._t = new Date(d.date).getTime());
-const inRange = clean.filter(d => d._t >= MIN && d._t <= MAX && d.metric > 0);
+const inRange = clean;
+
+// Date range is derived from the data, rounded to month boundaries
+const dataTs = inRange.map(d => d._t);
+const dataMin = Math.min(...dataTs);
+const dataMax = Math.max(...dataTs);
+const minDate = new Date(dataMin); minDate.setDate(1); minDate.setHours(0, 0, 0, 0);
+const maxDate = new Date(dataMax); maxDate.setMonth(maxDate.getMonth() + 1, 1); maxDate.setHours(0, 0, 0, 0);
+const MIN = minDate.getTime();
+const MAX = maxDate.getTime();
 
 const bySong = {};
-// Initialize all 20 ranks so we can track which have no data
 for (const d of DATA) {
-  if (!bySong[d.rank]) bySong[d.rank] = { rank: d.rank, name: d.name, artist: d.artist, videos: [], totalRecords: 0, inSwarm: 0 };
+  if (!bySong[d.rank]) bySong[d.rank] = { rank: d.rank, name: d.name, artist: d.artist, videos: [], totalRecords: 0, inSwarm: 0, releaseYear: null };
   bySong[d.rank].totalRecords++;
+  if (d.name && !bySong[d.rank].name) bySong[d.rank].name = d.name;
+  if (d.artist && !bySong[d.rank].artist) bySong[d.rank].artist = d.artist;
+  if (d.releaseYear && !bySong[d.rank].releaseYear) bySong[d.rank].releaseYear = d.releaseYear;
 }
 for (const d of inRange) {
   bySong[d.rank].videos.push(d);
   bySong[d.rank].inSwarm++;
 }
 const songs = Object.values(bySong).sort((a, b) => a.rank - b.rank);
+
+// --- Classify each song as one-hit or long-lasting ---
+function classifySong(videos) {
+  if (!videos.length) return null;
+  const sorted = [...videos].sort((a, b) => a._t - b._t);
+  let bestCount = 0;
+  for (let i = 0; i < sorted.length; i++) {
+    const cutoff = sorted[i]._t + ONE_MONTH_MS;
+    let c = 0;
+    for (let j = i; j < sorted.length && sorted[j]._t <= cutoff; j++) c++;
+    if (c > bestCount) bestCount = c;
+  }
+  return bestCount / videos.length >= 0.8 ? 'one-hit' : 'long-lasting';
+}
+
 songs.forEach(s => {
   s.color = COLORS[(s.rank - 1) % COLORS.length];
   s.hasData = s.inSwarm > 0;
   s.isPartial = s.inSwarm > 0 && s.inSwarm < s.totalRecords;
   s.isMissing = s.inSwarm === 0;
+  s.cls = s.hasData ? classifySong(s.videos) : null;
 });
+
+// --- Comparative insights for the two groups ---
+const NOW_YEAR = new Date().getFullYear();
+function avg(xs) { const ys = xs.filter(x => x != null && isFinite(x)); return ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : null; }
+function median(xs) { const ys = xs.filter(x => x != null && isFinite(x)).sort((a, b) => a - b); return ys.length ? ys[Math.floor(ys.length / 2)] : null; }
+
+const oneHitSongList = songs.filter(s => s.cls === 'one-hit');
+const longSongList = songs.filter(s => s.cls === 'long-lasting');
+const oneHitVids = inRange.filter(d => bySong[d.rank].cls === 'one-hit');
+const longVids = inRange.filter(d => bySong[d.rank].cls === 'long-lasting');
+
+const insights = {
+  age: {
+    oh: avg(oneHitSongList.map(s => NOW_YEAR - s.releaseYear)),
+    ll: avg(longSongList.map(s => NOW_YEAR - s.releaseYear)),
+  },
+  followers: {
+    oh: median(oneHitVids.map(d => d.followers)),
+    ll: median(longVids.map(d => d.followers)),
+  },
+  likeRate: {
+    oh: avg(oneHitVids.map(d => (d.likes != null && d.views) ? d.likes / d.views : null)),
+    ll: avg(longVids.map(d => (d.likes != null && d.views) ? d.likes / d.views : null)),
+  },
+};
+
+function fmtAge(y) { if (y == null) return '—'; const n = Math.round(y); return n + (n === 1 ? ' yr' : ' yrs'); }
+function fmtFol(n) {
+  if (n == null) return '—';
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return Math.round(n / 1e3) + 'K';
+  return Math.round(n);
+}
+function fmtRate(r) { return r == null ? '—' : (r * 100).toFixed(1) + '%'; }
 
 const metrics = inRange.map(d => d.metric);
 const mMin = Math.min(...metrics);
 const mMax = Math.max(...metrics);
+const mAxisMax = Math.max(100, Math.ceil(mMax / 100) * 100);
 
-// Like counts for size encoding (separate from views for y-position)
 const likeVals = inRange.map(d => d.likes).filter(l => l != null && l > 0);
-const lMin = Math.min(...likeVals);
-const lMax = Math.max(...likeVals);
+const lMin = likeVals.length ? Math.min(...likeVals) : 1;
+const lMax = likeVals.length ? Math.max(...likeVals) : 1;
 
 function radius(likes) {
-  if (likes == null || likes <= 0) return 3; // fallback for missing
+  if (likes == null || likes <= 0) return 3;
+  if (lMax === lMin) return 5;
   const t = (Math.sqrt(likes) - Math.sqrt(lMin)) / (Math.sqrt(lMax) - Math.sqrt(lMin));
   return 2.5 + t * 9;
 }
@@ -450,25 +615,28 @@ const W = 1100, H = 640;
 const marginL = 50, marginR = 40, marginT = 40, marginB = 50;
 const plotW = W - marginL - marginR;
 const plotH = H - marginT - marginB;
-const axisY = marginT + plotH - 10; // axis near bottom; dots rise upward
-const circleCx = W / 2;
-const circleCy = marginT + plotH / 2 - 20;
+const axisY = marginT + plotH - 10;
+
+const oneHitCx = marginL + plotW * 0.27;
+const oneHitCy = marginT + plotH / 2 - 10;
+const longCx = marginL + plotW * 0.73;
+const longCy = marginT + plotH / 2 - 10;
 
 function xOf(t) { return marginL + ((t - MIN) / (MAX - MIN)) * plotW; }
 function vOffset(m) {
-  const usableH = plotH - 40; // leave padding for top labels and bottom axis
-  const t = (Math.sqrt(m) - Math.sqrt(mMin)) / (Math.sqrt(mMax) - Math.sqrt(mMin));
-  return t * usableH;
+  const usableH = plotH - 40;
+  return (m / mAxisMax) * usableH;
 }
 
 function computeSwarmLayout() {
   const nodes = inRange.map((d, i) => ({
     ...d,
     tx: xOf(d._t),
-    ty: axisY - vOffset(d.metric), // always above the line
+    ty: axisY - vOffset(d.metric),
     r: radius(d.likes),
     color: COLORS[(d.rank - 1) % COLORS.length],
     id: `${d.rank}-${i}`,
+    cls: bySong[d.rank].cls,
   }));
   nodes.sort((a, b) => b.r - a.r);
   const placed = [];
@@ -480,10 +648,10 @@ function computeSwarmLayout() {
       const collides = xClose.some(p => {
         const dx = p.swarmX - n.tx;
         const dy = p.swarmY - y;
-        return Math.sqrt(dx*dx + dy*dy) < (p.r + n.r + 0.8);
+        return Math.sqrt(dx * dx + dy * dy) < (p.r + n.r + 0.8);
       });
       if (!collides) break;
-      y -= 0.8; // always push up
+      y -= 0.8;
       attempts++;
     }
     n.swarmX = n.tx;
@@ -496,20 +664,31 @@ function computeSwarmLayout() {
 const layout = computeSwarmLayout();
 layout.sort((a, b) => a.rank - b.rank || (a._t - b._t));
 
-function computeCircleTargets(rank) {
-  const songDots = layout.filter(n => n.rank === rank);
-  const sorted = [...songDots].sort((a, b) => a._t - b._t);
-  const R = 180;
-  const n = sorted.length;
-  sorted.forEach((d, i) => {
-    const angle = -Math.PI / 2 + (i / n) * 2 * Math.PI;
-    d.circleX = circleCx + R * Math.cos(angle);
-    d.circleY = circleCy + R * Math.sin(angle);
-  });
+// --- Two-cluster sunflower targets ---
+function computeClusterTargets() {
+  const oneHit = layout.filter(n => n.cls === 'one-hit');
+  const longLasting = layout.filter(n => n.cls === 'long-lasting');
+  const byRankDate = (a, b) => a.rank - b.rank || a._t - b._t;
+  oneHit.sort(byRankDate);
+  longLasting.sort(byRankDate);
+
+  function place(arr, cx, cy) {
+    const phi = Math.PI * (3 - Math.sqrt(5));
+    const step = 11;
+    arr.forEach((n, i) => {
+      const r = step * Math.sqrt(i + 0.5);
+      const theta = i * phi;
+      n.clusterX = cx + r * Math.cos(theta);
+      n.clusterY = cy + r * Math.sin(theta);
+    });
+  }
+  place(oneHit, oneHitCx, oneHitCy);
+  place(longLasting, longCx, longCy);
 }
+computeClusterTargets();
 
 let selectedRank = null;
-let scrollT = 0; // 0 = full swarm, 1 = full circle
+let scrollT = 0;
 
 function buildLegend() {
   const container = document.getElementById('legendList');
@@ -522,17 +701,20 @@ function buildLegend() {
     else if (s.isPartial) classes += ' partial-data';
     el.className = classes;
 
-    // Swatch: solid if data exists, hollow if missing
     const swatchStyle = s.isMissing
       ? `border: 1.5px dashed ${s.color}; background: transparent;`
       : `background: ${s.color}`;
 
-    // Data status badge
     let statusBadge = '';
     if (s.isMissing) {
       statusBadge = `<span class="data-badge">no data</span>`;
-    } else if (s.isPartial) {
-      statusBadge = `<span class="data-badge partial">${s.inSwarm}/${s.totalRecords}</span>`;
+    } else if (s.cls === 'one-hit') {
+      statusBadge = `<span class="data-badge cls-onehit">one-hit</span>`;
+    } else if (s.cls === 'long-lasting') {
+      statusBadge = `<span class="data-badge cls-long">long</span>`;
+    }
+    if (s.isPartial && !s.isMissing) {
+      statusBadge += `<span class="data-badge partial">${s.inSwarm}/${s.totalRecords}</span>`;
     }
 
     el.innerHTML = `
@@ -558,19 +740,20 @@ function renderStatic() {
   let html = '';
 
   html += '<g class="grid-group" id="gridGroup">';
-  const milestones = [50, 100, 200, 300];
+  const milestones = [];
+  for (let m = 100; m <= mAxisMax; m += 100) milestones.push(m);
   milestones.forEach(m => {
-    if (m <= mMax) {
-      const off = vOffset(m);
-      const yUp = axisY - off;
-      html += `<line x1="${marginL}" y1="${yUp}" x2="${marginL + plotW}" y2="${yUp}" class="y-gridline"/>`;
-      html += `<text x="${marginL - 6}" y="${yUp + 3}" text-anchor="end" class="y-gridline-label">${m}M</text>`;
-    }
+    const off = vOffset(m);
+    const yUp = axisY - off;
+    html += `<line x1="${marginL}" y1="${yUp}" x2="${marginL + plotW}" y2="${yUp}" class="y-gridline"/>`;
+    html += `<text x="${marginL - 6}" y="${yUp + 3}" text-anchor="end" class="y-gridline-label">${m}M</text>`;
   });
   html += '</g>';
 
   html += '<g class="axis-group" id="axisGroup">';
-  for (let y = 2024; y <= 2025; y++) {
+  const minYr = new Date(MIN).getFullYear();
+  const maxYr = new Date(MAX).getFullYear();
+  for (let y = minYr; y <= maxYr; y++) {
     for (let m = 0; m < 12; m++) {
       const t = new Date(y, m, 1).getTime();
       if (t >= MIN && t <= MAX) {
@@ -578,9 +761,7 @@ function renderStatic() {
         const isYear = m === 0;
         html += `<line x1="${x}" y1="${marginT + plotH + 3}" x2="${x}" y2="${marginT + plotH + (isYear ? 9 : 6)}" class="${isYear ? 'year-tick' : 'month-tick'}"/>`;
         const label = ['J','F','M','A','M','J','J','A','S','O','N','D'][m];
-        // Month letter on first row (all months, including Jan)
         html += `<text x="${x}" y="${marginT + plotH + 22}" class="axis-label" text-anchor="middle">${label}</text>`;
-        // Year label on a second row below, only at January
         if (isYear) {
           html += `<text x="${x}" y="${marginT + plotH + 40}" class="axis-label-year" text-anchor="start">${y}</text>`;
         }
@@ -595,27 +776,68 @@ function renderStatic() {
   layout.forEach(n => {
     const viewsStr = n.metric != null ? n.metric.toFixed(1) + 'M' : '—';
     const likesStr = n.likes != null ? n.likes.toFixed(1) + 'M' : '—';
-    html += `<circle class="dot" id="d_${n.id}" cx="${n.swarmX}" cy="${n.swarmY}" r="${n.r}" fill="${n.color}" fill-opacity="0.78" data-rank="${n.rank}" data-name="${escape(n.name)}" data-date="${n.date}" data-views="${viewsStr}" data-likes="${likesStr}" data-cat="${escape(n.category)}"/>`;
+    html += `<circle class="dot" id="d_${n.id}" cx="${n.swarmX}" cy="${n.swarmY}" r="${n.r}" fill="${n.color}" fill-opacity="0.78" data-rank="${n.rank}" data-name="${escape(n.name)}" data-artist="${escape(n.artist)}" data-date="${n.date}" data-views="${viewsStr}" data-likes="${likesStr}" data-cat="${escape(n.category)}" data-cls="${n.cls || ''}"/>`;
   });
 
-  html += `<g class="circle-title" id="circleTitle">
-    <text class="circle-title-tiny" x="${circleCx}" y="${circleCy - 26}">SELECTED</text>
-    <text class="circle-title-main" id="circleTitleName" x="${circleCx}" y="${circleCy - 4}"></text>
-    <text class="circle-title-sub" id="circleTitleArtist" x="${circleCx}" y="${circleCy + 14}"></text>
-    <text class="circle-title-tiny" id="circleTitleCount" x="${circleCx}" y="${circleCy + 34}"></text>
+  const oneHitCount = layout.filter(n => n.cls === 'one-hit').length;
+  const longCount = layout.filter(n => n.cls === 'long-lasting').length;
+  const oneHitSongCount = songs.filter(s => s.cls === 'one-hit').length;
+  const longSongCount = songs.filter(s => s.cls === 'long-lasting').length;
+
+  // Compute the visual top of each cluster so labels sit safely above the dots.
+  const sunflowerStep = 11;
+  const oneHitR = sunflowerStep * Math.sqrt(oneHitCount + 0.5);
+  const longR = sunflowerStep * Math.sqrt(longCount + 0.5);
+  const maxDotR = 12;
+  const labelGap = 14;
+  const oneHitMainY = oneHitCy - oneHitR - maxDotR - labelGap - 18;
+  const oneHitSubY = oneHitCy - oneHitR - maxDotR - labelGap;
+  const longMainY = longCy - longR - maxDotR - labelGap - 18;
+  const longSubY = longCy - longR - maxDotR - labelGap;
+
+  html += `<g class="cluster-labels" id="clusterLabels">
+    <text class="cluster-label-main" x="${oneHitCx}" y="${oneHitMainY}" fill="#F037A5">One-Hit Wonders</text>
+    <text class="cluster-label-sub" x="${oneHitCx}" y="${oneHitSubY}">Quick spike, &lt; 1 month · ${oneHitCount} TikToks · ${oneHitSongCount} songs</text>
+    <text class="cluster-label-main" x="${longCx}" y="${longMainY}" fill="#93E9DE">Long-Lasting Trends</text>
+    <text class="cluster-label-sub" x="${longCx}" y="${longSubY}">Spans &gt; 1 month · ${longCount} TikToks · ${longSongCount} songs</text>
   </g>`;
+
+  // Comparative insight panel — fades in once clusters land
+  const panelTop = 478;
+  const cols = [marginL + plotW * 0.18, marginL + plotW * 0.50, marginL + plotW * 0.82];
+  const tiles = [
+    { label: 'AVG SONG AGE', oh: fmtAge(insights.age.oh), ll: fmtAge(insights.age.ll), caption: 'fresh release vs. catalog rediscovery' },
+    { label: 'MEDIAN CREATOR FOLLOWERS', oh: fmtFol(insights.followers.oh), ll: fmtFol(insights.followers.ll), caption: 'celebrity launch vs. grassroots' },
+    { label: 'AVG LIKE-TO-VIEW RATE', oh: fmtRate(insights.likeRate.oh), ll: fmtRate(insights.likeRate.ll), caption: 'watched vs. loved' },
+  ];
+  html += `<g class="insight-panel" id="insightPanel">`;
+  html += `<line x1="${marginL + 80}" y1="${panelTop - 22}" x2="${marginL + plotW - 80}" y2="${panelTop - 22}" class="insight-divider"/>`;
+  html += `<text class="insight-section-title" x="${W / 2}" y="${panelTop - 6}">What separates the two?</text>`;
+  tiles.forEach((it, i) => {
+    const cx = cols[i];
+    html += `<text class="insight-label" x="${cx}" y="${panelTop + 22}">${it.label}</text>`;
+    html += `<text class="insight-value insight-onehit" x="${cx}" y="${panelTop + 50}">${it.oh}</text>`;
+    html += `<text class="insight-vs" x="${cx}" y="${panelTop + 68}">vs</text>`;
+    html += `<text class="insight-value insight-long" x="${cx}" y="${panelTop + 92}">${it.ll}</text>`;
+    html += `<text class="insight-caption" x="${cx}" y="${panelTop + 112}">${it.caption}</text>`;
+  });
+  html += `</g>`;
 
   svg.innerHTML = html;
 
   svg.querySelectorAll('.dot').forEach(dot => {
     dot.addEventListener('mousemove', e => {
-      const rank = dot.dataset.rank;
       const name = dot.dataset.name;
+      const artist = dot.dataset.artist;
+      const rank = dot.dataset.rank;
       const date = dot.dataset.date;
       const views = dot.dataset.views;
       const likes = dot.dataset.likes;
       const cat = dot.dataset.cat;
-      showTip(e, `<strong>${name}</strong> #${rank}<br>${date}<br>${views} views · ${likes} likes<br><span style="opacity:.6">${cat}</span>`);
+      const cls = dot.dataset.cls;
+      const clsLabel = cls === 'one-hit' ? '<span style="color:#F037A5">one-hit wonder</span>' :
+                       cls === 'long-lasting' ? '<span style="color:#93E9DE">long-lasting</span>' : '';
+      showTip(e, `<strong>${name}</strong> · ${artist}<br>#${rank} · ${date}<br>${views} views · ${likes} likes<br><span style="opacity:.6">${cat}</span>${clsLabel ? '<br>' + clsLabel : ''}`);
     });
     dot.addEventListener('mouseleave', hideTip);
     dot.addEventListener('click', () => {
@@ -626,113 +848,83 @@ function renderStatic() {
   });
 }
 
-// EASING
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+
+function applySelectionColors() {
+  layout.forEach(n => {
+    const el = document.getElementById(`d_${n.id}`);
+    if (!el) return;
+    if (selectedRank === null) {
+      el.setAttribute('fill', n.color);
+      el.setAttribute('fill-opacity', 0.78);
+      el.setAttribute('stroke', 'none');
+    } else if (n.rank === selectedRank) {
+      el.setAttribute('fill', n.color);
+      el.setAttribute('fill-opacity', 0.95);
+      el.setAttribute('stroke', '#CDFE34');
+      el.setAttribute('stroke-width', '1');
+      el.setAttribute('stroke-opacity', '0.85');
+      el.parentNode.appendChild(el);
+    } else {
+      el.setAttribute('fill', GRAY);
+      el.setAttribute('fill-opacity', 0.28);
+      el.setAttribute('stroke', 'none');
+    }
+  });
 }
 
 function selectSong(rank) {
   selectedRank = rank;
-  computeCircleTargets(rank);
   hideTip();
   buildLegend();
   document.getElementById('resetBtn').disabled = false;
-
-  // Recolor: others go gray, selected stays colored with a citric highlight stroke
-  layout.forEach(n => {
-    const el = document.getElementById(`d_${n.id}`);
-    if (!el) return;
-    if (n.rank === rank) {
-      el.setAttribute('fill', n.color);
-      el.setAttribute('fill-opacity', 0.92);
-      el.setAttribute('stroke', '#CDFE34');
-      el.setAttribute('stroke-width', '1');
-      el.setAttribute('stroke-opacity', '0.7');
-      el.parentNode.appendChild(el); // bring to front
-    } else {
-      el.setAttribute('fill', GRAY);
-      el.setAttribute('fill-opacity', 0.35);
-      el.setAttribute('stroke', 'none');
-    }
-  });
-
-  // Update title but don't show yet — shows at scroll t >= 0.9
-  const song = songs.find(s => s.rank === rank);
-  document.getElementById('circleTitleName').textContent = song.name;
-  document.getElementById('circleTitleArtist').textContent = song.artist || '—';
-  const count = layout.filter(n => n.rank === rank).length;
-  document.getElementById('circleTitleCount').textContent = `${count} TIKTOKS · #${rank}`;
-
-  updatePositions();
+  applySelectionColors();
 }
 
 function resetSelection() {
   selectedRank = null;
   buildLegend();
   document.getElementById('resetBtn').disabled = true;
-  document.getElementById('circleTitle').classList.remove('visible');
-
-  layout.forEach(n => {
-    const el = document.getElementById(`d_${n.id}`);
-    if (!el) return;
-    el.setAttribute('fill', n.color);
-    el.setAttribute('fill-opacity', 0.78);
-    el.setAttribute('stroke', 'none');
-    el.setAttribute('cx', n.swarmX);
-    el.setAttribute('cy', n.swarmY);
-  });
-
-  // Restore axis
-  document.getElementById('axisGroup').style.opacity = 1;
-  document.getElementById('gridGroup').style.opacity = 1;
+  applySelectionColors();
 }
 
-// Update dot positions based on selected song and scroll progress
 function updatePositions() {
-  if (!selectedRank) return;
-
   const eased = easeInOutCubic(Math.max(0, Math.min(1, scrollT)));
+  const fade = 1 - eased;
+  document.getElementById('axisGroup').style.opacity = fade;
+  document.getElementById('gridGroup').style.opacity = fade;
 
-  // Fade axis as we transition to circle
-  const axisOpacity = 1 - eased;
-  document.getElementById('axisGroup').style.opacity = axisOpacity;
-  document.getElementById('gridGroup').style.opacity = axisOpacity;
-
-  // Move selected dots along swarm -> circle path
   layout.forEach(n => {
     const el = document.getElementById(`d_${n.id}`);
     if (!el) return;
-    if (n.rank === selectedRank) {
-      const x = n.swarmX + (n.circleX - n.swarmX) * eased;
-      const y = n.swarmY + (n.circleY - n.swarmY) * eased;
-      el.setAttribute('cx', x);
-      el.setAttribute('cy', y);
-    } else {
-      // Non-selected dots fade out further as we get deeper into transition
-      const op = 0.35 * (1 - eased * 0.8); // fade from 0.35 to 0.07
-      el.setAttribute('fill-opacity', op);
-    }
+    const tx = n.clusterX != null ? n.clusterX : n.swarmX;
+    const ty = n.clusterY != null ? n.clusterY : n.swarmY;
+    const x = n.swarmX + (tx - n.swarmX) * eased;
+    const y = n.swarmY + (ty - n.swarmY) * eased;
+    el.setAttribute('cx', x);
+    el.setAttribute('cy', y);
   });
 
-  // Show title when nearly complete
-  const title = document.getElementById('circleTitle');
-  if (eased > 0.85) title.classList.add('visible');
-  else title.classList.remove('visible');
+  const labels = document.getElementById('clusterLabels');
+  if (eased > 0.5) labels.classList.add('visible');
+  else labels.classList.remove('visible');
+
+  const panel = document.getElementById('insightPanel');
+  if (panel) {
+    if (eased > 0.85) panel.classList.add('visible');
+    else panel.classList.remove('visible');
+  }
+
+  const hintDown = document.getElementById('hintDown');
+  const hintUp = document.getElementById('hintUp');
+  if (hintDown) hintDown.style.opacity = Math.max(0, 1 - eased * 3);
+  if (hintUp) hintUp.style.opacity = Math.max(0, (eased - 0.7) / 0.3);
 }
 
-// Scroll listener — compute progress through the scroll-zone
 function onScroll() {
   const zone = document.getElementById('scrollZone');
   const rect = zone.getBoundingClientRect();
-  const zoneHeight = rect.height;
-  // Start when zone's top hits viewport top; end when zone's bottom exits viewport top
-  // We want t=0 when rect.top = window.innerHeight (zone below viewport)
-  // and t=1 when rect.bottom = 0 (zone scrolled past)
-  // Actually: t=0 when rect.top = 0 (zone at top of viewport), t=1 when rect.bottom = viewport bottom or so.
-  // Simpler: track how far we've scrolled INTO the zone.
   const viewportH = window.innerHeight;
-  // Start the transition when the zone's top reaches ~60% of viewport
-  // End when the zone's top reaches the top of viewport
   const startY = viewportH * 0.6;
   const endY = 0;
   const triggerRange = startY - endY;
@@ -740,8 +932,6 @@ function onScroll() {
   t = Math.max(0, Math.min(1, t));
   scrollT = t;
   updatePositions();
-
-  // Progress bar
   document.getElementById('scrollProg').style.width = (t * 100) + '%';
 }
 
@@ -756,7 +946,7 @@ renderStatic();
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-} // end main()
+}
 </script>
 </body>
 </html>
