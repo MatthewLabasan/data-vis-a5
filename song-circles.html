@@ -243,7 +243,7 @@
   #song-main {
     display: flex;
     flex: 1;
-    gap: 32px;
+    gap: 18px;
     min-height: 0;
   }
 
@@ -251,7 +251,7 @@
   #song-left {
     display: flex;
     flex-direction: column;
-    width: 230px;
+    width: 290px;
     flex-shrink: 0;
     min-height: 0;
   }
@@ -260,7 +260,7 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding-bottom: 14px;
   }
 
@@ -282,6 +282,7 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+    align-items: flex-end;
   }
 
   #video-grid {
@@ -292,8 +293,6 @@
     background: #080808;
     border-radius: 6px;
     overflow: visible;
-    justify-content: center;
-    align-content: center;
   }
 
   .video-cell {
@@ -625,7 +624,7 @@
       <!-- Left: circle + clips list -->
       <div id="song-left">
         <div id="song-circle-svg-wrap">
-          <svg id="song-circle-svg" width="180" height="180"></svg>
+          <svg id="song-circle-svg" width="230" height="230"></svg>
         </div>
         <div id="clips-list-section">
           <div id="clips-panel-header">
@@ -749,6 +748,17 @@ const CAT_COLORS = {
 function catColor(cat) {
   return CAT_COLORS[cat] || CAT_COLORS.default;
 }
+
+// Lookup by TikTok clip file -> { category, color }
+const VIDEO_CATEGORY_COLOR_MAP = SONGS.reduce((acc, song) => {
+  song.clips.forEach((clip) => {
+    acc[clip.file] = {
+      category: clip.category,
+      color: catColor(clip.category)
+    };
+  });
+  return acc;
+}, {});
 
 // ─── SMALL MULTIPLES ────────────────────────────────────────────────────────
 let currentSort = 'rank';
@@ -917,8 +927,9 @@ let videoSlots = []; // 10 fixed slots, each { cell, video, clip, active }
 
 function layoutVideoGrid() {
   const grid = document.getElementById('video-grid');
-  const W = grid.clientWidth  || grid.offsetWidth  || 400;
+  // Height comes from flex:1 allocation; width constraint comes from the parent panel
   const H = grid.clientHeight || grid.offsetHeight || 300;
+  const W = grid.parentElement?.clientWidth || grid.parentElement?.offsetWidth || 400;
   const cols = 5, rows = 2, gap = 6;
   const cellW = (W - (cols - 1) * gap) / cols;
   const cellH = (H - (rows - 1) * gap) / rows;
@@ -954,7 +965,7 @@ function initVideoGrid() {
       video.muted = true;
       video.playsInline = true;
       video.preload = 'auto';
-      cell.style.borderColor = catColor(clip.category);
+      cell.style.borderColor = clip.color;
       cell.appendChild(video);
     } else {
       cell.style.borderColor = 'transparent';
@@ -1032,12 +1043,22 @@ let songDuration = 0;
 let clipStartTimes = [];
 let activeClipIdx = -1;
 let processedClips = [];
+let circleFillRevealRect = null;
+let circleFillProgress = 0;
+let circleFillTarget = 0;
+let circleFillAnimId = null;
 
 function parseClips(song) {
   return song.clips.map((c, i) => {
     const parts = c.timestamp.split(' - ');
+    const mapped = VIDEO_CATEGORY_COLOR_MAP[c.file] || {
+      category: c.category,
+      color: catColor(c.category)
+    };
     return {
       ...c,
+      category: mapped.category,
+      color: mapped.color,
       startSec: parseTime(parts[0]),
       endSec: parts[1] ? parseTime(parts[1]) : parseTime(parts[0]) + 15,
       index: i
@@ -1054,6 +1075,12 @@ function openSongView(song) {
   songDuration = parseLength(song.length);
   clipStartTimes = getClipStartTimes(song);
   processedClips = parseClips(song);
+  circleFillProgress = 0;
+  circleFillTarget = 0;
+  if (circleFillAnimId) {
+    cancelAnimationFrame(circleFillAnimId);
+    circleFillAnimId = null;
+  }
 
   document.getElementById('sv-title').textContent = song.name;
   document.getElementById('sv-artist').textContent = song.artist;
@@ -1081,22 +1108,145 @@ function openSongView(song) {
 function renderSongCircle(song) {
   const svg = document.getElementById('song-circle-svg');
   svg.innerHTML = '';
-  const size = 180;
-  const r = 78;
+  const size = 230;
+  const r = 98;
   const cx = size / 2, cy = size / 2;
+  const clipPathId = 'song-circle-fill-clip';
+  const maskId = 'song-circle-fill-mask';
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-  // Circle outline only — interior content added later
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+  const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  clipPath.setAttribute('id', clipPathId);
+  const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  clipCircle.setAttribute('cx', cx);
+  clipCircle.setAttribute('cy', cy);
+  clipCircle.setAttribute('r', r);
+  clipPath.appendChild(clipCircle);
+  defs.appendChild(clipPath);
+
+  const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+  mask.setAttribute('id', maskId);
+
+  const maskBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  maskBg.setAttribute('x', 0);
+  maskBg.setAttribute('y', 0);
+  maskBg.setAttribute('width', size);
+  maskBg.setAttribute('height', size);
+  maskBg.setAttribute('fill', 'black');
+  mask.appendChild(maskBg);
+
+  circleFillRevealRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  circleFillRevealRect.setAttribute('x', 0);
+  circleFillRevealRect.setAttribute('y', size);
+  circleFillRevealRect.setAttribute('width', size);
+  circleFillRevealRect.setAttribute('height', 0);
+  circleFillRevealRect.setAttribute('fill', 'white');
+  mask.appendChild(circleFillRevealRect);
+  defs.appendChild(mask);
+  svg.appendChild(defs);
+
+  const baseFill = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  baseFill.setAttribute('cx', cx);
+  baseFill.setAttribute('cy', cy);
+  baseFill.setAttribute('r', r);
+  baseFill.setAttribute('fill', '#111');
+  svg.appendChild(baseFill);
+
+  const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
+  fillGroup.setAttribute('mask', `url(#${maskId})`);
+
+  const clipCount = Math.max(1, processedClips.length);
+  const stripeH = size / clipCount;
+  processedClips.forEach((clip, i) => {
+    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    stripe.setAttribute('x', 0);
+    stripe.setAttribute('y', size - (i + 1) * stripeH);
+    stripe.setAttribute('width', size);
+    stripe.setAttribute('height', stripeH + 0.8);
+    stripe.setAttribute('fill', clip.color);
+    fillGroup.appendChild(stripe);
+  });
+  svg.appendChild(fillGroup);
+
+  // Circle outline
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
   circle.setAttribute('fill', 'none');
   circle.setAttribute('stroke', '#2a2a2a');
   circle.setAttribute('stroke-width', '1.5');
   svg.appendChild(circle);
+
+  updateSongCircle(false);
 }
 
-function updateSongCircle() {
-  // interior content TBD
+function circleFillTargetProgress() {
+  if (!processedClips.length) return 0;
+  const started = processedClips.filter(c => currentTimeSec >= c.startSec).length;
+  return Math.max(0, Math.min(1, started / processedClips.length));
+}
+
+function setCircleReveal(progress) {
+  if (!circleFillRevealRect) return;
+  const size = 230;
+  const clamped = Math.max(0, Math.min(1, progress));
+  const h = size * clamped;
+  circleFillRevealRect.setAttribute('y', size - h);
+  circleFillRevealRect.setAttribute('height', h);
+}
+
+function animateCircleFillTo(target) {
+  if (target <= circleFillProgress + 0.0001) {
+    circleFillProgress = target;
+    setCircleReveal(circleFillProgress);
+    return;
+  }
+
+  if (circleFillAnimId) cancelAnimationFrame(circleFillAnimId);
+
+  const allStartSameTime =
+    processedClips.length > 1 &&
+    processedClips.every(c => c.startSec === processedClips[0].startSec);
+
+  const start = circleFillProgress;
+  const delta = target - start;
+  const duration = (allStartSameTime && target === 1)
+    ? 2000
+    : Math.max(350, delta * 900);
+  const t0 = performance.now();
+
+  function step(now) {
+    const t = Math.min(1, (now - t0) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    circleFillProgress = start + delta * eased;
+    setCircleReveal(circleFillProgress);
+
+    if (t < 1) {
+      circleFillAnimId = requestAnimationFrame(step);
+    } else {
+      circleFillAnimId = null;
+      circleFillProgress = target;
+      setCircleReveal(circleFillProgress);
+    }
+  }
+
+  circleFillAnimId = requestAnimationFrame(step);
+}
+
+function updateSongCircle(animate = true) {
+  circleFillTarget = circleFillTargetProgress();
+  if (!animate) {
+    if (circleFillAnimId) {
+      cancelAnimationFrame(circleFillAnimId);
+      circleFillAnimId = null;
+    }
+    circleFillProgress = circleFillTarget;
+    setCircleReveal(circleFillProgress);
+    return;
+  }
+  animateCircleFillTo(circleFillTarget);
 }
 
 function renderClipsList(song) {
@@ -1109,7 +1259,7 @@ function renderClipsList(song) {
     card.innerHTML = `
       <span class="clip-number">${c.index + 1}</span>
       <span class="clip-timestamp" id="clip-ts-${i}">${c.timestamp}</span>
-      <span class="clip-dot" style="background:${catColor(c.category)}"></span>
+      <span class="clip-dot" style="background:${c.color}"></span>
       <span class="clip-category">${c.category}</span>
       <a class="clip-link" href="${c.link}" target="_blank" rel="noopener">↗ TikTok</a>
     `;
@@ -1117,7 +1267,7 @@ function renderClipsList(song) {
       currentTimeSec = c.startSec;
       if (audioEl.src) audioEl.currentTime = currentTimeSec;
       updateTimeline();
-      updateSongCircle();
+      updateSongCircle(false);
       checkClipActivation();
       syncVideoGrid();
     });
@@ -1234,7 +1384,7 @@ document.getElementById('skip-btn').addEventListener('click', () => {
     currentTimeSec = next;
     if (audioEl.src) audioEl.currentTime = currentTimeSec;
     updateTimeline();
-    updateSongCircle();
+    updateSongCircle(false);
     checkClipActivation();
     syncVideoGrid();
   }
@@ -1245,7 +1395,7 @@ document.getElementById('restart-btn').addEventListener('click', () => {
   currentTimeSec = 0;
   if (audioEl.src) audioEl.currentTime = 0;
   updateTimeline();
-  updateSongCircle();
+  updateSongCircle(false);
   checkClipActivation();
   syncVideoGrid();
 });
@@ -1257,7 +1407,7 @@ document.getElementById('timeline-track').addEventListener('click', function(e) 
   currentTimeSec = Math.max(0, Math.min(pct * songDuration, songDuration));
   if (audioEl.src) audioEl.currentTime = currentTimeSec;
   updateTimeline();
-  updateSongCircle();
+  updateSongCircle(false);
   checkClipActivation();
   syncVideoGrid();
 });
