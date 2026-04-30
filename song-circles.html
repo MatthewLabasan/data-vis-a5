@@ -315,16 +315,6 @@
     padding: 14px 48px 20px;
   }
 
-  /* Density heatmap row — colored clip segments stacked */
-  #density-row {
-    position: relative;
-    height: 28px;
-    margin-bottom: 6px;
-    border-radius: 3px;
-    overflow: hidden;
-    background: #0d0d0d;
-  }
-
   .density-seg {
     position: absolute;
     top: 0;
@@ -332,6 +322,7 @@
     border-radius: 2px;
     pointer-events: none;
     mix-blend-mode: screen;
+    z-index: 1;
   }
 
   /* Scrubber row */
@@ -344,36 +335,33 @@
   #timeline-track {
     position: relative;
     flex: 1;
-    height: 6px;
-    background: #1a1a1a;
+    height: 24px;
+    background: #111;
     border-radius: 3px;
     cursor: pointer;
-    overflow: visible;
+    overflow: hidden;
   }
-
-  #timeline-track:hover { background: #222; }
 
   #timeline-fill {
     position: absolute;
-    left: 0;
+    right: 0;
     top: 0;
     height: 100%;
-    background: #3a3a3a;
-    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.52);
     pointer-events: none;
+    z-index: 2;
   }
 
   #timeline-head {
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #e8e8e8;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateX(-50%);
     pointer-events: none;
-    box-shadow: 0 0 0 2px #0a0a0a;
-    transition: left 0.08s linear;
+    z-index: 3;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
   }
 
   #timeline-label {
@@ -616,7 +604,6 @@
 
   <!-- Full-width timeline pinned to bottom -->
   <div id="timeline-area">
-    <div id="density-row"></div>
     <div id="timeline-label">
       <span id="tl-current">0:00</span>
       <span id="tl-total">—</span>
@@ -966,78 +953,17 @@ function renderSongCircle(song) {
   const cx = size / 2, cy = size / 2;
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-  // Main circle outline only
+  // Circle outline only — interior content added later
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
   circle.setAttribute('fill', 'none');
   circle.setAttribute('stroke', '#2a2a2a');
   circle.setAttribute('stroke-width', '1.5');
   svg.appendChild(circle);
-
-  // Playhead arc
-  const playArc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  playArc.setAttribute('id', 'sv-play-arc');
-  playArc.setAttribute('fill', 'none');
-  playArc.setAttribute('stroke', '#444');
-  playArc.setAttribute('stroke-width', '1.5');
-  playArc.setAttribute('stroke-linecap', 'round');
-  svg.appendChild(playArc);
-
-  // Playhead dot
-  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  dot.setAttribute('id', 'sv-playhead-dot');
-  dot.setAttribute('r', '4');
-  dot.setAttribute('fill', '#e8e8e8');
-  dot.setAttribute('cx', cx);
-  dot.setAttribute('cy', cy - r);
-  svg.appendChild(dot);
-
-  // Center text
-  const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  title.setAttribute('x', cx);
-  title.setAttribute('y', cy - 4);
-  title.setAttribute('text-anchor', 'middle');
-  title.setAttribute('fill', '#888');
-  title.setAttribute('font-size', '10');
-  title.setAttribute('font-family', 'SF Mono, monospace');
-  title.setAttribute('letter-spacing', '0.05em');
-  title.textContent = fmtTime(0);
-  title.setAttribute('id', 'sv-center-time');
-  svg.appendChild(title);
 }
 
 function updateSongCircle() {
-  if (!currentSong) return;
-  const totalLen = songDuration;
-  const t = currentTimeSec;
-  const angle = (t / totalLen) * 2 * Math.PI - Math.PI / 2;
-  const r = 78;
-  const cx = 90, cy = 90;
-
-  // Playhead dot
-  const dot = document.getElementById('sv-playhead-dot');
-  if (dot) {
-    dot.setAttribute('cx', cx + r * Math.cos(angle));
-    dot.setAttribute('cy', cy + r * Math.sin(angle));
-  }
-
-  // Arc from start to current
-  const startAngle = -Math.PI / 2;
-  const x1 = cx + r * Math.cos(startAngle);
-  const y1 = cy + r * Math.sin(startAngle);
-  const x2 = cx + r * Math.cos(angle);
-  const y2 = cy + r * Math.sin(angle);
-  const largeArc = (angle - startAngle + 2 * Math.PI) % (2 * Math.PI) > Math.PI ? 1 : 0;
-  const playArc = document.getElementById('sv-play-arc');
-  if (playArc && t > 0) {
-    playArc.setAttribute('d', `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`);
-  }
-
-  // Center time
-  const ct = document.getElementById('sv-center-time');
-  if (ct) ct.textContent = fmtTime(t);
-
-
+  // interior content TBD
 }
 
 function renderClipsList(song) {
@@ -1066,13 +992,11 @@ function renderClipsList(song) {
 }
 
 function renderTimelineTicks(song) {
-  const row = document.getElementById('density-row');
-  row.innerHTML = '';
+  const track = document.getElementById('timeline-track');
+  track.querySelectorAll('.density-seg').forEach(el => el.remove());
 
   const totalLen = parseLength(song.length);
 
-  // Draw each clip as a colored filled segment (start→end).
-  // Overlapping clips naturally stack via mix-blend-mode:screen → bright clusters.
   processedClips.forEach(c => {
     const leftPct  = (c.startSec / totalLen) * 100;
     const widthPct = Math.max(0.4, ((c.endSec - c.startSec) / totalLen) * 100);
@@ -1083,13 +1007,13 @@ function renderTimelineTicks(song) {
     seg.style.background = catColor(c.category);
     seg.style.opacity = '0.55';
     seg.title = `${c.category}: ${c.timestamp}`;
-    row.appendChild(seg);
+    track.appendChild(seg);
   });
 }
 
 function updateTimeline() {
   const pct = songDuration > 0 ? (currentTimeSec / songDuration) * 100 : 0;
-  document.getElementById('timeline-fill').style.width = pct + '%';
+  document.getElementById('timeline-fill').style.width = (100 - pct) + '%';
   document.getElementById('timeline-head').style.left = pct + '%';
   document.getElementById('tl-current').textContent = fmtTime(currentTimeSec);
   document.getElementById('time-display').textContent = `${fmtTime(currentTimeSec)} / ${fmtTime(songDuration)}`;
