@@ -46,12 +46,48 @@
     color: #f0f0f0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+  .view-subtitle {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #777;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
 
   .sort-bar {
     display: flex;
     gap: 8px;
     margin-top: 12px;
     align-items: center;
+  }
+  .view-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .view-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .home-btn {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #777;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .home-btn:hover {
+    border-color: #444;
+    color: #ddd;
   }
 
   #color-legend {
@@ -626,7 +662,17 @@
 <div id="small-multiples">
   <div class="view-header">
     <div class="view-title">TikTok Data Visualization</div>
-    <div class="view-heading">ONE HIT WONDER TRENDS</div>
+    <div class="view-heading" id="view-heading">TREND EXPLORER</div>
+    <div class="view-subtitle" id="view-subtitle"></div>
+    <div class="view-controls">
+      <div class="view-filter-bar">
+        <span class="sort-label">View</span>
+        <button class="sort-btn" id="view-all">All Songs</button>
+        <button class="sort-btn" id="view-one-hit">One Hit Wonders</button>
+        <button class="sort-btn" id="view-long-lasting">Long Lasting Trends</button>
+      </div>
+      <a class="home-btn" href="opening_view.html">← Home</a>
+    </div>
     <div class="sort-bar">
       <span class="sort-label">Sort by</span>
       <button class="sort-btn active" id="sort-rank">Rank</button>
@@ -735,6 +781,14 @@ const SONGS = [
   {"rank":20,"name":"We Hug Now","artist":"Sydney Rose","length":"4:08","genre":"Alternative/Indie","clips":[{"file":"WeHugNow_1","timestamp":"3:19 - 3:27","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQamRKt/"},{"file":"WeHugNow_2","timestamp":"3:19 - 3:27","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaFr8g/"},{"file":"WeHugNow_3","timestamp":"3:19 - 3:34","category":"Animals","link":"https://www.tiktok.com/t/ZTkQaUAy1/"},{"file":"WeHugNow_4","timestamp":"3:19 - 3:25","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaAmPD/"},{"file":"WeHugNow_5","timestamp":"3:19 - 3:28","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaFXN5/"},{"file":"WeHugNow_6","timestamp":"3:19 - 3:28","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQauK7W/"},{"file":"WeHugNow_7","timestamp":"3:20 - 3:37","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQaF3DL/"},{"file":"WeHugNow_8","timestamp":"3:19 - 3:40","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQahvJG/"},{"file":"WeHugNow_9","timestamp":"3:19 - 3:34","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQamDee/"},{"file":"WeHugNow_10","timestamp":"3:28 - 4:08","category":"Wholesome/Emotional","link":"https://www.tiktok.com/t/ZTkQasnho/"}]}
 ];
 
+const ONE_HIT_RANKS = new Set([5, 7, 8, 9, 12, 18]);
+const LONG_LASTING_RANKS = new Set([1, 2, 3, 4, 6, 10, 11, 13, 14, 15, 16, 17, 19, 20]);
+SONGS.forEach((song) => {
+  if (ONE_HIT_RANKS.has(song.rank)) song.trendClass = 'one-hit';
+  else if (LONG_LASTING_RANKS.has(song.rank)) song.trendClass = 'long-lasting';
+  else song.trendClass = 'unknown';
+});
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function parseTime(s) {
   if (!s) return 0;
@@ -824,15 +878,59 @@ const VIDEO_CATEGORY_COLOR_MAP = SONGS.reduce((acc, song) => {
 
 // ─── SMALL MULTIPLES ────────────────────────────────────────────────────────
 let currentSort = 'rank';
+let currentView = 'all';
 let displayOrder = [...SONGS];
+
+function songsForCurrentView() {
+  if (currentView === 'one-hit') return SONGS.filter(s => s.trendClass === 'one-hit');
+  if (currentView === 'long-lasting') return SONGS.filter(s => s.trendClass === 'long-lasting');
+  return [...SONGS];
+}
+
+function updateViewHeader() {
+  const heading = document.getElementById('view-heading');
+  const subtitle = document.getElementById('view-subtitle');
+  if (!heading || !subtitle) return;
+  if (currentView === 'one-hit') {
+    heading.textContent = 'ONE HIT WONDER TRENDS';
+    subtitle.textContent = 'Showing songs that spike in a concentrated trend window.';
+  } else if (currentView === 'long-lasting') {
+    heading.textContent = 'LONG LASTING TREND PATTERNS';
+    subtitle.textContent = 'Showing songs that sustain traction across a longer span.';
+  } else {
+    heading.textContent = 'TREND EXPLORER';
+    subtitle.textContent = 'Showing all songs. Use filters to compare one-hit vs long-lasting groups.';
+  }
+}
+
+function updateViewButtons() {
+  const map = {
+    all: document.getElementById('view-all'),
+    'one-hit': document.getElementById('view-one-hit'),
+    'long-lasting': document.getElementById('view-long-lasting')
+  };
+  Object.entries(map).forEach(([k, el]) => {
+    if (!el) return;
+    if (k === currentView) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+}
+
+function applyView(view) {
+  currentView = view;
+  updateViewHeader();
+  updateViewButtons();
+  sortSongs(currentSort);
+}
 
 function sortSongs(by) {
   currentSort = by;
-  if (by === 'rank') displayOrder = [...SONGS].sort((a, b) => a.rank - b.rank);
-  else if (by === 'clips') displayOrder = [...SONGS].sort((a, b) => b.clips.length - a.clips.length);
-  else if (by === 'genre') displayOrder = [...SONGS].sort((a, b) => a.genre.localeCompare(b.genre));
+  const base = songsForCurrentView();
+  if (by === 'rank') displayOrder = [...base].sort((a, b) => a.rank - b.rank);
+  else if (by === 'clips') displayOrder = [...base].sort((a, b) => b.clips.length - a.clips.length);
+  else if (by === 'genre') displayOrder = [...base].sort((a, b) => a.genre.localeCompare(b.genre));
   else if (by === 'category') {
-    displayOrder = [...SONGS].sort((a, b) =>
+    displayOrder = [...base].sort((a, b) =>
       dominantCategory(a).localeCompare(dominantCategory(b)) || a.rank - b.rank
     );
   }
@@ -977,6 +1075,10 @@ document.getElementById('sort-category').addEventListener('click', function() {
   this.classList.add('active');
   sortSongs('category');
 });
+
+document.getElementById('view-all').addEventListener('click', () => applyView('all'));
+document.getElementById('view-one-hit').addEventListener('click', () => applyView('one-hit'));
+document.getElementById('view-long-lasting').addEventListener('click', () => applyView('long-lasting'));
 
 // ─── ZOOM TRANSITION ────────────────────────────────────────────────────────
 function zoomIntoSong(song, wrapEl) {
@@ -1637,7 +1739,13 @@ document.getElementById('restart-btn').addEventListener('click', () => {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderColorLegend();
-renderGrid();
+const initialViewParam = new URLSearchParams(window.location.search).get('view');
+if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting' || initialViewParam === 'all') {
+  currentView = initialViewParam;
+} else {
+  currentView = 'one-hit';
+}
+applyView(currentView);
 </script>
 </body>
 </html>
