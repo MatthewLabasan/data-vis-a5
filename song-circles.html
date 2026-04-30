@@ -883,27 +883,18 @@ function renderGrid() {
     fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
     fillGroup.setAttribute('opacity', '0.7');
 
-    const clips = song.clips || [];
-    const stripeCount = Math.max(1, clips.length);
-    const stripeH = size / stripeCount;
-    clips.forEach((clip, idx) => {
+    const clips = (song.clips || []).slice(0, 10);
+    const bandCount = 10;
+    const stripeH = size / bandCount;
+    for (let idx = 0; idx < bandCount; idx++) {
+      const clip = clips[idx];
       const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       stripe.setAttribute('x', '0');
       stripe.setAttribute('y', String(size - (idx + 1) * stripeH));
       stripe.setAttribute('width', String(size));
-      stripe.setAttribute('height', String(stripeH + 0.6));
-      stripe.setAttribute('fill', catColor(clip.category));
+      stripe.setAttribute('height', String(stripeH));
+      stripe.setAttribute('fill', clip ? catColor(clip.category) : catColor('default'));
       fillGroup.appendChild(stripe);
-    });
-
-    if (!clips.length) {
-      const fallback = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      fallback.setAttribute('x', '0');
-      fallback.setAttribute('y', '0');
-      fallback.setAttribute('width', String(size));
-      fallback.setAttribute('height', String(size));
-      fallback.setAttribute('fill', catColor('default'));
-      fillGroup.appendChild(fallback);
     }
 
     g.appendChild(fillGroup);
@@ -1118,8 +1109,12 @@ function syncVideoGrid(forceResync = false) {
 
   videoSlots.forEach(slot => {
     if (!slot.clip) return;
-    const shouldBeActive = activeClipSet.has(slot.clip.index);
+    const shouldBeActiveBySongTime = activeClipSet.has(slot.clip.index);
     const targetVideoTime = Math.max(0, currentTimeSec - slot.clip.startSec);
+    const videoDuration = slot.video && Number.isFinite(slot.video.duration) ? slot.video.duration : null;
+    const hasRemainingVideo =
+      videoDuration == null || videoDuration <= 0 || targetVideoTime < (videoDuration - 0.05);
+    const shouldBeActive = shouldBeActiveBySongTime && hasRemainingVideo;
 
     if (shouldBeActive && (!slot.active || forceResync)) {
       slot.active = true;
@@ -1376,17 +1371,19 @@ function renderSongCircle(song) {
   fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
   fillGroup.setAttribute('mask', `url(#${maskId})`);
 
-  const clipCount = Math.max(1, processedClips.length);
-  const stripeH = size / clipCount;
-  processedClips.forEach((clip, i) => {
+  const clipsForBands = processedClips.slice(0, 10);
+  const bandCount = 10;
+  const stripeH = size / bandCount;
+  for (let i = 0; i < bandCount; i++) {
+    const clip = clipsForBands[i];
     const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     stripe.setAttribute('x', 0);
     stripe.setAttribute('y', size - (i + 1) * stripeH);
     stripe.setAttribute('width', size);
-    stripe.setAttribute('height', stripeH + 0.8);
-    stripe.setAttribute('fill', clip.color);
+    stripe.setAttribute('height', stripeH);
+    stripe.setAttribute('fill', clip ? clip.color : catColor('default'));
     fillGroup.appendChild(stripe);
-  });
+  }
   svg.appendChild(fillGroup);
 
   // Circle outline
