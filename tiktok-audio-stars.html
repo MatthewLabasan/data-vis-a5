@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Audio Stars</title>
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/proxima-nova-2');
+
+    :root {
+      color-scheme: dark;
+      --black: #191414;
+      --off-white: #f3ede8;
+      --muted-grey: #bab1b1;
+      --citric: #cdfe34;
+      --tangerine: #ff4632;
+      --klein-blue: #4100f5;
+      --aquamarine: #93e9de;
+      --fuchsia: #f037a5;
+      --paper: var(--black);
+      --paper-strong: rgba(25, 20, 20, 0.92);
+      --ink: var(--off-white);
+      --muted: var(--muted-grey);
+      --line: rgba(243, 237, 232, 0.12);
+      --accent: var(--citric);
+      --accent-soft: rgba(205, 254, 52, 0.18);
+      --shadow: rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      position: relative;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, #191414 0%, #120f12 52%, #191414 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(243, 237, 232, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243, 237, 232, 0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 85%);
+    }
+
+    body::after {
+      content: none;
+    }
+
+    main {
+      width: min(1260px, calc(100vw - 96px));
+      margin: 0 auto;
+      padding: 40px 0 72px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-section {
+      position: relative;
+    }
+
+    .intro-screen {
+      min-height: calc(100vh - 112px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 54px;
+      will-change: opacity;
+    }
+
+    .timeline-screen {
+      min-height: calc(100vh - 112px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px 0 44px;
+      scroll-margin-top: 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(220px, 280px);
+      gap: 24px 34px;
+      align-items: start;
+      padding: 4px 0 10px;
+    }
+
+    .hero::after {
+      display: none;
+    }
+
+    h1 {
+      margin: 0 0 22px;
+      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      font-size: clamp(1.85rem, 4.2vw, 4.3rem);
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+      max-width: none;
+      white-space: nowrap;
+    }
+
+    .hero-copy {
+      min-width: 0;
+      order: 1;
+    }
+
+    .legend-wrap {
+      display: flex;
+      justify-content: flex-end;
+      align-self: start;
+      padding-right: 0;
+      margin-top: -4px;
+      order: 2;
+    }
+
+    .legend-star {
+      width: min(100%, 320px);
+      height: auto;
+      overflow: visible;
+    }
+
+    .legend-caption {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 76ch;
+    }
+
+    .scale-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .scale-item {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .scale-item strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .hero-panels {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .scroll-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      margin-top: auto;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 237, 232, 0.14);
+      color: var(--ink);
+      text-decoration: none;
+      background: rgba(243, 237, 232, 0.03);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      animation: arrow-float 1.8s ease-in-out infinite;
+    }
+
+    .scroll-arrow:hover {
+      transform: translateY(2px);
+      border-color: rgba(147, 233, 222, 0.34);
+      background: rgba(243, 237, 232, 0.06);
+    }
+
+    .scroll-arrow span {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .panel-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .control {
+      border-radius: 999px;
+      border: 1px solid rgba(243, 237, 232, 0.12);
+      background: rgba(39, 31, 34, 0.88);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: var(--ink);
+      box-shadow: inset 0 -1px 0 rgba(244, 238, 229, 0.06);
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .control:hover {
+      transform: translateY(-1px);
+      border-color: rgba(147, 233, 222, 0.28);
+      background: rgba(147, 233, 222, 0.14);
+    }
+
+    .control.is-active {
+      background: linear-gradient(180deg, rgba(255, 70, 50, 0.34), rgba(240, 55, 165, 0.24));
+      border-color: rgba(240, 55, 165, 0.42);
+      color: #fff0f7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 62px 40px;
+      align-items: start;
+      justify-items: center;
+      max-width: 1240px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .stars-screen {
+      padding-top: 22px;
+      scroll-margin-top: 28px;
+    }
+
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(48px);
+      transition: opacity 520ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stars-panel {
+      margin-top: 8px;
+      margin-bottom: 34px;
+    }
+
+    .overview-section {
+      display: block;
+      margin-top: 18px;
+      width: 100%;
+    }
+
+    .overview-copy {
+      max-width: 720px;
+    }
+
+    .overview-caption {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 64ch;
+    }
+
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+      gap: 14px 16px;
+      margin-top: 30px;
+    }
+
+    .overview-stat {
+      min-height: 0;
+      padding: 0;
+    }
+
+    .overview-value {
+      display: block;
+      color: var(--ink);
+      font-size: 1.5rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .overview-label {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .overview-viz {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      width: 100%;
+      min-height: clamp(320px, 46vh, 520px);
+      transform: none;
+    }
+
+    .overview-svg {
+      flex: 0 0 auto;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    .timeline-frame {
+      width: min(100%, 1120px);
+      height: clamp(390px, 54vh, 560px);
+      margin: 4px 0 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .timeline-scroll {
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 0 10px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(243, 237, 232, 0.24) transparent;
+      overscroll-behavior-x: contain;
+    }
+
+    .timeline-scroll::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    .timeline-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .timeline-scroll::-webkit-scrollbar-thumb {
+      background: rgba(243, 237, 232, 0.18);
+      border-radius: 999px;
+    }
+
+    .timeline-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 14px;
+    }
+
+    .timeline-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(243, 237, 232, 0.78);
+      font-size: 0.82rem;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .timeline-legend-swatch {
+      width: 34px;
+      height: 16px;
+      border-radius: 999px;
+      position: relative;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+
+    .timeline-legend-swatch::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 3px;
+      transform: translateY(-50%);
+      background: currentColor;
+    }
+
+    .overview-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .timeline-panel {
+      width: 100%;
+      display: grid;
+      gap: 14px;
+      align-content: center;
+    }
+
+    .timeline-heading {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .timeline-caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+      max-width: 66ch;
+    }
+
+    .timeline-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    .card.is-clickable .viz-wrap {
+      cursor: zoom-in;
+    }
+
+    .title {
+      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1.32rem;
+      line-height: 1.02;
+      margin: 14px 0 0;
+      max-width: 15ch;
+    }
+
+    .artist {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .viz-wrap {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .tooltip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 216px;
+      padding: 10px 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(243, 237, 232, 0.18);
+      background:
+        linear-gradient(180deg, rgba(243, 237, 232, 0.12), rgba(243, 237, 232, 0.032)),
+        linear-gradient(180deg, rgba(49, 35, 58, 0.24), rgba(22, 18, 25, 0.18));
+      box-shadow:
+        0 18px 34px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: opacity 140ms ease;
+      backdrop-filter: blur(18px) saturate(145%);
+      -webkit-backdrop-filter: blur(18px) saturate(145%);
+      isolation: isolate;
+      z-index: 2;
+    }
+
+    .tooltip.is-visible {
+      opacity: 1;
+    }
+
+    .tooltip::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 34%),
+        radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.16), transparent 22%),
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.035) 0 2px,
+          rgba(255, 255, 255, 0) 2px 6px
+        );
+      opacity: 0.55;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .tooltip > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tooltip-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(244, 238, 229, 0.08);
+      background: rgba(243, 237, 232, 0.04);
+    }
+
+    .tooltip-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .tooltip-row + .tooltip-row {
+      margin-top: 6px;
+    }
+
+    .tooltip-label {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .tooltip-value {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    svg {
+      width: 224px;
+      height: 224px;
+      overflow: visible;
+    }
+
+    .axis {
+      stroke: rgba(255, 255, 255, 0.18);
+      stroke-width: 1.2;
+    }
+
+    .guide {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.12);
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-dasharray: 5 6;
+    }
+
+    .star-blend {
+      opacity: 0.95;
+    }
+
+    .star-pixel {
+      opacity: 0.2;
+      shape-rendering: crispEdges;
+    }
+
+    .star-outline {
+      fill: none;
+      stroke: var(--stroke);
+      stroke-width: 0.5pt;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.24));
+      transition: stroke-width 140ms ease;
+    }
+
+    .viz-wrap:hover .star-outline,
+    .viz-wrap:focus-within .star-outline {
+      stroke-width: 1.35pt;
+    }
+
+    .core {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.96);
+      stroke-width: 1.5;
+      stroke-dasharray: 2.2 2.2;
+      stroke-linecap: round;
+    }
+
+    .axis-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .axis-label-bpm,
+    .axis-label-energy,
+    .axis-label-dance,
+    .axis-label-happy {
+      fill: rgba(243, 237, 232, 0.6);
+    }
+
+    .focus-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      background: rgba(26, 24, 24, 0.46);
+      backdrop-filter: blur(10px) grayscale(0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+      z-index: 30;
+    }
+
+    .focus-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .focus-stage {
+      position: relative;
+      width: min(92vw, 680px);
+      padding: 20px 20px 14px;
+      border-radius: 28px;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .focus-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(243, 237, 232, 0.08);
+      color: var(--ink);
+      font: inherit;
+      font-size: 1.05rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .focus-close:hover {
+      background: rgba(243, 237, 232, 0.14);
+    }
+
+    .focus-card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+      padding: 28px 24px 22px;
+      border-radius: 28px;
+      border: 0;
+      background: none;
+      box-shadow: none;
+      animation: focus-pop 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .focus-card .viz-wrap {
+      cursor: default;
+    }
+
+    .focus-card svg {
+      width: min(68vw, 430px);
+      height: min(68vw, 430px);
+    }
+
+    .focus-card .title {
+      margin-top: 18px;
+      font-size: 1.9rem;
+      max-width: 18ch;
+    }
+
+    .focus-card .artist {
+      margin-top: 8px;
+      font-size: 1.05rem;
+    }
+
+    @keyframes focus-pop {
+      from {
+        transform: scale(0.86);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes arrow-float {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(8px);
+      }
+    }
+
+    .cat-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-top: 14px;
+    }
+
+    .cat-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .cat-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .cluster-screen {
+      padding: 18px 0 72px;
+      scroll-margin-top: 28px;
+    }
+
+    .cluster-heading {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .cluster-caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+      max-width: 66ch;
+    }
+
+    .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+      gap: 36px 16px;
+      margin-top: 18px;
+      justify-items: center;
+    }
+
+    .cluster-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cluster-card svg {
+      overflow: visible;
+    }
+
+    .cluster-name {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.1;
+      max-width: 13ch;
+    }
+
+    .cluster-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 700px) {
+      main {
+        width: min(100vw - 32px, 1260px);
+        padding-top: 20px;
+        padding-bottom: 48px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 0;
+      }
+
+      .intro-screen {
+        min-height: auto;
+        padding-bottom: 26px;
+      }
+
+      .timeline-screen {
+        min-height: auto;
+        padding: 10px 0 26px;
+      }
+
+      .legend-wrap {
+        justify-content: center;
+        padding-right: 0;
+        margin-top: 0;
+      }
+
+      .stars-panel {
+        margin-bottom: 28px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 42px;
+      }
+
+      .overview-section {
+        margin-top: 20px;
+      }
+
+      .overview-copy {
+        max-width: none;
+      }
+
+      .overview-viz {
+        display: block;
+        min-height: 0;
+        align-self: auto;
+        justify-self: stretch;
+        width: 100%;
+        transform: none;
+      }
+
+      .card {
+        width: 100%;
+      }
+
+      svg {
+        width: 210px;
+        height: 210px;
+      }
+
+      .cluster-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 10px;
+      }
+
+      .focus-overlay {
+        padding: 14px;
+      }
+
+      .focus-stage {
+        width: min(94vw, 540px);
+        padding: 16px 14px 12px;
+      }
+
+      .focus-card {
+        padding: 24px 16px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="page-section intro-screen">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>Let&#39;s Explore More!</h1>
+          <p class="legend-caption">
+            Each star uses the same four directions. The farther a point stretches from the center, the stronger that attribute is for the track.
+          </p>
+          <div class="scale-list">
+            <div class="scale-item"><strong>BPM:</strong> shown on the BPM scale, from slower to faster.</div>
+            <div class="scale-item"><strong>Energy, Danceability, Happiness:</strong> shown on a 0-100 audio-feature scale.</div>
+            <div class="scale-item"><strong>Center to edge:</strong> low values stay near the middle; high values reach toward the outer guide.</div>
+          </div>
+          <section class="overview-section" aria-labelledby="overview-title">
+            <div class="overview-copy">
+              <div class="panel-title">Data Overview</div>
+              <p class="overview-caption" id="overview-title">
+                The dataset totals stay here, so you can see the core numbers behind these 10 songs before moving into the post-date timeline.
+              </p>
+              <div class="overview-stats" id="overview-stats"></div>
+            </div>
+          </section>
+        </div>
+        <div class="legend-wrap" aria-hidden="true">
+          <svg class="legend-star" viewBox="0 0 320 260">
+            <g transform="translate(132 130)">
+              <line x1="0" y1="-88" x2="0" y2="88" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
+              <line x1="-88" y1="0" x2="88" y2="0" stroke="rgba(244,238,229,0.18)" stroke-width="1.2"></line>
+              <polygon points="0,-72 26,-26 72,0 26,26 0,72 -26,26 -72,0 -26,-26" fill="rgba(186, 177, 177, 0.08)" stroke="rgba(186, 177, 177, 0.32)" stroke-width="1.1"></polygon>
+              <circle cx="0" cy="0" r="6" fill="none" stroke="rgba(244,238,229,0.9)" stroke-width="1.4" stroke-dasharray="2.2 2.2"></circle>
+              <text x="0" y="-98" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">BPM</text>
+              <text x="98" y="4" text-anchor="start" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">ENERGY</text>
+              <text x="0" y="106" text-anchor="middle" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">DANCEABILITY</text>
+              <text x="-98" y="4" text-anchor="end" fill="rgba(243,237,232,0.6)" font-size="11" letter-spacing="0.12em">HAPPINESS</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+      <a class="scroll-arrow" href="#timeline-screen" aria-label="Scroll to the timeline section">
+        <span>↓</span>
+      </a>
+    </section>
+
+    <section class="page-section timeline-screen reveal-section" id="timeline-screen">
+      <div class="timeline-panel">
+        <div class="timeline-heading">Post Date Area Overlap</div>
+        <p class="timeline-caption">
+          All 10 songs now share one timeline. The x-axis stays the post-date timeline, the y-axis shows how many videos were posted, and the metric buttons change the color shading.
+        </p>
+        <div class="timeline-controls" id="timeline-controls" aria-label="Choose timeline metric view"></div>
+        <div class="overview-viz">
+          <div class="timeline-frame" aria-label="Horizontally scrollable timeline frame">
+            <div class="timeline-scroll" id="timeline-scroll">
+              <svg class="overview-svg" id="overview-svg" viewBox="0 0 1200 520" role="img" aria-label="Overlapped post date area chart for all 10 songs"></svg>
+            </div>
+          </div>
+          <div class="timeline-legend" id="timeline-legend" aria-label="Timeline legend"></div>
+          <p class="overview-note" id="overview-note">The selected metric controls both height and shading. The curve shape still follows when posts cluster together on the timeline.</p>
+        </div>
+      </div>
+      <a class="scroll-arrow" href="#stars-screen" aria-label="Scroll to the star ranking section">
+        <span>↓</span>
+      </a>
+    </section>
+
+    <section class="page-section stars-screen reveal-section" id="stars-screen">
+      <div class="hero-panels stars-panel">
+        <div class="controls-panel">
+          <div class="panel-title">Sort Stars By</div>
+          <div class="controls" id="controls"></div>
+          <div class="cat-legend" id="cat-legend" aria-label="Video category legend"></div>
+        </div>
+      </div>
+      <section class="grid" id="grid" aria-live="polite"></section>
+      <a class="scroll-arrow" href="#cluster-screen" aria-label="Scroll to the video clusters section">
+        <span>↓</span>
+      </a>
+    </section>
+
+    <section class="page-section cluster-screen reveal-section" id="cluster-screen">
+      <div class="cluster-heading">Video Clusters</div>
+      <p class="cluster-caption">
+        Each circle groups every video that used the same song. One mini-star equals one video — packed outward from the center in rings, colored by the song's dominant audio trait.
+      </p>
+      <div class="cluster-grid" id="cluster-grid" aria-live="polite"></div>
+    </section>
+  </main>
+  <div class="focus-overlay" id="focus-overlay" aria-hidden="true">
+    <div class="focus-stage" role="dialog" aria-modal="true" aria-label="Expanded song star">
+      <button class="focus-close" id="focus-close" type="button" aria-label="Close expanded star">×</button>
+      <div id="focus-content"></div>
+    </div>
+  </div>
+
+  <script type="application/json" id="dataset">
+[
+  {
+    "name": "Pretty Little Baby",
+    "artist": "Connie Francis",
+    "year": 1962,
+    "genre": "Pop",
+    "duration": 142,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 13,
+    "bpm": 121,
+    "energy": 40,
+    "danceability": 78,
+    "happiness": 63,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/pretty-little-baby/5GQPBzoRBDxcAjwSSluQXD",
+    "postDate": "2025-05-13"
+  },
+  {
+    "name": "Hold My Hand",
+    "artist": "Jess Glynne",
+    "year": 2015,
+    "genre": "Dancehall",
+    "duration": 227,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 12,
+    "bpm": 123,
+    "energy": 82,
+    "danceability": 64,
+    "happiness": 43,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/hold-my-hand/1i1rNVtxbE7rdFfpHuNq2j",
+    "postDate": "2025-07-04"
+  },
+  {
+    "name": "Rock That Body",
+    "artist": "Black Eyed Peas",
+    "year": 2009,
+    "genre": "Electropop",
+    "duration": 268,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 11,
+    "bpm": 125,
+    "energy": 91,
+    "danceability": 72,
+    "happiness": 84,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/rock-that-body/2WQ09wqQBIOor7Q0VpIDBK",
+    "postDate": "2025-06-25"
+  },
+  {
+    "name": "Azul",
+    "artist": "J Balvin",
+    "year": 2020,
+    "genre": "Reggaeton",
+    "duration": 206,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 11,
+    "bpm": 94,
+    "energy": 84,
+    "danceability": 84,
+    "happiness": 65,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/azul/2lCkncy6bIB0LTMT7kvrD1",
+    "postDate": "2025-03-27"
+  },
+  {
+    "name": "Dame Un Grrr",
+    "artist": "Fantomel and Kate Linn",
+    "year": 2025,
+    "genre": "Pop",
+    "duration": 133,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 6,
+    "bpm": 118,
+    "energy": 83,
+    "danceability": 90,
+    "happiness": 90,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/dame-un-grrr/7ih7pYSRZgWCTXuOmrnXjX",
+    "postDate": "2025-06-24"
+  },
+  {
+    "name": "APT.",
+    "artist": "ROSÉ & Bruno Mars",
+    "year": 2024,
+    "genre": "Pop",
+    "duration": 169,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 10,
+    "bpm": 149,
+    "energy": 78,
+    "danceability": 78,
+    "happiness": 94,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/apt/5vNRhkKd0yEAg8suGBpjeY",
+    "postDate": "2024-10-19"
+  },
+  {
+    "name": "Te Quería Ver",
+    "artist": "Alemán & Neton Vega",
+    "year": 2025,
+    "genre": "Reggaeton",
+    "duration": 176,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 14,
+    "bpm": 100,
+    "energy": 76,
+    "danceability": 80,
+    "happiness": 45,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/te-queria-ver/78HEzDEs1QUnHB2DbxgC1s",
+    "postDate": "2025-04-01"
+  },
+  {
+    "name": "Stecu Stecu",
+    "artist": "Faris Adam",
+    "year": 2025,
+    "genre": "Pop",
+    "duration": 223,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 14,
+    "bpm": 103,
+    "energy": 82,
+    "danceability": 83,
+    "happiness": 92,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/stecu-stecu/2ECbN3xQ7M6B7AI9BhhCy7",
+    "postDate": "2025-03-26"
+  },
+  {
+    "name": "Anxiety",
+    "artist": "Doechii",
+    "year": 2025,
+    "genre": "Pop Rap",
+    "duration": 249,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 16,
+    "bpm": 129,
+    "energy": 59,
+    "danceability": 81,
+    "happiness": 89,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/anxiety/1musbempyJAw5gfSKZHXP9",
+    "postDate": "2025-03-18"
+  },
+  {
+    "name": "Sailor Song",
+    "artist": "Gigi Perez",
+    "year": 2024,
+    "genre": "Indie Folk",
+    "duration": 211,
+    "validClipCount": 1,
+    "clipInstances": 1,
+    "avgClipLength": 12,
+    "bpm": 95,
+    "energy": 41,
+    "danceability": 49,
+    "happiness": 27,
+    "featureSource": "Musicstax",
+    "featureUrl": "https://musicstax.com/track/sailor-song/2262bWmqomIaJXwCRHr13j",
+    "postDate": "2025-03-11"
+  }
+]
+  </script>
+
+  <script type="application/json" id="timeline-series">
+[
+  {
+    "name": "Pretty Little Baby",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-04-29", "count": 1 },
+      { "date": "2025-05-04", "count": 1 },
+      { "date": "2025-05-12", "count": 1 },
+      { "date": "2025-05-13", "count": 1 },
+      { "date": "2025-05-14", "count": 1 },
+      { "date": "2025-05-22", "count": 1 },
+      { "date": "2025-06-05", "count": 1 },
+      { "date": "2025-06-10", "count": 1 },
+      { "date": "2025-07-23", "count": 1 },
+      { "date": "2025-08-06", "count": 1 }
+    ]
+  },
+  {
+    "name": "Hold My Hand",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-06-17", "count": 1 },
+      { "date": "2025-06-20", "count": 1 },
+      { "date": "2025-07-04", "count": 1 },
+      { "date": "2025-07-06", "count": 1 },
+      { "date": "2025-07-16", "count": 1 },
+      { "date": "2025-07-21", "count": 1 },
+      { "date": "2025-07-22", "count": 1 },
+      { "date": "2025-07-30", "count": 1 },
+      { "date": "2025-08-17", "count": 1 },
+      { "date": "2025-08-21", "count": 1 }
+    ]
+  },
+  {
+    "name": "Rock That Body",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-06-08", "count": 1 },
+      { "date": "2025-06-10", "count": 1 },
+      { "date": "2025-06-25", "count": 1 },
+      { "date": "2025-07-23", "count": 1 },
+      { "date": "2025-07-28", "count": 1 },
+      { "date": "2025-08-07", "count": 1 },
+      { "date": "2025-08-17", "count": 1 },
+      { "date": "2025-08-19", "count": 1 },
+      { "date": "2025-08-23", "count": 1 },
+      { "date": "2025-09-09", "count": 1 }
+    ]
+  },
+  {
+    "name": "Azul",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2024-04-21", "count": 1 },
+      { "date": "2025-02-17", "count": 3 },
+      { "date": "2025-02-18", "count": 1 },
+      { "date": "2025-02-22", "count": 1 },
+      { "date": "2025-02-25", "count": 1 },
+      { "date": "2025-03-22", "count": 1 },
+      { "date": "2025-03-27", "count": 1 },
+      { "date": "2025-03-28", "count": 1 }
+    ]
+  },
+  {
+    "name": "Dame Un Grrr",
+    "totalVideos": 1,
+    "posts": [
+      { "date": "2025-06-24", "count": 1 }
+    ]
+  },
+  {
+    "name": "APT.",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2024-10-18", "count": 1 },
+      { "date": "2024-10-19", "count": 1 },
+      { "date": "2024-10-20", "count": 1 },
+      { "date": "2024-10-22", "count": 1 },
+      { "date": "2024-10-28", "count": 1 },
+      { "date": "2024-10-30", "count": 1 },
+      { "date": "2024-10-31", "count": 1 },
+      { "date": "2024-11-01", "count": 1 },
+      { "date": "2024-11-18", "count": 1 },
+      { "date": "2024-12-07", "count": 1 }
+    ]
+  },
+  {
+    "name": "Te Quería Ver",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-03-03", "count": 1 },
+      { "date": "2025-03-18", "count": 1 },
+      { "date": "2025-03-19", "count": 1 },
+      { "date": "2025-03-20", "count": 1 },
+      { "date": "2025-03-22", "count": 1 },
+      { "date": "2025-03-24", "count": 1 },
+      { "date": "2025-03-30", "count": 1 },
+      { "date": "2025-04-01", "count": 1 },
+      { "date": "2025-04-09", "count": 1 },
+      { "date": "2025-04-28", "count": 1 }
+    ]
+  },
+  {
+    "name": "Stecu Stecu",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-03-26", "count": 1 },
+      { "date": "2025-04-02", "count": 1 },
+      { "date": "2025-04-06", "count": 4 },
+      { "date": "2025-04-07", "count": 1 },
+      { "date": "2025-04-10", "count": 1 },
+      { "date": "2025-04-11", "count": 1 },
+      { "date": "2025-04-13", "count": 1 }
+    ]
+  },
+  {
+    "name": "Anxiety",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2025-02-24", "count": 1 },
+      { "date": "2025-03-05", "count": 1 },
+      { "date": "2025-03-07", "count": 1 },
+      { "date": "2025-03-08", "count": 1 },
+      { "date": "2025-03-10", "count": 2 },
+      { "date": "2025-03-14", "count": 1 },
+      { "date": "2025-03-18", "count": 2 },
+      { "date": "2025-04-06", "count": 1 }
+    ]
+  },
+  {
+    "name": "Sailor Song",
+    "totalVideos": 10,
+    "posts": [
+      { "date": "2024-08-25", "count": 1 },
+      { "date": "2024-09-05", "count": 1 },
+      { "date": "2024-09-16", "count": 1 },
+      { "date": "2024-11-20", "count": 1 },
+      { "date": "2024-11-22", "count": 1 },
+      { "date": "2024-12-07", "count": 1 },
+      { "date": "2025-01-03", "count": 1 },
+      { "date": "2025-02-22", "count": 1 },
+      { "date": "2025-03-11", "count": 1 },
+      { "date": "2025-04-21", "count": 1 }
+    ]
+  }
+]
+  </script>
+
+  <script>
+    const data = JSON.parse(document.getElementById("dataset").textContent);
+    const timelineSeries = JSON.parse(document.getElementById("timeline-series").textContent);
+    const artworkByName = {
+      "Pretty Little Baby": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/d0/39/3d/d0393d3e-267b-3042-adfc-45bb30e09313/22UMGIM91134.rgb.jpg/600x600bb.jpg",
+      "Hold My Hand": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/19/e0/1b/19e01b5f-0fd5-85f1-f347-461d4130309a/825646029594.jpg/600x600bb.jpg",
+      "Rock That Body": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/42/fc/47/42fc4794-3c69-8c00-e528-1c7e92b5ac93/09UMGIM13833.rgb.jpg/600x600bb.jpg",
+      "Azul": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ae/b3/66/aeb36667-f9b2-c455-c3fc-a53bbd5ec4c1/20UMGIM10542.rgb.jpg/600x600bb.jpg",
+      "Dame Un Grrr": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/20/80/a1/2080a1b9-f359-86a4-d3c4-f0be82213062/25UM1IM53811.rgb.jpg/600x600bb.jpg",
+      "APT.": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2d/14/66/2d14661b-345b-d0f3-4e86-56ef626e68aa/075679629203.jpg/600x600bb.jpg",
+      "Te Quería Ver": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c5/31/fb/c531fb42-cd7c-7c5f-ee0e-ce2293850b66/196872800463.jpg/600x600bb.jpg",
+      "Stecu Stecu": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f4/85/e2/f485e212-6415-25d3-709c-645129dabe67/cover.jpg/600x600bb.jpg",
+      "Anxiety": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ad/65/7d/ad657de9-2dab-d086-84c3-e6b8363b984e/25UMGIM39878.rgb.jpg/600x600bb.jpg",
+      "Sailor Song": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/25/d4/96/25d49699-acc0-401f-a7cc-d7697339a474/24UM1IM03751.rgb.jpg/600x600bb.jpg"
+};
+    const timelineByName = new Map(timelineSeries.map((entry) => [entry.name, entry]));
+    data.forEach((item) => {
+      const series = timelineByName.get(item.name);
+      if (series) {
+        item.clipInstances = series.totalVideos;
+        item.validClipCount = series.posts.length;
+      }
+    });
+    const bpmValues = data.map((item) => item.bpm);
+    const bpmMin = Math.min(...bpmValues);
+    const bpmMax = Math.max(...bpmValues);
+    const controls = [
+      { key: "original", label: "TikTok Top 10" },
+      { key: "postDate", label: "Newest Post" },
+      { key: "bpm", label: "Highest BPM" },
+      { key: "energy", label: "Most Energy" },
+      { key: "danceability", label: "Most Danceable" },
+      { key: "happiness", label: "Happiest" }
+    ];
+    const timelineMetricControls = [
+      { key: "bpm", label: "BPM" },
+      { key: "energy", label: "Energy" },
+      { key: "danceability", label: "Danceability" },
+      { key: "happiness", label: "Happiness" }
+    ];
+
+    const CAT_COLORS = {
+      "Animals":             "#4a9e6b",
+      "Humor":               "#c4773a",
+      "Dance":               "#6a7ec4",
+      "Lip Sync":            "#b06ab3",
+      "Aesthetic":           "#8a7a6a",
+      "Wholesome/Emotional": "#6aacb3",
+      "Wholesome":           "#6aacb3",
+      "Tutorial":            "#9a8a4a",
+      "Edit":                "#7a6aaa",
+      "Hair + Makeup":       "#c48a6a",
+      "Art":                 "#6a9ab3",
+      "Unboxing":            "#8a6a7a",
+      "Celebrity":           "#4a6a8a",
+      "Advertisement":       "#6a6a6a",
+      "default":             "#4a4a4a"
+    };
+
+    const songVideoCategories = {
+      "Pretty Little Baby": ["Wholesome/Emotional","Lip Sync","Animals","Lip Sync","Animals","Animals","Aesthetic","Aesthetic","Animals","Celebrity"],
+      "Hold My Hand":        ["Humor","Animals","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Humor"],
+      "Rock That Body":      ["Animals","Lip Sync","Lip Sync","Advertisement","Lip Sync","Hair + Makeup","Advertisement","Lip Sync","Lip Sync","Lip Sync"],
+      "Azul":                ["Wholesome/Emotional","Dance","Dance","Dance","Dance","Dance","Tutorial","Dance","Lip Sync","Dance"],
+      "Dame Un Grrr":        ["Animals","Animals","Lip Sync","Lip Sync","Lip Sync","Hair + Makeup","Edit","Animals","Animals","Animals"],
+      "APT.":                ["Animals","Dance","Celebrity","Celebrity","Celebrity","Dance","Celebrity","Lip Sync","Wholesome/Emotional","Animals"],
+      "Te Quería Ver":       ["Dance","Dance","Dance","Dance","Dance","Dance","Dance","Lip Sync","Dance","Lip Sync"],
+      "Stecu Stecu":         ["Humor","Dance","Lip Sync","Dance","Dance","Dance","Dance","Dance","Humor","Dance"],
+      "Anxiety":             ["Celebrity","Humor","Dance","Humor","Celebrity","Dance","Hair + Makeup","Humor","Dance","Humor"],
+      "Sailor Song":         ["Wholesome/Emotional","Wholesome/Emotional","Humor","Wholesome/Emotional","Wholesome/Emotional","Wholesome/Emotional","Aesthetic","Wholesome/Emotional","Art","Wholesome/Emotional"]
+    };
+
+    const CAT_CIRCLE_POSITIONS = [
+      { x: 0, y: -20 }, { x: 20, y: 0 }, { x: 0, y: 20 }, { x: -20, y: 0 },
+      { x: 0, y: -42 }, { x: 36.4, y: -21 }, { x: 36.4, y: 21 },
+      { x: 0, y: 42 }, { x: -36.4, y: 21 }, { x: -36.4, y: -21 }
+    ];
+
+    function catColor(cat) {
+      return CAT_COLORS[cat] || CAT_COLORS["default"];
+    }
+
+    const controlsEl = document.getElementById("controls");
+    const timelineControlsEl = document.getElementById("timeline-controls");
+    const timelineScrollEl = document.getElementById("timeline-scroll");
+    const timelineLegendEl = document.getElementById("timeline-legend");
+    const gridEl = document.getElementById("grid");
+    const overviewStatsEl = document.getElementById("overview-stats");
+    const overviewSvgEl = document.getElementById("overview-svg");
+    const overviewNoteEl = document.getElementById("overview-note");
+    const introScreenEl = document.querySelector(".intro-screen");
+    const revealSections = [...document.querySelectorAll(".reveal-section")];
+    const starsScreenEl = document.getElementById("stars-screen");
+    const focusOverlayEl = document.getElementById("focus-overlay");
+    const focusContentEl = document.getElementById("focus-content");
+    const focusCloseEl = document.getElementById("focus-close");
+    const palette = {
+      black: "#191414",
+      offWhite: "#F3EDE8",
+      mutedGrey: "#BAB1B1",
+      citric: "#CDFE34",
+      tangerine: "#FF4632",
+      kleinBlue: "#4100F5",
+      aquamarine: "#93E9DE",
+      fuchsia: "#F037A5"
+    };
+    const postDateFormatter = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+    const postMonthFormatter = new Intl.DateTimeFormat("en-US", {
+      month: "short"
+    });
+    let activeTimelineMetric = "bpm";
+    let timelineScrollInitialized = false;
+
+    function averageFor(key) {
+      return Math.round(data.reduce((sum, item) => sum + item[key], 0) / data.length);
+    }
+
+    function formatDuration(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainder = String(seconds % 60).padStart(2, "0");
+      return `${minutes}:${remainder}`;
+    }
+
+    function formatPostDate(dateString) {
+      if (!dateString) {
+        return "Unknown";
+      }
+      return postDateFormatter.format(new Date(`${dateString}T00:00:00`));
+    }
+
+    function parsePostDate(dateString) {
+      if (!dateString) {
+        return null;
+      }
+      const date = new Date(`${dateString}T00:00:00`);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function bpmNormalized(value) {
+      return (value - bpmMin) / (bpmMax - bpmMin || 1);
+    }
+
+    function hexToRgba(hex, alpha) {
+      const value = hex.replace("#", "");
+      const normalized = value.length === 3
+        ? value.split("").map((part) => part + part).join("")
+        : value;
+      const r = Number.parseInt(normalized.slice(0, 2), 16);
+      const g = Number.parseInt(normalized.slice(2, 4), 16);
+      const b = Number.parseInt(normalized.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function hexToRgb(hex) {
+      const value = hex.replace("#", "");
+      const normalized = value.length === 3
+        ? value.split("").map((part) => part + part).join("")
+        : value;
+      return {
+        r: Number.parseInt(normalized.slice(0, 2), 16),
+        g: Number.parseInt(normalized.slice(2, 4), 16),
+        b: Number.parseInt(normalized.slice(4, 6), 16)
+      };
+    }
+
+    function rgbToHex({ r, g, b }) {
+      return `#${[r, g, b].map((channel) => Math.max(0, Math.min(255, Math.round(channel))).toString(16).padStart(2, "0")).join("")}`;
+    }
+
+    function mixRgb(first, second, ratio) {
+      return {
+        r: first.r + (second.r - first.r) * ratio,
+        g: first.g + (second.g - first.g) * ratio,
+        b: first.b + (second.b - first.b) * ratio
+      };
+    }
+
+    function timelineMetricValue(item, metricKey) {
+      if (metricKey === "bpm") {
+        return bpmNormalized(item.bpm);
+      }
+      return item[metricKey] / 100;
+    }
+
+    function timelineMetricColor(item, metricKey) {
+      const metricPalette = {
+        bpm: palette.tangerine,
+        energy: palette.kleinBlue,
+        danceability: palette.aquamarine,
+        happiness: palette.fuchsia
+      };
+      const value = timelineMetricValue(item, metricKey);
+      const base = hexToRgb(metricPalette[metricKey]);
+      const lightTint = mixRgb(base, hexToRgb(palette.offWhite), 0.74);
+      const deepShade = mixRgb(base, hexToRgb(palette.black), 0.24);
+      const blended = mixRgb(lightTint, deepShade, value);
+      return rgbToHex({
+        r: blended.r,
+        g: blended.g,
+        b: blended.b
+      });
+    }
+
+    function smoothCurveCommands(points) {
+      if (!points.length) {
+        return [];
+      }
+      if (points.length === 1) {
+        return [`M ${points[0].x} ${points[0].y}`];
+      }
+      const commands = [`M ${points[0].x} ${points[0].y}`];
+      for (let index = 0; index < points.length - 1; index += 1) {
+        const previous = points[index - 1] || points[index];
+        const current = points[index];
+        const next = points[index + 1];
+        const afterNext = points[index + 2] || next;
+        const controlOneX = current.x + (next.x - previous.x) / 6;
+        const controlOneY = current.y + (next.y - previous.y) / 6;
+        const controlTwoX = next.x - (afterNext.x - current.x) / 6;
+        const controlTwoY = next.y - (afterNext.y - current.y) / 6;
+        commands.push(`C ${controlOneX} ${controlOneY}, ${controlTwoX} ${controlTwoY}, ${next.x} ${next.y}`);
+      }
+      return commands;
+    }
+
+    function pointString(points) {
+      return points.map(([x, y]) => `${x},${y}`).join(" ");
+    }
+
+    function starGeometry(item, outerMax, outerMin, innerRadius) {
+      const metrics = [
+        bpmNormalized(item.bpm),
+        item.energy / 100,
+        item.danceability / 100,
+        item.happiness / 100
+      ];
+      const top = outerMin + metrics[0] * (outerMax - outerMin);
+      const right = outerMin + metrics[1] * (outerMax - outerMin);
+      const bottom = outerMin + metrics[2] * (outerMax - outerMin);
+      const left = outerMin + metrics[3] * (outerMax - outerMin);
+      const diagonal = innerRadius * 0.74;
+      return {
+        top,
+        right,
+        bottom,
+        left,
+        points: [
+          [0, -top],
+          [diagonal, -diagonal],
+          [right, 0],
+          [diagonal, diagonal],
+          [0, bottom],
+          [-diagonal, diagonal],
+          [-left, 0],
+          [-diagonal, -diagonal]
+        ]
+      };
+    }
+
+    function smallDataStarPoints(item, cx, cy) {
+      const geometry = starGeometry(item, 6.4, 3.4, 4);
+      return pointString(geometry.points.map(([x, y]) => [cx + x, cy + y]));
+    }
+
+    function guidePoints(radius, innerRadius) {
+      const diagonal = innerRadius * 0.74;
+      return pointString([
+        [0, -radius],
+        [diagonal, -diagonal],
+        [radius, 0],
+        [diagonal, diagonal],
+        [0, radius],
+        [-diagonal, diagonal],
+        [-radius, 0],
+        [-diagonal, -diagonal]
+      ]);
+    }
+
+    function cardHue(item) {
+      return Math.round(190 + item.happiness * 0.45);
+    }
+
+    function sortedData(mode) {
+      if (mode === "original") {
+        return [...data];
+      }
+      if (mode === "postDate") {
+        return [...data].sort((a, b) => {
+          const aTime = Date.parse(a.postDate || "");
+          const bTime = Date.parse(b.postDate || "");
+          return bTime - aTime || a.name.localeCompare(b.name);
+        });
+      }
+      return [...data].sort((a, b) => b[mode] - a[mode] || a.name.localeCompare(b.name));
+    }
+
+    function renderControls(activeMode) {
+      controlsEl.innerHTML = controls.map((control) => `
+        <button
+          class="control ${control.key === activeMode ? "is-active" : ""}"
+          type="button"
+          data-mode="${control.key}"
+        >${control.label}</button>
+      `).join("");
+      controlsEl.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => render(button.dataset.mode));
+      });
+    }
+
+    function renderTimelineControls(metricKey) {
+      timelineControlsEl.innerHTML = timelineMetricControls.map((control) => `
+        <button
+          class="control ${control.key === metricKey ? "is-active" : ""}"
+          type="button"
+          data-timeline-metric="${control.key}"
+        >${control.label}</button>
+      `).join("");
+      timelineControlsEl.querySelectorAll("[data-timeline-metric]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeTimelineMetric = button.dataset.timelineMetric;
+          renderBottomOverview(activeTimelineMetric);
+        });
+      });
+    }
+
+    function bindTooltips() {
+      const wraps = [...gridEl.querySelectorAll(".viz-wrap")];
+      const wrapRects = wraps.map((wrap) => ({ wrap, rect: wrap.getBoundingClientRect() }));
+      const minLeft = Math.min(...wrapRects.map(({ rect }) => rect.left));
+      const maxRight = Math.max(...wrapRects.map(({ rect }) => rect.right));
+      const edgeTolerance = 18;
+
+      wrapRects.forEach(({ wrap, rect: initialRect }) => {
+        const tooltip = wrap.querySelector(".tooltip");
+        if (!tooltip) {
+          return;
+        }
+
+        if (Math.abs(initialRect.left - minLeft) <= edgeTolerance) {
+          wrap.dataset.tooltipEdge = "leftmost";
+        } else if (Math.abs(initialRect.right - maxRight) <= edgeTolerance) {
+          wrap.dataset.tooltipEdge = "rightmost";
+        } else {
+          wrap.dataset.tooltipEdge = "middle";
+        }
+
+        function moveTooltip(event) {
+          const rect = wrap.getBoundingClientRect();
+          const tooltipWidth = tooltip.offsetWidth || 190;
+          const tooltipHeight = tooltip.offsetHeight || 110;
+          const rawLeft = event.clientX - rect.left;
+          const rawTop = event.clientY - rect.top;
+          const gutter = 18;
+          let left = rect.width + gutter;
+          let top = rawTop - tooltipHeight / 2;
+          const edge = wrap.dataset.tooltipEdge;
+
+          if (edge === "leftmost") {
+            left = rect.width + gutter;
+          } else if (edge === "rightmost") {
+            left = -tooltipWidth - gutter;
+          } else if (rawLeft > rect.width * 0.66) {
+            left = -tooltipWidth - gutter;
+          } else if (rawTop < rect.height * 0.28) {
+            left = rawLeft - tooltipWidth / 2;
+            top = rect.height + gutter;
+          } else if (rawTop > rect.height * 0.72) {
+            left = rawLeft - tooltipWidth / 2;
+            top = -tooltipHeight - gutter;
+          }
+
+          left = Math.max(left, -tooltipWidth - gutter);
+          left = Math.min(left, rect.width + gutter);
+          top = Math.max(top, -tooltipHeight - gutter);
+          top = Math.min(top, rect.height + gutter);
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        }
+
+        wrap.addEventListener("mouseenter", (event) => {
+          tooltip.classList.add("is-visible");
+          moveTooltip(event);
+        });
+
+        wrap.addEventListener("mousemove", moveTooltip);
+
+        wrap.addEventListener("mouseleave", () => {
+          tooltip.classList.remove("is-visible");
+        });
+      });
+    }
+
+    function closeFocusView() {
+      focusOverlayEl.classList.remove("is-open");
+      focusOverlayEl.setAttribute("aria-hidden", "true");
+      focusContentEl.innerHTML = "";
+      document.body.style.overflow = "";
+    }
+
+    function openFocusView(card) {
+      const clone = card.cloneNode(true);
+      clone.classList.remove("is-clickable");
+      clone.classList.add("focus-card");
+      const tooltip = clone.querySelector(".tooltip");
+      if (tooltip) {
+        tooltip.remove();
+      }
+      focusContentEl.innerHTML = "";
+      focusContentEl.appendChild(clone);
+      focusOverlayEl.classList.add("is-open");
+      focusOverlayEl.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function bindFocusCards() {
+      gridEl.querySelectorAll(".card").forEach((card) => {
+        const wrap = card.querySelector(".viz-wrap");
+        if (!wrap) {
+          return;
+        }
+        card.classList.add("is-clickable");
+        wrap.addEventListener("click", () => {
+          openFocusView(card);
+        });
+      });
+    }
+
+    function captureCardPositions() {
+      return new Map(
+        [...gridEl.querySelectorAll(".card[data-card-key]")].map((card) => [
+          card.dataset.cardKey,
+          card.getBoundingClientRect()
+        ])
+      );
+    }
+
+    function animateCardReorder(previousPositions) {
+      if (!previousPositions.size) {
+        return;
+      }
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+      }
+
+      gridEl.querySelectorAll(".card[data-card-key]").forEach((card, index) => {
+        const first = previousPositions.get(card.dataset.cardKey);
+        if (!first) {
+          return;
+        }
+
+        const last = card.getBoundingClientRect();
+        const deltaX = first.left - last.left;
+        const deltaY = first.top - last.top;
+
+        if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) {
+          return;
+        }
+
+        card.animate(
+          [
+            {
+              transform: `translate(${deltaX}px, ${deltaY}px) scale(0.985)`,
+              opacity: 0.92
+            },
+            {
+              transform: "translate(0, 0) scale(1)",
+              opacity: 1
+            }
+          ],
+          {
+            duration: 640,
+            delay: Math.min(index * 10, 90),
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "both"
+          }
+        );
+      });
+    }
+
+    function renderBottomOverview(metricKey = activeTimelineMetric) {
+      activeTimelineMetric = metricKey;
+      renderTimelineControls(metricKey);
+      const previousScrollLeft = timelineScrollEl ? timelineScrollEl.scrollLeft : 0;
+      const totalInstances = data.reduce((sum, item) => sum + item.clipInstances, 0);
+      const timelineRows = data.map((item) => {
+        const series = timelineByName.get(item.name);
+        const posts = (series?.posts || [])
+          .map((post) => ({
+            ...post,
+            date: parsePostDate(post.date)
+          }))
+          .filter((post) => post.date)
+          .sort((a, b) => a.date - b.date);
+        return {
+          item,
+          totalVideos: series?.totalVideos || 0,
+          posts
+        };
+      }).filter((row) => row.posts.length);
+      const allPostTimes = timelineRows.flatMap((row) => row.posts.map((post) => post.date.getTime()));
+      const dayMs = 24 * 60 * 60 * 1000;
+      const minTimeRaw = allPostTimes.length ? Math.min(...allPostTimes) : Date.now();
+      const maxTimeRaw = allPostTimes.length ? Math.max(...allPostTimes) : Date.now() + dayMs;
+      const minTime = minTimeRaw - dayMs * 4;
+      const maxTime = maxTimeRaw + dayMs * 4;
+      const chartWidth = 3200;
+      const axisLeft = 82;
+      const axisRight = chartWidth - 96;
+      const axisTop = 82;
+      const axisBottom = 402;
+      const svgHeight = 520;
+      const chartBottom = axisBottom;
+      const plotHeight = axisBottom - axisTop;
+      const scaleX = (time) => {
+        const ratio = (time - minTime) / (maxTime - minTime || 1);
+        return axisLeft + ratio * (axisRight - axisLeft);
+      };
+      const timelineLayerData = timelineRows.map((row) => {
+        const posts = row.posts.map((post) => ({
+          time: post.date.getTime() + dayMs / 2,
+          count: post.count
+        }));
+        return { row, posts };
+      });
+      const maxDailyCount = Math.max(1, ...timelineRows.flatMap((row) => row.posts.map((post) => post.count)));
+      const yTickMax = maxDailyCount + 0.55;
+      const yTickValues = Array.from({ length: maxDailyCount + 1 }, (_, i) => i);
+      const scaleY = (value) => axisBottom - (value / yTickMax) * plotHeight;
+      const monthTicks = [];
+      const tickDate = new Date(minTime);
+      tickDate.setDate(1);
+      tickDate.setHours(0, 0, 0, 0);
+      while (tickDate.getTime() <= maxTime) {
+        const x = scaleX(tickDate.getTime());
+        monthTicks.push(`
+          <line x1="${x}" y1="${axisTop}" x2="${x}" y2="${axisBottom}" stroke="rgba(243, 237, 232, 0.065)" stroke-width="1"></line>
+          <text x="${x}" y="${chartBottom + 34}" text-anchor="middle" fill="rgba(243, 237, 232, 0.64)" font-size="13" letter-spacing="0.12em">${postMonthFormatter.format(tickDate).toUpperCase()}</text>
+        `);
+        tickDate.setMonth(tickDate.getMonth() + 1);
+      }
+      const yTicks = yTickValues.map((value) => {
+        const y = scaleY(value);
+        return `
+          <line x1="${axisLeft}" y1="${y}" x2="${axisRight}" y2="${y}" stroke="rgba(243, 237, 232, ${value === 0 ? "0.16" : "0.08"})" stroke-width="${value === 0 ? "1.2" : "1"}"></line>
+          <text x="${axisLeft - 18}" y="${y + 4}" text-anchor="end" fill="rgba(243, 237, 232, 0.44)" font-size="11">${value}</text>
+        `;
+      }).join("");
+      const dayPx = (axisRight - axisLeft) / ((maxTime - minTime) / dayMs);
+      const barHalfW = Math.max(3, dayPx * 0.45);
+      const layers = timelineLayerData.map(({ row, posts }) => {
+        const metricValue = timelineMetricValue(row.item, metricKey);
+        const color = timelineMetricColor(row.item, metricKey);
+        const barFill = hexToRgba(color, 0.1 + metricValue * 0.2);
+        const starPositions = [];
+        const barsAndStars = posts.map((post) => {
+          const postX = scaleX(post.time);
+          const barTop = scaleY(post.count);
+          const barBase = scaleY(0);
+          const stars = Array.from({ length: post.count }, (_, i) => {
+            const y = scaleY(i + 1);
+            starPositions.push({ x: postX, y });
+            return `<polygon points="${smallDataStarPoints(row.item, postX, y)}" fill="${hexToRgba(palette.offWhite, 0.92)}" stroke="${hexToRgba(color, 0.96)}" stroke-width="1.2" stroke-linejoin="round"></polygon>`;
+          }).join("");
+          return `<rect x="${postX - barHalfW}" y="${barTop}" width="${barHalfW * 2}" height="${barBase - barTop}" fill="${barFill}" stroke="${hexToRgba(color, 0.28)}" stroke-width="0.5" rx="2"></rect>${stars}`;
+        }).join("");
+        let groupEllipse = "";
+        if (starPositions.length > 0) {
+          const xs = starPositions.map((p) => p.x);
+          const ys = starPositions.map((p) => p.y);
+          const ecx = (Math.min(...xs) + Math.max(...xs)) / 2;
+          const ecy = (Math.min(...ys) + Math.max(...ys)) / 2;
+          const erx = Math.max((Math.max(...xs) - Math.min(...xs)) / 2 + barHalfW + 14, 14);
+          const ery = Math.max((Math.max(...ys) - Math.min(...ys)) / 2 + 20, 20);
+          groupEllipse = `<ellipse cx="${ecx}" cy="${ecy}" rx="${erx}" ry="${ery}" fill="${hexToRgba(color, 0.05)}" stroke="${hexToRgba(color, 0.44)}" stroke-width="1.4" stroke-dasharray="5 4"></ellipse>`;
+        }
+        return `${groupEllipse}${barsAndStars}`;
+      }).join("");
+      const legend = timelineRows.map((row) => {
+        const color = timelineMetricColor(row.item, metricKey);
+        return `
+          <div class="timeline-legend-item">
+            <span class="timeline-legend-swatch" style="background:${hexToRgba(color, 0.14)}; color:${color};"></span>
+            <span>${row.item.name}</span>
+          </div>
+        `;
+      }).join("");
+      const firstDateLabel = formatPostDate(new Date(minTimeRaw).toISOString().slice(0, 10));
+      const lastDateLabel = formatPostDate(new Date(maxTimeRaw).toISOString().slice(0, 10));
+      const metricLabel = timelineMetricControls.find((control) => control.key === metricKey)?.label || "Metric";
+      if (overviewNoteEl) {
+        overviewNoteEl.textContent = `Each bar shows exactly how many videos were posted on that date. Stars stack vertically — one star per video. Dashed ovals group all posts from the same song. Scroll left to reach the earlier 2024 posts.`;
+      }
+      if (timelineLegendEl) {
+        timelineLegendEl.innerHTML = legend;
+      }
+
+      overviewStatsEl.innerHTML = `
+        <div class="overview-stat"><span class="overview-value">${data.length}</span><span class="overview-label">Sounds</span></div>
+        <div class="overview-stat"><span class="overview-value">${totalInstances}</span><span class="overview-label">Clip Instances</span></div>
+        <div class="overview-stat"><span class="overview-value">${bpmMin}-${bpmMax}</span><span class="overview-label">BPM Range</span></div>
+        <div class="overview-stat"><span class="overview-value">${averageFor("energy")}</span><span class="overview-label">Avg Energy</span></div>
+        <div class="overview-stat"><span class="overview-value">${averageFor("danceability")}</span><span class="overview-label">Avg Danceability</span></div>
+      `;
+
+      overviewSvgEl.setAttribute("viewBox", `0 0 ${chartWidth} ${svgHeight}`);
+      overviewSvgEl.style.width = `${chartWidth}px`;
+      overviewSvgEl.style.maxWidth = "none";
+      overviewSvgEl.innerHTML = `
+        ${monthTicks.join("")}
+        ${yTicks}
+        <line x1="${axisLeft}" y1="${axisTop}" x2="${axisLeft}" y2="${axisBottom}" stroke="rgba(243, 237, 232, 0.18)" stroke-width="1.2"></line>
+        <line x1="${axisLeft}" y1="${axisBottom}" x2="${axisRight}" y2="${axisBottom}" stroke="rgba(243, 237, 232, 0.18)" stroke-width="1.2"></line>
+        <text x="${axisLeft}" y="${axisTop - 26}" fill="rgba(243, 237, 232, 0.56)" font-size="18" letter-spacing="0.16em">OVERLAPPED POST DATE AREAS</text>
+        <text x="${axisLeft - 18}" y="${axisTop - 26}" text-anchor="end" fill="rgba(243, 237, 232, 0.46)" font-size="11" letter-spacing="0.16em">VIDEOS</text>
+        ${layers}
+        <text x="${axisLeft}" y="${chartBottom + 62}" text-anchor="start" fill="rgba(243, 237, 232, 0.72)" font-size="14" letter-spacing="0.12em">${firstDateLabel}</text>
+        <text x="${axisRight}" y="${chartBottom + 62}" text-anchor="end" fill="rgba(243, 237, 232, 0.72)" font-size="14" letter-spacing="0.12em">${lastDateLabel}</text>
+        <text x="${axisRight}" y="${axisTop - 26}" text-anchor="end" fill="rgba(243, 237, 232, 0.46)" font-size="11" letter-spacing="0.16em">DARKER = HIGHER ${metricLabel.toUpperCase()}</text>
+      `;
+
+      if (timelineScrollEl) {
+        const shouldUseInitialScroll = !timelineScrollInitialized;
+        const initialTimelineStart = parsePostDate("2025-01-01");
+        const initialScrollLeft = initialTimelineStart
+          ? Math.max(0, scaleX(initialTimelineStart.getTime()))
+          : 0;
+        const applyTimelineScroll = () => {
+          const maxScroll = Math.max(0, timelineScrollEl.scrollWidth - timelineScrollEl.clientWidth);
+          const targetScroll = shouldUseInitialScroll
+            ? Math.min(maxScroll, initialScrollLeft)
+            : Math.max(0, Math.min(maxScroll, previousScrollLeft));
+          timelineScrollEl.scrollLeft = targetScroll;
+        };
+        window.requestAnimationFrame(() => {
+          applyTimelineScroll();
+          window.requestAnimationFrame(() => {
+            applyTimelineScroll();
+          });
+        });
+        timelineScrollInitialized = true;
+      }
+    }
+
+    function initializeSectionReveal() {
+      if (!revealSections.length) {
+        return;
+      }
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+        revealSections.forEach((section) => section.classList.add("is-visible"));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.18,
+        rootMargin: "0px 0px -8% 0px"
+      });
+
+      revealSections.forEach((section) => observer.observe(section));
+    }
+
+    function updateIntroFade() {
+      if (!introScreenEl) {
+        return;
+      }
+
+      const fadeDistance = Math.max(introScreenEl.offsetHeight * 0.72, window.innerHeight * 0.55);
+      const progress = Math.max(0, Math.min(window.scrollY / fadeDistance, 1));
+      const opacity = 1 - progress * 0.94;
+      introScreenEl.style.opacity = `${Math.max(0.06, opacity)}`;
+    }
+
+    function initializeIntroFade() {
+      if (!introScreenEl) {
+        return;
+      }
+
+      let ticking = false;
+      const requestUpdate = () => {
+        if (ticking) {
+          return;
+        }
+
+        ticking = true;
+        window.requestAnimationFrame(() => {
+          updateIntroFade();
+          ticking = false;
+        });
+      };
+
+      updateIntroFade();
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", requestUpdate);
+    }
+
+    function render(mode = "original") {
+      const previousPositions = captureCardPositions();
+      renderControls(mode);
+      const items = sortedData(mode);
+      gridEl.innerHTML = items.map((item, index) => {
+        const artworkUrl = artworkByName[item.name];
+        const stroke = `rgba(243, 237, 232, 0.76)`;
+        const halo = `rgba(243, 237, 232, 0.08)`;
+        const geometry = starGeometry(item, 92, 30, 46);
+        const clipId = `star-clip-${index}`;
+        const starId = `star-shape-${index}`;
+        const outlinePoints = pointString(geometry.points);
+        const videoCats = songVideoCategories[item.name] || [];
+        return `
+          <article class="card" data-card-key="${item.name}" style="--stroke:${stroke};">
+            <div class="viz-wrap">
+              <svg viewBox="0 0 240 240" role="img" aria-label="${item.name} star showing BPM, energy, danceability, and happiness">
+                <defs>
+                  <clipPath id="${clipId}">
+                    <polygon points="${outlinePoints}"></polygon>
+                  </clipPath>
+                </defs>
+                <g transform="translate(120 120)">
+                  <line class="axis" x1="0" y1="-96" x2="0" y2="96"></line>
+                  <line class="axis" x1="-96" y1="0" x2="96" y2="0"></line>
+                  <polygon class="guide" points="${guidePoints(92, 46)}"></polygon>
+                  <polygon class="guide" points="${guidePoints(62, 30)}"></polygon>
+                  <g clip-path="url(#${clipId})">
+                    <polygon points="${outlinePoints}" fill="rgba(243,237,232,0.05)"></polygon>
+                    <g style="filter: blur(8px);">
+                      ${CAT_CIRCLE_POSITIONS.map((pos, i) => `<circle cx="${pos.x}" cy="${pos.y}" r="52" fill="${catColor(videoCats[i] || "")}" opacity="1"></circle>`).join("")}
+                    </g>
+                  </g>
+                  <polygon class="star-outline" points="${outlinePoints}"></polygon>
+                  <circle class="core" cx="0" cy="0" r="6.4"></circle>
+                  <text class="axis-label axis-label-bpm" text-anchor="middle" x="0" y="-108">BPM ${item.bpm}</text>
+                  <text class="axis-label axis-label-energy" text-anchor="start" x="102" y="4">ENG ${item.energy}</text>
+                  <text class="axis-label axis-label-dance" text-anchor="middle" x="0" y="122">DNC ${item.danceability}</text>
+                  <text class="axis-label axis-label-happy" text-anchor="end" x="-102" y="4">HAP ${item.happiness}</text>
+                </g>
+              </svg>
+              <div class="tooltip" role="tooltip" aria-hidden="true">
+                ${artworkUrl ? `<img class="tooltip-cover" src="${artworkUrl}" alt="${item.name} cover art">` : ""}
+                <div class="tooltip-row"><span class="tooltip-label">Post Date</span><span class="tooltip-value">${formatPostDate(item.postDate)}</span></div>
+                <div class="tooltip-row"><span class="tooltip-label">BPM</span><span class="tooltip-value">${item.bpm}</span></div>
+                <div class="tooltip-row"><span class="tooltip-label">Energy</span><span class="tooltip-value">${item.energy}/100</span></div>
+                <div class="tooltip-row"><span class="tooltip-label">Danceability</span><span class="tooltip-value">${item.danceability}/100</span></div>
+                <div class="tooltip-row"><span class="tooltip-label">Happiness</span><span class="tooltip-value">${item.happiness}/100</span></div>
+              </div>
+            </div>
+            <h2 class="title">${item.name}</h2>
+            <div class="artist">${item.artist}</div>
+          </article>
+        `;
+      }).join("");
+      bindTooltips();
+      bindFocusCards();
+      animateCardReorder(previousPositions);
+    }
+
+    focusCloseEl.addEventListener("click", closeFocusView);
+    focusOverlayEl.addEventListener("click", (event) => {
+      if (event.target === focusOverlayEl) {
+        closeFocusView();
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && focusOverlayEl.classList.contains("is-open")) {
+        closeFocusView();
+      }
+    });
+
+    function packDotPositions(count, spacing) {
+      if (count <= 0) return [];
+      const positions = [{ x: 0, y: 0 }];
+      let ring = 1;
+      while (positions.length < count) {
+        const r = spacing * ring;
+        const dotsInRing = Math.max(1, Math.round(2 * Math.PI * r / spacing));
+        for (let i = 0; i < dotsInRing && positions.length < count; i++) {
+          const angle = (2 * Math.PI * i) / dotsInRing - Math.PI / 2;
+          positions.push({ x: r * Math.cos(angle), y: r * Math.sin(angle) });
+        }
+        ring++;
+      }
+      return positions;
+    }
+
+    function clusterDotPoints(item, cx, cy) {
+      const scale = 1.8;
+      const geometry = starGeometry(item, 6.4 * scale, 3.4 * scale, 4 * scale);
+      return pointString(geometry.points.map(([x, y]) => [cx + x, cy + y]));
+    }
+
+    function songDominantColor(item) {
+      const scored = [
+        { color: palette.tangerine, value: bpmNormalized(item.bpm) },
+        { color: palette.kleinBlue, value: item.energy / 100 },
+        { color: palette.aquamarine, value: item.danceability / 100 },
+        { color: palette.fuchsia, value: item.happiness / 100 }
+      ];
+      return scored.sort((a, b) => b.value - a.value)[0].color;
+    }
+
+    function renderClusterView() {
+      const clusterGridEl = document.getElementById("cluster-grid");
+      if (!clusterGridEl) return;
+
+      const dotSpacing = 28;
+      const dotRadius = 13;
+      const svgPad = 20;
+
+      clusterGridEl.innerHTML = data.map((item) => {
+        const series = timelineByName.get(item.name);
+        const totalVideos = series?.totalVideos || 0;
+        const positions = packDotPositions(totalVideos, dotSpacing);
+
+        const maxR = positions.reduce((m, p) => Math.max(m, Math.hypot(p.x, p.y)), 0);
+        const containerR = Math.max(maxR + dotRadius + 6, 24);
+        const svgSize = Math.round((containerR + svgPad) * 2);
+        const cx = svgSize / 2;
+        const cy = svgSize / 2;
+
+        const color = songDominantColor(item);
+
+        const guideRings = [];
+        for (let r = dotSpacing; r < containerR; r += dotSpacing) {
+          guideRings.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${hexToRgba(color, 0.1)}" stroke-width="1" stroke-dasharray="3 5"/>`);
+        }
+
+        const axes = `
+          <line x1="${cx}" y1="${cy - containerR + 2}" x2="${cx}" y2="${cy + containerR - 2}" stroke="${hexToRgba(color, 0.09)}" stroke-width="1"/>
+          <line x1="${cx - containerR + 2}" y1="${cy}" x2="${cx + containerR - 2}" y2="${cy}" stroke="${hexToRgba(color, 0.09)}" stroke-width="1"/>
+        `;
+
+        const dots = positions.map((pos) => {
+          const x = cx + pos.x;
+          const y = cy + pos.y;
+          return `<polygon points="${clusterDotPoints(item, x, y)}" fill="${hexToRgba(color, 0.18)}" stroke="${hexToRgba(color, 0.88)}" stroke-width="1" stroke-linejoin="round"/>`;
+        }).join("");
+
+        const plural = totalVideos !== 1 ? "s" : "";
+        return `
+          <div class="cluster-card">
+            <svg width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}"
+                 role="img" aria-label="${item.name}: ${totalVideos} video${plural}">
+              <circle cx="${cx}" cy="${cy}" r="${containerR}"
+                fill="${hexToRgba(color, 0.05)}"
+                stroke="${hexToRgba(color, 0.2)}"
+                stroke-width="1"
+                stroke-dasharray="4 7"
+              />
+              ${axes}
+              ${guideRings.join("")}
+              ${dots}
+            </svg>
+            <div class="cluster-name">${item.name}</div>
+            <div class="cluster-meta">${item.artist} · ${totalVideos} video${plural}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    renderBottomOverview();
+    initializeIntroFade();
+    initializeSectionReveal();
+    render();
+    renderClusterView();
+
+    const catLegendEl = document.getElementById("cat-legend");
+    if (catLegendEl) {
+      const usedCats = new Set(Object.values(songVideoCategories).flat());
+      catLegendEl.innerHTML = [...usedCats].sort().map((cat) => `
+        <div class="cat-legend-item">
+          <span class="cat-legend-dot" style="background:${catColor(cat)};"></span>
+          <span>${cat}</span>
+        </div>
+      `).join("");
+    }
+  </script>
+</body>
+</html>
