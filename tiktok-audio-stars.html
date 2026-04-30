@@ -176,6 +176,29 @@
       order: 1;
     }
 
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 237, 232, 0.18);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: rgba(243, 237, 232, 0.04);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(147, 233, 222, 0.35);
+      background: rgba(243, 237, 232, 0.08);
+    }
+
     .legend-wrap {
       display: flex;
       justify-content: flex-end;
@@ -1248,6 +1271,7 @@
       <section class="page-section intro-screen reveal-section is-active-view" id="trend-screen">
         <section class="hero">
           <div class="hero-copy">
+            <a class="back-link" href="song-circles.html">← Back to Trends</a>
             <h1>Song Characteristics</h1>
             <p class="legend-caption">
               Each star reads on four axes — bpm, energy, danceability, happiness. The farther a point stretches from the center, the stronger that attribute is for the track.
