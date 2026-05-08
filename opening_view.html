@@ -275,11 +275,10 @@
   .data-badge.cls-onehit { border-color: #F037A5; color: #F037A5; }
   .data-badge.cls-long { border-color: #93E9DE; color: #93E9DE; }
   .legend-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
-    border: 1px solid rgba(0,0,0,0.1);
+    display: block;
   }
   .legend-name {
     font-weight: 500;
@@ -3912,13 +3911,32 @@ function parseDataset(text) {
 
 function main(DATA) {
 
+// 14-color palette, ordered so adjacent indices have visually distinct hues.
+// Indices 1..N (where N = size of the smaller group) get used twice — once on
+// a triangle (one-hit) and once on a circle (long-lasting). The shape disambiguates.
 const COLORS = [
-  '#E8B04A', '#7FB3D5', '#D16BA5', '#9BC95A', '#F5D547',
-  '#A38FCC', '#F29E8E', '#5DBFB0', '#E17A47', '#6C92D8',
-  '#C4A381', '#C77DCB', '#7AB87A', '#F0B25A', '#8E9DAB',
-  '#EE8FA9', '#5EB5C9', '#C9D06E', '#9481C4', '#E89970',
+  '#E8B04A', // 1  warm gold
+  '#7FB3D5', // 2  steel blue
+  '#D16BA5', // 3  dusty rose
+  '#9BC95A', // 4  spring green
+  '#A38FCC', // 5  lavender
+  '#E89970', // 6  coral
+  '#5EB5C9', // 7  cyan-teal
+  '#F5D547', // 8  sunflower
+  '#C77DCB', // 9  lilac
+  '#5DBFB0', // 10 seafoam
+  '#E17A47', // 11 burnt orange
+  '#6C92D8', // 12 denim blue
+  '#C9D06E', // 13 olive
+  '#EE8FA9', // 14 salmon pink
 ];
 const GRAY = '#4a4444';
+
+// Equal-area triangle whose visual weight matches a circle of radius r.
+function trianglePoints(r) {
+  const top = -1.55 * r, side = 1.35 * r, bottom = 0.78 * r;
+  return `0,${top.toFixed(2)} ${-side.toFixed(2)},${bottom.toFixed(2)} ${side.toFixed(2)},${bottom.toFixed(2)}`;
+}
 
 const tooltip = document.getElementById('tooltip');
 function showTip(e, html) {
@@ -3973,12 +3991,21 @@ function classifySong(videos) {
 }
 
 songs.forEach(s => {
-  s.color = COLORS[(s.rank - 1) % COLORS.length];
   s.hasData = s.inSwarm > 0;
   s.isPartial = s.inSwarm > 0 && s.inSwarm < s.totalRecords;
   s.isMissing = s.inSwarm === 0;
   s.cls = s.hasData ? classifySong(s.videos) : null;
 });
+
+// Assign color + shape per group, walking each group's songs in rank order.
+// One-hit songs get triangles; long-lasting songs get circles. Colors restart at
+// index 0 within each group so the first one-hit and the first long-lasting share
+// a hue (distinguished by shape), the second pair shares the next, and so on.
+const oneHitOrdered = songs.filter(s => s.cls === 'one-hit').sort((a, b) => a.rank - b.rank);
+const longOrdered = songs.filter(s => s.cls === 'long-lasting').sort((a, b) => a.rank - b.rank);
+oneHitOrdered.forEach((s, i) => { s.color = COLORS[i % COLORS.length]; s.shape = 'triangle'; });
+longOrdered.forEach((s, i) => { s.color = COLORS[i % COLORS.length]; s.shape = 'circle'; });
+songs.filter(s => !s.cls).forEach(s => { s.color = '#888'; s.shape = 'circle'; });
 
 // --- Comparative insights for the two groups ---
 const NOW_YEAR = new Date().getFullYear();
@@ -4053,7 +4080,8 @@ function computeSwarmLayout() {
     tx: xOf(d._t),
     ty: axisY - vOffset(d.metric),
     r: radius(d.likes),
-    color: COLORS[(d.rank - 1) % COLORS.length],
+    color: bySong[d.rank].color,
+    shape: bySong[d.rank].shape,
     id: `${d.rank}-${i}`,
     cls: bySong[d.rank].cls,
   }));
@@ -4084,29 +4112,59 @@ const layout = computeSwarmLayout();
 layout.sort((a, b) => a.rank - b.rank || (a._t - b._t));
 
 // --- Two-cluster sunflower targets ---
-function computeClusterTargets() {
-  const oneHit = layout.filter(n => n.cls === 'one-hit');
-  const longLasting = layout.filter(n => n.cls === 'long-lasting');
-  const byRankDate = (a, b) => a.rank - b.rank || a._t - b._t;
-  oneHit.sort(byRankDate);
-  longLasting.sort(byRankDate);
+// Flat sunflower placement (step 11) keeps the swirl look and avoids overlaps.
+// Dots are sorted by hue so similar colors end up at adjacent spiral indices,
+// which the golden-angle layout draws onto shared spiral arms — giving each
+// hue a continuous streak through the cluster instead of being scattered.
+let oneHitClusterR = 0;
+let longClusterR = 0;
+const PHI = Math.PI * (3 - Math.sqrt(5));
 
-  function place(arr, cx, cy) {
-    const phi = Math.PI * (3 - Math.sqrt(5));
-    const step = 11;
-    arr.forEach((n, i) => {
-      const r = step * Math.sqrt(i + 0.5);
-      const theta = i * phi;
-      n.clusterX = cx + r * Math.cos(theta);
-      n.clusterY = cy + r * Math.sin(theta);
-    });
-  }
-  place(oneHit, oneHitCx, oneHitCy);
-  place(longLasting, longCx, longCy);
+function hueOf(hex) {
+  if (!hex || hex[0] !== '#') return 0;
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const d = max - min;
+  if (d === 0) return 0;
+  let h;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return ((h * 60) + 360) % 360;
+}
+
+function placeSunflower(cluster, cx, cy) {
+  if (!cluster.length) return 0;
+  // Primary sort: hue — neighboring spiral indices share similar colors.
+  // Secondary: radius desc — within a same-hue band, larger dots come first.
+  cluster.sort((a, b) => {
+    const dh = hueOf(a.color) - hueOf(b.color);
+    if (dh !== 0) return dh;
+    return b.r - a.r;
+  });
+  const step = 11;
+  let maxR = 0;
+  cluster.forEach((n, i) => {
+    const r = step * Math.sqrt(i + 0.5);
+    const theta = i * PHI;
+    n.clusterX = cx + r * Math.cos(theta);
+    n.clusterY = cy + r * Math.sin(theta);
+    const dist = r + n.r;
+    if (dist > maxR) maxR = dist;
+  });
+  return maxR;
+}
+
+function computeClusterTargets() {
+  oneHitClusterR = placeSunflower(layout.filter(n => n.cls === 'one-hit'), oneHitCx, oneHitCy);
+  longClusterR = placeSunflower(layout.filter(n => n.cls === 'long-lasting'), longCx, longCy);
 }
 computeClusterTargets();
 
 let selectedRank = null;
+let hoveredRank = null;
 let scrollT = 0;
 
 function buildLegend() {
@@ -4120,9 +4178,14 @@ function buildLegend() {
     else if (s.isPartial) classes += ' partial-data';
     el.className = classes;
 
-    const swatchStyle = s.isMissing
-      ? `border: 1.5px dashed ${s.color}; background: transparent;`
-      : `background: ${s.color}`;
+    let swatchSvg;
+    if (s.isMissing) {
+      swatchSvg = `<svg class="legend-swatch" viewBox="-7 -7 14 14"><circle cx="0" cy="0" r="5.5" fill="none" stroke="${s.color || '#888'}" stroke-width="1.4" stroke-dasharray="2 2"/></svg>`;
+    } else if (s.shape === 'triangle') {
+      swatchSvg = `<svg class="legend-swatch" viewBox="-7 -7 14 14"><polygon points="0,-6 -5.2,3 5.2,3" fill="${s.color}"/></svg>`;
+    } else {
+      swatchSvg = `<svg class="legend-swatch" viewBox="-7 -7 14 14"><circle cx="0" cy="0" r="6" fill="${s.color}"/></svg>`;
+    }
 
     let statusBadge = '';
     if (s.isMissing) {
@@ -4137,7 +4200,7 @@ function buildLegend() {
     }
 
     el.innerHTML = `
-      <span class="legend-swatch" style="${swatchStyle}"></span>
+      ${swatchSvg}
       <div class="legend-name-wrap">
         <span class="legend-name">${escape(s.name)}</span>
         <span class="legend-artist">${escape(s.artist || '—')}${statusBadge}</span>
@@ -4145,6 +4208,8 @@ function buildLegend() {
       <span class="legend-rank">#${s.rank}</span>
     `;
     if (!s.isMissing) {
+      el.addEventListener('mouseenter', () => setHovered(s.rank));
+      el.addEventListener('mouseleave', () => setHovered(null));
       el.addEventListener('click', () => {
         if (selectedRank === s.rank) resetSelection();
         else selectSong(s.rank);
@@ -4195,7 +4260,13 @@ function renderStatic() {
   layout.forEach(n => {
     const viewsStr = n.metric != null ? n.metric.toFixed(1) + 'M' : '—';
     const likesStr = n.likes != null ? n.likes.toFixed(1) + 'M' : '—';
-    html += `<circle class="dot" id="d_${n.id}" cx="${n.swarmX}" cy="${n.swarmY}" r="${n.r}" fill="${n.color}" fill-opacity="0.78" data-rank="${n.rank}" data-name="${escape(n.name)}" data-artist="${escape(n.artist)}" data-date="${n.date}" data-views="${viewsStr}" data-likes="${likesStr}" data-cat="${escape(n.category)}" data-cls="${n.cls || ''}"/>`;
+    const dataAttrs = `data-rank="${n.rank}" data-name="${escape(n.name)}" data-artist="${escape(n.artist)}" data-date="${n.date}" data-views="${viewsStr}" data-likes="${likesStr}" data-cat="${escape(n.category)}" data-cls="${n.cls || ''}"`;
+    const transform = `transform="translate(${n.swarmX.toFixed(2)},${n.swarmY.toFixed(2)})"`;
+    if (n.shape === 'triangle') {
+      html += `<polygon class="dot" id="d_${n.id}" points="${trianglePoints(n.r)}" ${transform} fill="${n.color}" fill-opacity="0.78" ${dataAttrs}/>`;
+    } else {
+      html += `<circle class="dot" id="d_${n.id}" cx="0" cy="0" r="${n.r}" ${transform} fill="${n.color}" fill-opacity="0.78" ${dataAttrs}/>`;
+    }
   });
 
   const oneHitCount = layout.filter(n => n.cls === 'one-hit').length;
@@ -4203,16 +4274,12 @@ function renderStatic() {
   const oneHitSongCount = songs.filter(s => s.cls === 'one-hit').length;
   const longSongCount = songs.filter(s => s.cls === 'long-lasting').length;
 
-  // Compute the visual top of each cluster so labels sit safely above the dots.
-  const sunflowerStep = 11;
-  const oneHitR = sunflowerStep * Math.sqrt(oneHitCount + 0.5);
-  const longR = sunflowerStep * Math.sqrt(longCount + 0.5);
-  const maxDotR = 12;
+  // Position labels above the actual cluster extents (computed during placement).
   const labelGap = 14;
-  const oneHitMainY = oneHitCy - oneHitR - maxDotR - labelGap - 18;
-  const oneHitSubY = oneHitCy - oneHitR - maxDotR - labelGap;
-  const longMainY = longCy - longR - maxDotR - labelGap - 18;
-  const longSubY = longCy - longR - maxDotR - labelGap;
+  const oneHitMainY = oneHitCy - oneHitClusterR - labelGap - 18;
+  const oneHitSubY = oneHitCy - oneHitClusterR - labelGap;
+  const longMainY = longCy - longClusterR - labelGap - 18;
+  const longSubY = longCy - longClusterR - labelGap;
 
   html += `<g class="cluster-labels" id="clusterLabels">
     <text class="cluster-label-main" x="${oneHitCx}" y="${oneHitMainY}" fill="#F037A5">One-Hit Wonders</text>
@@ -4245,10 +4312,11 @@ function renderStatic() {
   svg.innerHTML = html;
 
   svg.querySelectorAll('.dot').forEach(dot => {
+    const dotRank = parseInt(dot.dataset.rank);
+    dot.addEventListener('mouseenter', () => setHovered(dotRank));
     dot.addEventListener('mousemove', e => {
       const name = dot.dataset.name;
       const artist = dot.dataset.artist;
-      const rank = dot.dataset.rank;
       const date = dot.dataset.date;
       const views = dot.dataset.views;
       const likes = dot.dataset.likes;
@@ -4256,28 +4324,33 @@ function renderStatic() {
       const cls = dot.dataset.cls;
       const clsLabel = cls === 'one-hit' ? '<span style="color:#F037A5">one-hit wonder</span>' :
                        cls === 'long-lasting' ? '<span style="color:#93E9DE">long-lasting</span>' : '';
-      showTip(e, `<strong>${name}</strong> · ${artist}<br>#${rank} · ${date}<br>${views} views · ${likes} likes<br><span style="opacity:.6">${cat}</span>${clsLabel ? '<br>' + clsLabel : ''}`);
+      showTip(e, `<strong>${name}</strong> · ${artist}<br>#${dotRank} · ${date}<br>${views} views · ${likes} likes<br><span style="opacity:.6">${cat}</span>${clsLabel ? '<br>' + clsLabel : ''}`);
     });
-    dot.addEventListener('mouseleave', hideTip);
+    dot.addEventListener('mouseleave', () => {
+      hideTip();
+      setHovered(null);
+    });
     dot.addEventListener('click', () => {
-      const r = parseInt(dot.dataset.rank);
-      if (selectedRank === r) resetSelection();
-      else selectSong(r);
+      if (selectedRank === dotRank) resetSelection();
+      else selectSong(dotRank);
     });
   });
 }
 
 function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
 
-function applySelectionColors() {
+function applyColors() {
+  // Hover takes precedence over click-selection so the user can briefly inspect
+  // a different song without losing their selection.
+  const active = hoveredRank !== null ? hoveredRank : selectedRank;
   layout.forEach(n => {
     const el = document.getElementById(`d_${n.id}`);
     if (!el) return;
-    if (selectedRank === null) {
+    if (active === null) {
       el.setAttribute('fill', n.color);
       el.setAttribute('fill-opacity', 0.78);
       el.setAttribute('stroke', 'none');
-    } else if (n.rank === selectedRank) {
+    } else if (n.rank === active) {
       el.setAttribute('fill', n.color);
       el.setAttribute('fill-opacity', 0.95);
       el.setAttribute('stroke', '#CDFE34');
@@ -4286,10 +4359,16 @@ function applySelectionColors() {
       el.parentNode.appendChild(el);
     } else {
       el.setAttribute('fill', GRAY);
-      el.setAttribute('fill-opacity', 0.28);
+      el.setAttribute('fill-opacity', 0.22);
       el.setAttribute('stroke', 'none');
     }
   });
+}
+
+function setHovered(rank) {
+  if (hoveredRank === rank) return;
+  hoveredRank = rank;
+  applyColors();
 }
 
 function selectSong(rank) {
@@ -4297,14 +4376,14 @@ function selectSong(rank) {
   hideTip();
   buildLegend();
   document.getElementById('resetBtn').disabled = false;
-  applySelectionColors();
+  applyColors();
 }
 
 function resetSelection() {
   selectedRank = null;
   buildLegend();
   document.getElementById('resetBtn').disabled = true;
-  applySelectionColors();
+  applyColors();
 }
 
 function updatePositions() {
@@ -4320,8 +4399,7 @@ function updatePositions() {
     const ty = n.clusterY != null ? n.clusterY : n.swarmY;
     const x = n.swarmX + (tx - n.swarmX) * eased;
     const y = n.swarmY + (ty - n.swarmY) * eased;
-    el.setAttribute('cx', x);
-    el.setAttribute('cy', y);
+    el.setAttribute('transform', `translate(${x.toFixed(2)},${y.toFixed(2)})`);
   });
 
   const labels = document.getElementById('clusterLabels');
