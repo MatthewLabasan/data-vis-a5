@@ -422,10 +422,41 @@
     align-items: center;
     justify-content: center;
     padding-bottom: 14px;
+    position: relative;
+  }
+
+  #song-circle-star-container {
+    position: relative;
+    width: 230px;
+    height: 230px;
+    flex-shrink: 0;
   }
 
   #song-circle-svg {
     overflow: visible;
+    display: block;
+  }
+
+  .sv-pt-tooltip {
+    position: absolute;
+    background: rgba(20,20,20,0.92);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(243,237,232,0.92);
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+    transform: translate(-50%, calc(-100% - 6px));
+  }
+
+  .sv-pt-tooltip.visible {
+    opacity: 1;
   }
 
   #clips-list-section {
@@ -1365,7 +1396,9 @@
       <!-- Left: circle + clips list -->
       <div id="song-left">
         <div id="song-circle-svg-wrap">
-          <svg id="song-circle-svg" width="230" height="230"></svg>
+          <div id="song-circle-star-container">
+            <svg id="song-circle-svg" width="230" height="230"></svg>
+          </div>
         </div>
         <div id="clips-list-section">
           <div id="clips-panel-header">
@@ -2167,10 +2200,7 @@ let playbackTimelineBySecond = [];
 let lastSyncedAudioSecond = -1;
 let lastForcedResyncAtMs = 0;
 let hasPrimedVideos = false;
-let circleFillRevealRect = null;
-let circleFillProgress = 0;
-let circleFillTarget = 0;
-let circleFillAnimId = null;
+let songViewDotRefs = [];
 let lastSelectedRank = null;
 let isTransitioning = false;
 
@@ -2249,12 +2279,7 @@ function openSongView(song) {
   clipStartTimeline = buildClipStartTimeline(processedClips);
   playbackTimelineBySecond = buildPlaybackTimelineBySecond(processedClips, songDuration);
   lastSyncedAudioSecond = -1;
-  circleFillProgress = 0;
-  circleFillTarget = 0;
-  if (circleFillAnimId) {
-    cancelAnimationFrame(circleFillAnimId);
-    circleFillAnimId = null;
-  }
+  songViewDotRefs = [];
 
   document.getElementById('sv-title').textContent = song.name;
   document.getElementById('sv-artist').textContent = song.artist;
@@ -2283,133 +2308,163 @@ function renderSongCircle(song) {
   const svg = document.getElementById('song-circle-svg');
   svg.innerHTML = '';
   const size = 230;
-  const r = 98;
+  const r = 96;
   const cx = size / 2, cy = size / 2;
-  const clipPathId = 'song-circle-fill-clip';
-  const maskId = 'song-circle-fill-mask';
+  const ns = 'http://www.w3.org/2000/svg';
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const metrics = TUT_SONG_METRICS[song.name] || { bpm: 120, energy: 60, danceability: 60, happiness: 60 };
+  const starPts = starPointsScaled(metrics, r);
+  const starPtsStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
 
-  const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-  clipPath.setAttribute('id', clipPathId);
-  const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  clipCircle.setAttribute('cx', cx);
-  clipCircle.setAttribute('cy', cy);
-  clipCircle.setAttribute('r', r);
-  clipPath.appendChild(clipCircle);
-  defs.appendChild(clipPath);
-
-  const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
-  mask.setAttribute('id', maskId);
-
-  const maskBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  maskBg.setAttribute('x', 0);
-  maskBg.setAttribute('y', 0);
-  maskBg.setAttribute('width', size);
-  maskBg.setAttribute('height', size);
-  maskBg.setAttribute('fill', 'black');
-  mask.appendChild(maskBg);
-
-  circleFillRevealRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  circleFillRevealRect.setAttribute('x', 0);
-  circleFillRevealRect.setAttribute('y', size);
-  circleFillRevealRect.setAttribute('width', size);
-  circleFillRevealRect.setAttribute('height', 0);
-  circleFillRevealRect.setAttribute('fill', 'white');
-  mask.appendChild(circleFillRevealRect);
-  defs.appendChild(mask);
+  const defs = document.createElementNS(ns, 'defs');
+  const cp = document.createElementNS(ns, 'clipPath');
+  cp.setAttribute('id', 'sv-star-clip');
+  const cpPoly = document.createElementNS(ns, 'polygon');
+  cpPoly.setAttribute('points', starPtsStr);
+  cp.appendChild(cpPoly);
+  defs.appendChild(cp);
   svg.appendChild(defs);
 
-  const baseFill = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  baseFill.setAttribute('cx', cx);
-  baseFill.setAttribute('cy', cy);
-  baseFill.setAttribute('r', r);
-  baseFill.setAttribute('fill', '#111');
-  svg.appendChild(baseFill);
+  // Dark background star shape
+  const bg = document.createElementNS(ns, 'polygon');
+  bg.setAttribute('points', starPtsStr);
+  bg.setAttribute('fill', '#111');
+  svg.appendChild(bg);
 
-  const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
-  fillGroup.setAttribute('mask', `url(#${maskId})`);
-  fillGroup.appendChild(buildCategoryRingGroup(processedClips.slice(0, 10), cx, cy, r));
-  svg.appendChild(fillGroup);
-
-  // Circle outline
-  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
-  circle.setAttribute('fill', 'none');
-  circle.setAttribute('stroke', '#2a2a2a');
-  circle.setAttribute('stroke-width', '1.5');
-  svg.appendChild(circle);
-
-  updateSongCircle(false);
-}
-
-function circleFillTargetProgress() {
-  if (!processedClips.length) return 0;
-  const started = processedClips.filter(c => currentTimeSec >= c.startSec).length;
-  return Math.max(0, Math.min(1, started / processedClips.length));
-}
-
-function setCircleReveal(progress) {
-  if (!circleFillRevealRect) return;
-  const size = 230;
-  const clamped = Math.max(0, Math.min(1, progress));
-  const h = size * clamped;
-  circleFillRevealRect.setAttribute('y', size - h);
-  circleFillRevealRect.setAttribute('height', h);
-}
-
-function animateCircleFillTo(target) {
-  if (target <= circleFillProgress + 0.0001) {
-    circleFillProgress = target;
-    setCircleReveal(circleFillProgress);
-    return;
-  }
-
-  if (circleFillAnimId) cancelAnimationFrame(circleFillAnimId);
-
-  const allStartSameTime =
-    processedClips.length > 1 &&
-    processedClips.every(c => c.startSec === processedClips[0].startSec);
-
-  const start = circleFillProgress;
-  const delta = target - start;
-  const duration = (allStartSameTime && target === 1)
-    ? 2000
-    : Math.max(350, delta * 900);
-  const t0 = performance.now();
-
-  function step(now) {
-    const t = Math.min(1, (now - t0) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    circleFillProgress = start + delta * eased;
-    setCircleReveal(circleFillProgress);
-
-    if (t < 1) {
-      circleFillAnimId = requestAnimationFrame(step);
+  // Axis cross-hairs
+  const axisLen = r * 1.04;
+  ['V', 'H'].forEach(dir => {
+    const line = document.createElementNS(ns, 'line');
+    if (dir === 'V') {
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy - axisLen);
+      line.setAttribute('x2', cx); line.setAttribute('y2', cy + axisLen);
     } else {
-      circleFillAnimId = null;
-      circleFillProgress = target;
-      setCircleReveal(circleFillProgress);
+      line.setAttribute('x1', cx - axisLen); line.setAttribute('y1', cy);
+      line.setAttribute('x2', cx + axisLen); line.setAttribute('y2', cy);
     }
-  }
+    line.setAttribute('class', 'sm-axis');
+    svg.appendChild(line);
+  });
 
-  circleFillAnimId = requestAnimationFrame(step);
+  // Guide octagons
+  const innerR = r * 0.50;
+  [{ outer: r * 1.0, inner: r * 0.5 }, { outer: r * 0.674, inner: r * 0.326 }].forEach(({ outer, inner }) => {
+    const g = document.createElementNS(ns, 'polygon');
+    g.setAttribute('points', smGuideStr(outer, inner, cx, cy));
+    g.setAttribute('class', 'sm-guide');
+    svg.appendChild(g);
+  });
+
+  // Category ring dots, individually referenced, clipped to star
+  const ringGroup = document.createElementNS(ns, 'g');
+  ringGroup.setAttribute('clip-path', 'url(#sv-star-clip)');
+  const clips10 = processedClips.slice(0, 10);
+  const dotR = Math.max(5, r * 0.38);
+  const ringR = r * 0.45;
+  songViewDotRefs = [];
+  CAT_RING_ANGLES.forEach((angleDeg, i) => {
+    if (i >= clips10.length) return;
+    const rad = (angleDeg * Math.PI) / 180;
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', (cx + ringR * Math.cos(rad)).toFixed(2));
+    dot.setAttribute('cy', (cy + ringR * Math.sin(rad)).toFixed(2));
+    dot.setAttribute('r', dotR);
+    dot.setAttribute('fill', clips10[i].color);
+    dot.setAttribute('opacity', '0');
+    dot.style.transition = 'opacity 0.4s ease';
+    ringGroup.appendChild(dot);
+    songViewDotRefs.push(dot);
+  });
+  svg.appendChild(ringGroup);
+
+  // Star outline
+  const starOutline = document.createElementNS(ns, 'polygon');
+  starOutline.setAttribute('points', starPtsStr);
+  starOutline.setAttribute('fill', 'none');
+  starOutline.setAttribute('stroke', 'rgba(243,237,232,0.72)');
+  starOutline.setAttribute('stroke-width', '1.5');
+  starOutline.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(starOutline);
+
+  // Center core dot
+  const core = document.createElementNS(ns, 'circle');
+  core.setAttribute('cx', cx); core.setAttribute('cy', cy);
+  core.setAttribute('r', Math.max(3, r * 0.07));
+  core.setAttribute('class', 'sm-core');
+  svg.appendChild(core);
+
+  // Axis labels with exact values + hover targets
+  const labelFs = 10;
+  const labelOffset = r * 1.26;
+  const axisLabels = [
+    { key: 'bpm',          text: `BPM`,  value: metrics.bpm,          x: cx,               y: cy - labelOffset,           anchor: 'middle', ptIdx: 0, hx: cx,               hy: cy - r * 0.95 },
+    { key: 'energy',       text: `ENG`,  value: metrics.energy,        x: cx + labelOffset,  y: cy + labelFs * 0.35,        anchor: 'start',  ptIdx: 2, hx: cx + r * 0.95,    hy: cy },
+    { key: 'danceability', text: `DNC`,  value: metrics.danceability,  x: cx,               y: cy + labelOffset + labelFs, anchor: 'middle', ptIdx: 4, hx: cx,               hy: cy + r * 0.95 },
+    { key: 'happiness',    text: `HAP`,  value: metrics.happiness,     x: cx - labelOffset,  y: cy + labelFs * 0.35,        anchor: 'end',    ptIdx: 6, hx: cx - r * 0.95,    hy: cy },
+  ];
+
+  // Tooltip container (HTML, positioned absolutely within the 230×230 star container)
+  const starContainer = document.getElementById('song-circle-star-container');
+  starContainer.querySelectorAll('.sv-pt-tooltip').forEach(el => el.remove());
+
+  axisLabels.forEach(({ text, value, x, y, anchor, hx, hy, key }) => {
+    // SVG label
+    const lbl = document.createElementNS(ns, 'text');
+    lbl.setAttribute('x', x.toFixed(1));
+    lbl.setAttribute('y', y.toFixed(1));
+    lbl.setAttribute('font-size', labelFs);
+    lbl.setAttribute('text-anchor', anchor);
+    lbl.setAttribute('class', 'sm-axis-label');
+    lbl.textContent = `${text} ${value}`;
+    svg.appendChild(lbl);
+
+    // Invisible hover circle at star point tip
+    const hitR = Math.max(10, r * 0.18);
+    const hit = document.createElementNS(ns, 'circle');
+    hit.setAttribute('cx', hx.toFixed(2));
+    hit.setAttribute('cy', hy.toFixed(2));
+    hit.setAttribute('r', hitR);
+    hit.setAttribute('fill', 'transparent');
+    hit.setAttribute('cursor', 'pointer');
+    svg.appendChild(hit);
+
+    // Tooltip div
+    const tip = document.createElement('div');
+    tip.className = 'sv-pt-tooltip';
+    tip.dataset.key = key;
+    tip.textContent = `${text}: ${value}`;
+    starContainer.appendChild(tip);
+
+    const svgSize = 230;
+
+    function showTip() {
+      tip.classList.add('visible');
+      // hx/hy are absolute SVG coords; convert to % of svgSize for CSS positioning
+      tip.style.left = `${((hx / svgSize) * 100).toFixed(2)}%`;
+      tip.style.top  = `${((hy / svgSize) * 100).toFixed(2)}%`;
+      if (anchor === 'start')       { tip.style.transform = 'translate(8px,-50%)'; }
+      else if (anchor === 'end')    { tip.style.transform = 'translate(calc(-100% - 8px),-50%)'; }
+      else if (hy < cy)             { tip.style.transform = 'translate(-50%,calc(-100% - 8px))'; }
+      else                          { tip.style.transform = 'translate(-50%,8px)'; }
+    }
+    function hideTip() { tip.classList.remove('visible'); }
+    hit.addEventListener('mouseenter', showTip);
+    hit.addEventListener('mouseleave', hideTip);
+  });
+
+  updateSongCircle();
 }
 
-function updateSongCircle(animate = true) {
-  circleFillTarget = circleFillTargetProgress();
-  if (!animate) {
-    if (circleFillAnimId) {
-      cancelAnimationFrame(circleFillAnimId);
-      circleFillAnimId = null;
-    }
-    circleFillProgress = circleFillTarget;
-    setCircleReveal(circleFillProgress);
-    return;
-  }
-  animateCircleFillTo(circleFillTarget);
+function updateSongCircle() {
+  if (!songViewDotRefs.length) return;
+  const clips10 = processedClips.slice(0, 10);
+  clips10.forEach((clip, i) => {
+    const dot = songViewDotRefs[i];
+    if (!dot) return;
+    const started = currentTimeSec >= clip.startSec;
+    dot.setAttribute('opacity', started ? '0.85' : '0');
+  });
 }
 
 function renderClipsList(song) {
