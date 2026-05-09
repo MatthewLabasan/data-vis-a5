@@ -166,6 +166,167 @@
     align-content: stretch;
   }
 
+  /* ─── OTHER-TREND PROMPT ─── */
+  #other-trend-prompt {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13,13,13,0.72);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  #other-trend-prompt.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .otp-card {
+    background: #171717;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    padding: 32px 36px 28px;
+    max-width: 420px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  }
+
+  .otp-kicker {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .otp-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #c8c8c8;
+    margin: 0;
+  }
+
+  .otp-text strong {
+    font-weight: 600;
+  }
+
+  .otp-btn {
+    margin-top: 6px;
+    background: none;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #e8e8e8;
+    font-size: 13px;
+    font-family: inherit;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .otp-btn:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  #grid-scroll-hint {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 0 8px;
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    animation: tut-bounce 2.4s ease-in-out infinite;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ─── COMPARISON SECTION ─── */
+  #compare-section {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0d0d0d;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    overflow-y: auto;
+  }
+
+  #compare-section.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .compare-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 52px 48px 36px;
+    gap: 24px;
+    min-height: 100vh;
+  }
+
+  .compare-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .compare-headline {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f0f0f0;
+    text-align: center;
+    max-width: 640px;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .compare-back-hint {
+    margin-top: auto;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    font-family: 'SF Mono', monospace;
+    padding-top: 12px;
+  }
+
+  .compare-inner .tut-cloud-stage {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .compare-inner .tut-cloud-col {
+    min-height: 0;
+  }
+
+  .compare-inner .tut-cloud-list {
+    flex: 1;
+    min-height: 320px;
+  }
+
   .song-circle-wrap {
     display: flex;
     flex-direction: column;
@@ -829,8 +990,52 @@
   }
 
   #tut-outro-section {
-    padding-top: 220px;
-    justify-content: flex-start;
+    height: 280vh;
+    min-height: unset;
+    scroll-snap-align: start;
+  }
+
+  .tut-outro-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tut-outro-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+    will-change: transform, opacity;
+  }
+
+  #tut-interlude-section {
+    height: 280vh;
+    scroll-snap-align: start;
+  }
+
+  .tut-interlude-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tut-interlude-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+    will-change: transform, opacity;
   }
 
   .tut-kicker {
@@ -885,6 +1090,71 @@
   @keyframes tut-bounce-centered {
     0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
     50% { transform: translateX(-50%) translateY(7px); opacity: 1; }
+  }
+
+  @keyframes cluster-star-float {
+    0%, 100% { transform: translateY(0) rotate(var(--star-rotate, 0deg)); }
+    50%       { transform: translateY(var(--float-distance, -8px)) rotate(calc(var(--star-rotate, 0deg) + 2deg)); }
+  }
+
+  /* ─── SECTION 3.5: SIDE-BY-SIDE COMPARISON CLOUDS ─── */
+  .tut-cloud-stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 960px;
+    flex: 1;
+  }
+
+  .tut-cloud-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tut-cloud-header {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .tut-cloud-list {
+    position: relative;
+    flex: 1;
+    min-height: 400px;
+  }
+
+  .tut-cc-card {
+    position: absolute;
+    left: var(--cloud-x);
+    top: var(--cloud-y);
+    transform: translate(-50%, -50%) scale(var(--cloud-scale, 1));
+  }
+
+  .tut-cc-card:hover { z-index: 5; }
+
+  .tut-cc-card svg {
+    width: clamp(78px, 7.5vw, 104px);
+    height: clamp(78px, 7.5vw, 104px);
+    animation: cluster-star-float var(--float-duration, 5s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+    transform: rotate(var(--star-rotate, 0deg));
+    transform-origin: center;
+    overflow: visible;
+    display: block;
+  }
+
+  .cc-star-name {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    fill: rgba(243, 237, 232, 0.92);
+    stroke: rgba(15, 15, 15, 0.82);
+    stroke-width: 3.5px;
+    paint-order: stroke;
+    font-weight: 700;
+    pointer-events: none;
   }
 
   /* ─── SECTION 2: SCROLLY CIRCLE + VIDEO BACKGROUND ─── */
@@ -1278,12 +1548,16 @@
   </div>
 
   <!-- Section 2.5: Characteristics interlude -->
-  <div class="tut-section tut-intro">
-    <div class="tut-kicker" id="tut-interlude-kicker"></div>
-    <h2 class="tut-headline">We also looked at different song characteristics, such as BPM, energy, happiness, and danceability.</h2>
-    <div class="tut-scroll-hint">
-      <span>Scroll to see how</span>
-      <span style="font-size:15px; letter-spacing:0">↓</span>
+  <div id="tut-interlude-section">
+    <div class="tut-interlude-sticky">
+      <div class="tut-interlude-content">
+        <div class="tut-kicker" id="tut-interlude-kicker"></div>
+        <h2 class="tut-headline">We also looked at different song characteristics, such as BPM, energy, happiness, and danceability.</h2>
+        <div class="tut-scroll-hint" style="margin-top:28px">
+          <span>Scroll to see how</span>
+          <span style="font-size:15px;letter-spacing:0">↓</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1338,12 +1612,16 @@
   </div>
 
   <!-- Section 4: Transition into full trend view -->
-  <div class="tut-section tut-intro" id="tut-outro-section">
-    <div class="tut-kicker" id="tut-outro-kicker"></div>
-    <h2 class="tut-headline" id="tut-outro-headline">Now, let's explore the entire trend.</h2>
-    <div class="tut-scroll-hint">
-      <span>Scroll to dive in</span>
-      <span style="font-size:15px; letter-spacing:0">↓</span>
+  <div id="tut-outro-section">
+    <div class="tut-outro-sticky">
+      <div class="tut-outro-content">
+        <div class="tut-kicker" id="tut-outro-kicker"></div>
+        <h2 class="tut-headline" id="tut-outro-headline">Now, let's explore the entire trend.</h2>
+        <div class="tut-scroll-hint" style="margin-top:28px">
+          <span>Scroll to dive in</span>
+          <span style="font-size:15px;letter-spacing:0">↓</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1376,6 +1654,39 @@
     <div id="color-legend"></div>
   </div>
   <div id="circles-grid"></div>
+
+  <div id="other-trend-prompt">
+    <div class="otp-card">
+      <div class="otp-kicker">Before you continue</div>
+      <p class="otp-text" id="otp-text">—</p>
+      <button class="otp-btn" id="otp-switch-btn">—</button>
+    </div>
+  </div>
+
+  <div id="grid-scroll-hint">
+    <span>Scroll to compare both trends</span>
+    <span style="font-size:16px;letter-spacing:0;opacity:0.6">↓</span>
+  </div>
+
+</div>
+
+<!-- COMPARISON SECTION -->
+<div id="compare-section">
+  <div class="compare-inner">
+    <div class="compare-kicker">The Two Trends</div>
+    <h2 class="compare-headline">Now, let's compare the two trend types side by side.</h2>
+    <div class="tut-cloud-stage">
+      <div class="tut-cloud-col" data-trend="one-hit">
+        <div class="tut-cloud-header" style="color:#f037a5">One Hit Wonders</div>
+        <div class="tut-cloud-list" id="tut-cloud-one-hit"></div>
+      </div>
+      <div class="tut-cloud-col" data-trend="long">
+        <div class="tut-cloud-header" style="color:#93e9de">Long Lasting Trends</div>
+        <div class="tut-cloud-list" id="tut-cloud-long"></div>
+      </div>
+    </div>
+    <div class="compare-back-hint">↑ Scroll up to return</div>
+  </div>
 </div>
 
 <!-- SINGLE SONG VIEW -->
@@ -3016,6 +3327,221 @@ function updateTutorialDemoScroll() {
   }
 }
 
+function updateTutorialInterludeScroll() {
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section  = document.getElementById('tut-interlude-section');
+  const content  = document.querySelector('.tut-interlude-content');
+  if (!overlay || !section || !content) return;
+
+  const scrollTop = overlay.scrollTop;
+  const secTop    = section.offsetTop;
+  const secH      = section.offsetHeight;
+  const viewH     = overlay.clientHeight;
+
+  const scrollable = secH - viewH;
+  const p = scrollable > 0 ? Math.max(0, Math.min(1, (scrollTop - secTop) / scrollable)) : 0;
+
+  const fadeStart = 0.40;
+  if (p <= fadeStart) {
+    content.style.opacity = '';
+    content.style.transform = '';
+  } else {
+    const t = (p - fadeStart) / (1 - fadeStart);
+    const eased = t * t;
+    content.style.opacity = Math.max(0, 1 - eased * 1.6);
+    content.style.transform = `translateY(${-eased * 80}px)`;
+  }
+}
+
+function updateTutorialOutroScroll() {
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section  = document.getElementById('tut-outro-section');
+  const content  = document.querySelector('.tut-outro-content');
+  if (!overlay || !section || !content) return;
+
+  const scrollTop = overlay.scrollTop;
+  const secTop    = section.offsetTop;
+  const secH      = section.offsetHeight;
+  const viewH     = overlay.clientHeight;
+
+  // p goes 0→1 as the section scrolls from entry to exit
+  const scrollable = secH - viewH;
+  const p = scrollable > 0 ? Math.max(0, Math.min(1, (scrollTop - secTop) / scrollable)) : 0;
+
+  // Hold centered until 40% through, then fade up over the remaining 60%
+  const fadeStart = 0.40;
+  if (p <= fadeStart) {
+    content.style.opacity = '';
+    content.style.transform = '';
+  } else {
+    const t = (p - fadeStart) / (1 - fadeStart);
+    const eased = t * t; // ease-in so fade accelerates
+    content.style.opacity = Math.max(0, 1 - eased * 1.6);
+    content.style.transform = `translateY(${-eased * 80}px)`;
+  }
+}
+
+// ─── COMPARISON CLOUDS ───────────────────────────────────────────────────────
+
+function seededRandom(seedText) {
+  let seed = 1337;
+  for (let i = 0; i < seedText.length; i++) {
+    seed = Math.imul(seed ^ seedText.charCodeAt(i), 3432918353);
+    seed = (seed << 13) | (seed >>> 19);
+  }
+  return () => {
+    seed = Math.imul(seed ^ (seed >>> 16), 2246822507);
+    seed = Math.imul(seed ^ (seed >>> 13), 3266489909);
+    seed ^= seed >>> 16;
+    return (seed >>> 0) / 4294967296;
+  };
+}
+
+function cloudPositions(items, groupKind) {
+  const placed = [];
+  const minDist = 20;
+  const spread  = groupKind === 'long' ? 32 : 28;
+  const clamp   = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  items.forEach((item, index) => {
+    const rng = seededRandom(`${groupKind}-${item.name}-${index}`);
+    let best = null, bestDist = -1;
+    for (let attempt = 0; attempt < 400; attempt++) {
+      const angle = rng() * Math.PI * 2;
+      const radius = Math.sqrt(rng()) * spread;
+      const cand = {
+        x: clamp(50 + Math.cos(angle) * radius, 12, 88),
+        y: clamp(50 + Math.sin(angle) * radius * 0.9, 12, 88),
+      };
+      const nearest = placed.length
+        ? Math.min(...placed.map(p => Math.hypot(cand.x - p.x, (cand.y - p.y) * 1.08)))
+        : Infinity;
+      if (nearest > bestDist) { bestDist = nearest; best = cand; }
+      if (nearest >= minDist) break;
+    }
+    placed.push({
+      ...best,
+      scale: 1 + rng() * 0.1,
+      rotate: Math.round(rng() * 84 - 42),
+      floatDuration: (4.6 + rng() * 1.4).toFixed(2),
+      floatDelay: (-rng() * 3.5).toFixed(2),
+      floatDistance: Math.round(5 + rng() * 6),
+    });
+  });
+  return placed;
+}
+
+function cloudSongNameLines(name) {
+  const words = name.split(/\s+/);
+  const lines = [];
+  let cur = '';
+  words.forEach(w => {
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length > 11 && cur) { lines.push(cur); cur = w; }
+    else cur = next;
+  });
+  if (cur) lines.push(cur);
+  return lines.slice(0, 3);
+}
+
+function buildCloudStarCard(song, position, index, groupKind) {
+  const metrics = TUT_SONG_METRICS[song.name] || { bpm: 120, energy: 60, danceability: 60, happiness: 60 };
+  const r = 80, cx = 100, cy = 100;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const starPts = starPointsScaled(metrics, r);
+  const starPtsStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
+
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 200 200');
+  svg.setAttribute('class', 'cc-star-svg');
+
+  const clipId = `cc-clip-${groupKind}-${index}`;
+  const defs = document.createElementNS(ns, 'defs');
+  const cp = document.createElementNS(ns, 'clipPath');
+  cp.setAttribute('id', clipId);
+  const cpPoly = document.createElementNS(ns, 'polygon');
+  cpPoly.setAttribute('points', starPtsStr);
+  cp.appendChild(cpPoly);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  // Dark fill behind ring
+  const bgPoly = document.createElementNS(ns, 'polygon');
+  bgPoly.setAttribute('points', starPtsStr);
+  bgPoly.setAttribute('fill', 'rgba(15,15,15,0.7)');
+  svg.appendChild(bgPoly);
+
+  // Blurred category ring, clipped to star
+  const clipGroup = document.createElementNS(ns, 'g');
+  clipGroup.setAttribute('clip-path', `url(#${clipId})`);
+  const blurGroup = document.createElementNS(ns, 'g');
+  blurGroup.style.filter = 'blur(7px)';
+  const ringClips = (song.clips || []).slice(0, 10).map(c => ({ color: catColor(c.category) }));
+  blurGroup.appendChild(buildCategoryRingGroup(ringClips, cx, cy, r));
+  clipGroup.appendChild(blurGroup);
+  svg.appendChild(clipGroup);
+
+  // Star outline
+  const outline = document.createElementNS(ns, 'polygon');
+  outline.setAttribute('points', starPtsStr);
+  outline.setAttribute('fill', 'none');
+  outline.setAttribute('stroke', 'rgba(243,237,232,0.76)');
+  outline.setAttribute('stroke-width', '1.5');
+  outline.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(outline);
+
+  // Song name centered on star
+  const lines = cloudSongNameLines(song.name);
+  const fontSize = lines.length > 2 ? 11 : 13;
+  const lineGap = fontSize + 2;
+  const startY = cy - ((lines.length - 1) * lineGap) / 2;
+  const textEl = document.createElementNS(ns, 'text');
+  textEl.setAttribute('class', 'cc-star-name');
+  textEl.setAttribute('font-size', fontSize);
+  textEl.setAttribute('text-anchor', 'middle');
+  textEl.setAttribute('x', cx);
+  lines.forEach((line, i) => {
+    const tspan = document.createElementNS(ns, 'tspan');
+    tspan.setAttribute('x', cx);
+    if (i === 0) tspan.setAttribute('y', startY);
+    else tspan.setAttribute('dy', lineGap);
+    tspan.textContent = line;
+    textEl.appendChild(tspan);
+  });
+  svg.appendChild(textEl);
+
+  // Card wrapper with CSS custom props for positioning + float
+  const card = document.createElement('article');
+  card.className = 'tut-cc-card';
+  card.style.setProperty('--cloud-x', `${position.x}%`);
+  card.style.setProperty('--cloud-y', `${position.y}%`);
+  card.style.setProperty('--cloud-scale', position.scale);
+  card.style.setProperty('--star-rotate', `${position.rotate}deg`);
+  card.style.setProperty('--float-duration', `${position.floatDuration}s`);
+  card.style.setProperty('--float-delay', `${position.floatDelay}s`);
+  card.style.setProperty('--float-distance', `-${position.floatDistance}px`);
+  card.appendChild(svg);
+  return card;
+}
+
+function renderComparisonClouds() {
+  const oneHitSongs = SONGS.filter(s => ONE_HIT_RANKS.has(s.rank));
+  const longSongs   = SONGS.filter(s => !ONE_HIT_RANKS.has(s.rank));
+
+  [
+    { songs: oneHitSongs, kind: 'one-hit', id: 'tut-cloud-one-hit' },
+    { songs: longSongs,   kind: 'long',    id: 'tut-cloud-long'    },
+  ].forEach(({ songs, kind, id }) => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.innerHTML = '';
+    const positions = cloudPositions(songs, kind);
+    songs.forEach((song, i) => {
+      container.appendChild(buildCloudStarCard(song, positions[i], i, kind));
+    });
+  });
+}
+
 function initTutorial(song, viewType) {
   const overlay = document.getElementById('tutorial-overlay');
   overlay.classList.add('tut-visible');
@@ -3057,6 +3583,8 @@ function initTutorial(song, viewType) {
       requestAnimationFrame(() => {
         updateTutorialDemoScroll();
         updateTutorialStarScroll();
+        updateTutorialInterludeScroll();
+        updateTutorialOutroScroll();
         // Auto-dismiss when user scrolls to the very bottom of the overlay
         if (overlay.scrollTop + overlay.clientHeight >= overlay.scrollHeight - 8) {
           tutDismiss();
@@ -3085,22 +3613,125 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
   if (tutSong) initTutorial(tutSong, initialViewParam);
 }
 
-// Scroll up on the main view re-opens the tutorial at the bottom so the
-// user can scroll back up through the scrollytelling
+// ─── COMPARE SECTION ─────────────────────────────────────────────────────────
+let compareRendered = false;
+let compareVisible = false;
+let compareCooldown = false;
+let scrollAccum = 0;          // accumulated downward scroll in grid view
+let scrollUpAccum = 0;        // accumulated upward scroll in grid view (for re-opening tutorial)
+let promptShown = false;      // has the other-trend prompt been shown?
+let promptDismissed = false;  // has the user clicked through the prompt?
+
+// Each wheel event is capped so fast trackpad swipes don't dump huge deltas at once
+const TICK_CAP = 20;            // max px credited per wheel event
+const PROMPT_THRESHOLD  = 480;  // capped px before prompt appears
+const COMPARE_THRESHOLD = 300;  // capped px (after prompt dismissed) to reach compare
+const REOPEN_THRESHOLD  = 400;  // capped px upward to re-open tutorial
+
+function showCompareSection() {
+  if (compareVisible || compareCooldown) return;
+  if (!compareRendered) {
+    renderComparisonClouds();
+    compareRendered = true;
+  }
+  compareVisible = true;
+  compareCooldown = true;
+  scrollAccum = 0;
+  setTimeout(() => { compareCooldown = false; }, 600);
+  document.getElementById('compare-section').classList.add('visible');
+}
+
+function hideCompareSection() {
+  if (!compareVisible || compareCooldown) return;
+  compareVisible = false;
+  compareCooldown = true;
+  scrollAccum = 0;
+  scrollUpAccum = 0;
+  setTimeout(() => { compareCooldown = false; }, 600);
+  document.getElementById('compare-section').classList.remove('visible');
+}
+
+// Wire up the other-trend prompt button
+(function () {
+  const btn = document.getElementById('otp-switch-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const other = currentView === 'one-hit' ? 'long-lasting' : 'one-hit';
+    applyView(other);
+    document.getElementById('other-trend-prompt').classList.remove('visible');
+    promptDismissed = true;
+    scrollAccum = 0;
+  });
+})();
+
+function showOtherTrendPrompt() {
+  if (promptShown) return;
+  promptShown = true;
+  const isOneHit = currentView === 'one-hit';
+  const otherLabel = isOneHit ? 'Long Lasting Trends' : 'One Hit Wonders';
+  const otherColor = isOneHit ? '#93e9de' : '#f037a5';
+  document.getElementById('otp-text').innerHTML =
+    `Have you seen the <strong style="color:${otherColor}">${otherLabel}</strong> view? Explore it before diving into the full comparison.`;
+  const btn2 = document.getElementById('otp-switch-btn');
+  btn2.textContent = `Switch to ${otherLabel} →`;
+  btn2.style.borderColor = otherColor;
+  btn2.style.color = otherColor;
+  document.getElementById('other-trend-prompt').classList.add('visible');
+}
+
+// Wheel listener: grid ↔ compare, grid ↔ tutorial
 document.addEventListener('wheel', (e) => {
+  // Ignore accidental light touches / micro-scrolls
+  if (Math.abs(e.deltaY) < 12) return;
+
   const overlay = document.getElementById('tutorial-overlay');
-  if (!overlay || overlay.classList.contains('tut-visible')) return;
-  if (!tutDismiss) return; // tutorial was never shown this session
-  // Don't re-open tutorial from inside the single-song detail view
+  const tick = Math.min(Math.abs(e.deltaY), TICK_CAP); // cap per-event contribution
+
+  // ── Inside compare section: scroll up at top → back to grid ──
+  if (compareVisible && !compareCooldown) {
+    const compareEl = document.getElementById('compare-section');
+    if (e.deltaY < 0 && compareEl.scrollTop <= 4) {
+      hideCompareSection();
+    }
+    return;
+  }
+
+  // ── Skip if tutorial or song view is active ──
+  if (overlay?.classList.contains('tut-visible')) return;
   if (document.getElementById('song-view')?.classList.contains('visible')) return;
+
+  // ── Scroll down in grid view ──
+  if (e.deltaY > 0) {
+    scrollUpAccum = 0;
+    if (promptShown && !promptDismissed) return; // blocked until user clicks prompt
+
+    scrollAccum += tick;
+
+    if (!promptDismissed && scrollAccum >= PROMPT_THRESHOLD) {
+      showOtherTrendPrompt();
+      scrollAccum = 0;
+      return;
+    }
+
+    if (promptDismissed && scrollAccum >= COMPARE_THRESHOLD) {
+      showCompareSection();
+    }
+    return;
+  }
+
+  // ── Scroll up in grid view → re-open tutorial (needs sustained upward scroll) ──
   if (e.deltaY < 0) {
+    scrollAccum = 0;
+    if (!tutDismiss) return;
+
+    scrollUpAccum += tick;
+    if (scrollUpAccum < REOPEN_THRESHOLD) return;
+    scrollUpAccum = 0;
+
     tutStarScrollActive = true;
-    // Make visible but fully transparent first so we can set scroll position
-    // before any frame is painted — prevents the top-of-overlay flash
     overlay.style.opacity = '0';
     overlay.classList.add('tut-visible');
     overlay.scrollTop = overlay.scrollHeight;
-    // Force reflow so the scroll position is committed before we animate
     void overlay.offsetHeight;
     overlay.classList.add('tut-appearing');
     setTimeout(() => {
