@@ -668,9 +668,567 @@
     will-change: transform, opacity;
     transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.62s ease;
   }
+
+  /* ─── TUTORIAL OVERLAY ─── */
+  #tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: #0d0d0d;
+    overflow-y: scroll;
+    scroll-snap-type: y proximity;
+    display: none;
+  }
+
+  #tutorial-overlay.tut-visible {
+    display: block;
+  }
+
+  #tutorial-overlay.tut-dismissing {
+    transition: opacity 0.5s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tut-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-snap-align: start;
+  }
+
+  .tut-intro {
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+  }
+
+  .tut-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .tut-kicker.one-hit { color: #f037a5; }
+  .tut-kicker.long-lasting { color: #93e9de; }
+
+  .tut-headline {
+    font-size: clamp(22px, 4vw, 40px);
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 620px;
+    line-height: 1.15;
+    margin: 0 0 20px;
+  }
+
+  .tut-body {
+    font-size: 16px;
+    color: #777;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 520px;
+    line-height: 1.65;
+    margin: 0 0 52px;
+  }
+
+  .tut-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #3a3a3a;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    animation: tut-bounce 2.2s ease-in-out infinite;
+  }
+
+  @keyframes tut-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(7px); opacity: 1; }
+  }
+
+  .tut-demo {
+    padding: 40px 56px 48px;
+    gap: 24px;
+    min-height: 100vh;
+  }
+
+  .tut-demo-header {
+    flex-shrink: 0;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 18px;
+    margin-bottom: 6px;
+  }
+
+  .tut-song-name {
+    font-size: 26px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin-bottom: 5px;
+    letter-spacing: -0.02em;
+  }
+
+  .tut-song-artist {
+    font-size: 13px;
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin-bottom: 6px;
+  }
+
+  .tut-song-desc {
+    font-size: 12px;
+    color: #444;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .tut-demo-main {
+    display: flex;
+    gap: 40px;
+    flex: 1;
+    align-items: flex-start;
+    min-height: 0;
+  }
+
+  .tut-circle-wrap {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-top: 8px;
+  }
+
+  .tut-circle-label {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    font-family: 'SF Mono', monospace;
+    text-align: center;
+  }
+
+  .tut-cat-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 220px;
+  }
+
+  .tut-cat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .tut-cat-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tut-video-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .tut-video-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #444;
+    font-family: 'SF Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  #tut-video-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    flex: 1;
+  }
+
+  .tut-video-cell {
+    border-radius: 8px;
+    overflow: hidden;
+    border-width: 2px;
+    border-style: solid;
+    aspect-ratio: 9 / 16;
+    background: #111;
+  }
+
+  .tut-video-cell video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tut-continue-wrap {
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    padding-top: 20px;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 8px;
+  }
+
+  #tut-continue-btn {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #e8e8e8;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  #tut-continue-btn:hover {
+    background: #1a1a1a;
+    border-color: #555;
+    color: #fff;
+  }
+
+  #tut-continue-btn.one-hit:hover { border-color: #f037a5; color: #f037a5; }
+  #tut-continue-btn.long-lasting:hover { border-color: #93e9de; color: #93e9de; }
+
+  /* ─── TUTORIAL STAR SECTION ─── */
+  .tut-star-section {
+    position: relative;
+    height: 320vh;
+  }
+
+  /* Sticky viewport — only .tut-star-outer is in the flex flow; everything
+     else is pulled out with position:absolute so it can't collide with tooltips */
+  .tut-star-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .tut-star-kicker {
+    position: absolute;
+    top: 20px;
+    left: 56px;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #333;
+  }
+
+  .tut-star-song-title {
+    position: absolute;
+    top: 36px;
+    left: 56px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Enlarged container so tooltips at all four sides have room */
+  .tut-star-outer {
+    position: relative;
+    width: 700px;
+    height: 460px;
+  }
+
+  /* SVG absolutely centered inside the 700×460 outer */
+  #tut-star-svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 280px;
+    display: block;
+    overflow: visible;
+  }
+
+  .tut-star-tooltip {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.55s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .tut-star-tooltip.tut-tt-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* All four positions use calc(50% + 170px) from the 700×460 outer center */
+  .tut-tt-bpm {
+    bottom: calc(50% + 170px);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .tut-tt-energy {
+    left: calc(50% + 170px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .tut-tt-dance {
+    top: calc(50% + 170px);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .tut-tt-happy {
+    right: calc(50% + 170px);
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+  }
+
+  .tut-tt-axis-name {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #cdfe34;
+    margin-bottom: 6px;
+  }
+
+  .tut-tt-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1;
+  }
+
+  .tut-tt-val span:last-child {
+    font-size: 28px;
+    color: #f0f0f0;
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  .tut-star-hint {
+    position: absolute;
+    top: 148px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #666;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .tut-star-hint.tut-tt-visible {
+    opacity: 1;
+  }
+
+  /* Hover popup — replaces always-visible description */
+  .tut-tt-hover-popup {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    white-space: normal;
+    width: 220px;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    z-index: 10;
+  }
+
+  .tut-tt-happy .tut-tt-hover-popup {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+
+  .tut-tt-energy .tut-tt-hover-popup {
+    left: 0;
+    transform: none;
+  }
+
+  .tut-star-tooltip.tut-tt-visible:hover .tut-tt-hover-popup {
+    opacity: 1;
+  }
+
+  .tut-star-scroll-cue {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #2a2a2a;
+    transition: opacity 0.4s ease;
+    animation: tut-bounce 2.2s ease-in-out infinite;
+  }
+
+  .tut-star-continue-wrap {
+    position: absolute;
+    bottom: 32px;
+    right: 56px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .tut-star-continue-wrap.tut-tt-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #tut-star-continue-btn {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #e8e8e8;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  #tut-star-continue-btn:hover {
+    background: #1a1a1a;
+    border-color: #555;
+    color: #fff;
+  }
 </style>
 </head>
 <body>
+
+<!-- TUTORIAL OVERLAY -->
+<div id="tutorial-overlay">
+  <!-- Section 1: Intro -->
+  <div class="tut-section tut-intro">
+    <div class="tut-kicker" id="tut-kicker">Long Lasting Trends</div>
+    <h2 class="tut-headline">Before we dive into a trend, let's examine a song fingerprint.</h2>
+    <p class="tut-body">We represent a song using color and different "spikes", creating a star. Each band of color maps to how people used that song on TikTok — animals, dance, humor, and more.</p>
+    <div class="tut-scroll-hint">
+      <span>Scroll to see an example</span>
+      <span style="font-size:15px; letter-spacing:0">↓</span>
+    </div>
+  </div>
+
+  <!-- Section 2: Song demo -->
+  <div class="tut-section tut-demo">
+    <div class="tut-demo-header">
+      <div class="tut-song-name" id="tut-song-name">—</div>
+      <div class="tut-song-artist" id="tut-song-artist">—</div>
+      <div class="tut-song-desc" id="tut-song-desc">—</div>
+    </div>
+    <div class="tut-demo-main">
+      <div class="tut-circle-wrap">
+        <svg id="tut-circle-svg" width="220" height="220" style="overflow:visible"></svg>
+        <div class="tut-circle-label">Song Fingerprint</div>
+        <div class="tut-cat-legend" id="tut-cat-legend"></div>
+      </div>
+      <div class="tut-video-area">
+        <div class="tut-video-label">TikTok Clips Using This Song</div>
+        <div id="tut-video-grid"></div>
+      </div>
+    </div>
+    <div class="tut-continue-wrap">
+      <button id="tut-continue-btn">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Section 3: Star Reveal -->
+  <div class="tut-star-section" id="tut-star-section">
+    <div class="tut-star-sticky">
+      <div class="tut-star-kicker">Song Fingerprint</div>
+      <div class="tut-star-song-title" id="tut-star-song-title">—</div>
+
+      <div class="tut-star-hint" id="tut-star-hint">Hover a label to see its description</div>
+
+      <div class="tut-star-outer" id="tut-star-outer">
+        <svg id="tut-star-svg" viewBox="0 0 240 240"></svg>
+
+        <!-- BPM: above -->
+        <div class="tut-star-tooltip tut-tt-bpm" id="tut-tt-bpm">
+          <div class="tut-tt-axis-name">BPM</div>
+          <div class="tut-tt-val" id="tut-tt-bpm-val">—</div>
+          <div class="tut-tt-hover-popup">Beats Per Minute — how fast the track moves.</div>
+        </div>
+
+        <!-- Energy: right -->
+        <div class="tut-star-tooltip tut-tt-energy" id="tut-tt-energy">
+          <div class="tut-tt-axis-name">Energy</div>
+          <div class="tut-tt-val"><span id="tut-tt-energy-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">Intensity and activity of the track, based on timbre, loudness, and dynamic range.</div>
+        </div>
+
+        <!-- Danceability: below -->
+        <div class="tut-star-tooltip tut-tt-dance" id="tut-tt-dance">
+          <div class="tut-tt-axis-name">Danceability</div>
+          <div class="tut-tt-val"><span id="tut-tt-dance-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">How suited the track is for dancing, based on rhythm, beat strength, and tempo stability.</div>
+        </div>
+
+        <!-- Happiness: left -->
+        <div class="tut-star-tooltip tut-tt-happy" id="tut-tt-happy">
+          <div class="tut-tt-axis-name">Happiness</div>
+          <div class="tut-tt-val"><span id="tut-tt-happy-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">How cheerful and positive the track sounds.</div>
+        </div>
+      </div>
+
+      <div class="tut-star-scroll-cue" id="tut-star-scroll-cue">↓ Keep scrolling</div>
+
+      <div class="tut-star-continue-wrap" id="tut-star-continue-wrap">
+        <button id="tut-star-continue-btn">Explore the trend →</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- SMALL MULTIPLES VIEW -->
 <div id="small-multiples">
@@ -854,6 +1412,33 @@ function catColor(cat) {
   return CAT_COLORS[cat] || CAT_COLORS.default;
 }
 
+// Same 10 angles used in tiktok-audio-stars for consistent visual language
+const CAT_RING_ANGLES = [-90, -18, 54, 126, -162, -54, 18, 90, 162, -126];
+
+function buildCategoryRingGroup(clips, cx, cy, r) {
+  const blurAmount = Math.max(4, r * 0.068);
+  const dotR = Math.max(5, r * 0.38);
+  const fraction = 0.45;
+
+  const blurGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  blurGroup.style.filter = `blur(${blurAmount.toFixed(1)}px)`;
+
+  clips.slice(0, 10).forEach((clip, i) => {
+    const rad = CAT_RING_ANGLES[i] * Math.PI / 180;
+    const px = cx + Math.cos(rad) * r * fraction;
+    const py = cy + Math.sin(rad) * r * fraction;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', px.toFixed(1));
+    dot.setAttribute('cy', py.toFixed(1));
+    dot.setAttribute('r', dotR.toFixed(1));
+    dot.setAttribute('fill', clip.color || catColor(clip.category));
+    dot.setAttribute('opacity', '0.55');
+    blurGroup.appendChild(dot);
+  });
+
+  return blurGroup;
+}
+
 function renderColorLegend() {
   const legend = document.getElementById('color-legend');
   if (!legend) return;
@@ -1017,19 +1602,8 @@ function renderGrid() {
     fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
     fillGroup.setAttribute('opacity', '0.7');
 
-    const clips = (song.clips || []).slice(0, 10);
-    const bandCount = 10;
-    const stripeH = size / bandCount;
-    for (let idx = 0; idx < bandCount; idx++) {
-      const clip = clips[idx];
-      const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      stripe.setAttribute('x', '0');
-      stripe.setAttribute('y', String(size - (idx + 1) * stripeH));
-      stripe.setAttribute('width', String(size));
-      stripe.setAttribute('height', String(stripeH));
-      stripe.setAttribute('fill', clip ? catColor(clip.category) : catColor('default'));
-      fillGroup.appendChild(stripe);
-    }
+    const ringClips = (song.clips || []).slice(0, 10).map(c => ({ color: catColor(c.category) }));
+    fillGroup.appendChild(buildCategoryRingGroup(ringClips, cx, cy, r));
 
     g.appendChild(fillGroup);
 
@@ -1602,20 +2176,7 @@ function renderSongCircle(song) {
   const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
   fillGroup.setAttribute('mask', `url(#${maskId})`);
-
-  const clipsForBands = processedClips.slice(0, 10);
-  const bandCount = 10;
-  const stripeH = size / bandCount;
-  for (let i = 0; i < bandCount; i++) {
-    const clip = clipsForBands[i];
-    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    stripe.setAttribute('x', 0);
-    stripe.setAttribute('y', size - (i + 1) * stripeH);
-    stripe.setAttribute('width', size);
-    stripe.setAttribute('height', stripeH);
-    stripe.setAttribute('fill', clip ? clip.color : catColor('default'));
-    fillGroup.appendChild(stripe);
-  }
+  fillGroup.appendChild(buildCategoryRingGroup(processedClips.slice(0, 10), cx, cy, r));
   svg.appendChild(fillGroup);
 
   // Circle outline
@@ -1867,6 +2428,357 @@ document.getElementById('restart-btn').addEventListener('click', () => {
 
 // Scrubbing disabled: navigation is controlled by skip buttons.
 
+// ─── TUTORIAL STAR GEOMETRY ──────────────────────────────────────────────────
+// BPM range across all 20 songs in the dataset (93 min, 149 max)
+const TUT_BPM_MIN = 93;
+const TUT_BPM_MAX = 149;
+
+function tutBpmNormalized(bpm) {
+  return (bpm - TUT_BPM_MIN) / (TUT_BPM_MAX - TUT_BPM_MIN);
+}
+
+// Audio metrics for the two tutorial songs (from tiktok-audio-stars dataset)
+const TUT_SONG_METRICS = {
+  'Pretty Little Baby': { bpm: 121, energy: 40, danceability: 78, happiness: 63 },
+  'Dame Un Grrr':       { bpm: 118, energy: 83, danceability: 90, happiness: 90 }
+};
+
+function tutStarGeometry(metrics) {
+  const outerMax = 92, outerMin = 30, innerRadius = 46;
+  const diag = innerRadius * 0.74;
+  const m = [
+    tutBpmNormalized(metrics.bpm),
+    metrics.energy / 100,
+    metrics.danceability / 100,
+    metrics.happiness / 100
+  ];
+  const top    = outerMin + m[0] * (outerMax - outerMin);
+  const right  = outerMin + m[1] * (outerMax - outerMin);
+  const bottom = outerMin + m[2] * (outerMax - outerMin);
+  const left   = outerMin + m[3] * (outerMax - outerMin);
+  return {
+    top, right, bottom, left,
+    points: [
+      [0, -top], [diag, -diag], [right, 0], [diag, diag],
+      [0, bottom], [-diag, diag], [-left, 0], [-diag, -diag]
+    ]
+  };
+}
+
+function tutPtStr(pts) {
+  return pts.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+function tutGuideOctagonStr(outerR, innerR) {
+  const d = innerR * 0.74;
+  return [[0,-outerR],[d,-d],[outerR,0],[d,d],[0,outerR],[-d,d],[-outerR,0],[-d,-d]]
+    .map(([x,y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+// Morph state
+let tutStarOutlinePoly = null;
+let tutStarBgPoly = null;
+let tutStarClipPoly = null;
+let tutStarStartPts = null;
+let tutStarEndPts   = null;
+let tutStarScrollActive = false;
+
+function applyStarMorph(t) {
+  if (!tutStarOutlinePoly || !tutStarStartPts || !tutStarEndPts) return;
+  const e = 1 - Math.pow(1 - Math.min(1, t), 3); // ease-out cubic
+  const pts = tutStarStartPts.map(([sx, sy], i) => {
+    const [ex, ey] = tutStarEndPts[i];
+    return [sx + (ex - sx) * e, sy + (ey - sy) * e];
+  });
+  const pStr = tutPtStr(pts);
+  tutStarOutlinePoly.setAttribute('points', pStr);
+  if (tutStarBgPoly)   tutStarBgPoly.setAttribute('points', pStr);
+  if (tutStarClipPoly) tutStarClipPoly.setAttribute('points', pStr);
+}
+
+function setTutTooltip(id, visible) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('tut-tt-visible', visible);
+}
+
+function updateTutorialStarScroll() {
+  if (!tutStarScrollActive) return;
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section3 = document.getElementById('tut-star-section');
+  if (!overlay || !section3) return;
+
+  const scrollTop   = overlay.scrollTop;
+  const sec3Top     = section3.offsetTop;
+  const scrollRange = section3.offsetHeight - overlay.clientHeight;
+  const p = Math.max(0, Math.min(1, (scrollTop - sec3Top) / scrollRange));
+
+  applyStarMorph(p / 0.22); // morph completes by 22% scroll
+
+  setTutTooltip('tut-tt-bpm',    p >= 0.30);
+  setTutTooltip('tut-tt-energy', p >= 0.48);
+  setTutTooltip('tut-tt-dance',  p >= 0.66);
+  setTutTooltip('tut-tt-happy',  p >= 0.84);
+  setTutTooltip('tut-star-hint', p >= 0.30);
+
+  const scrollCue = document.getElementById('tut-star-scroll-cue');
+  if (scrollCue) scrollCue.style.opacity = p >= 0.84 ? '0' : '1';
+
+  const continueWrap = document.getElementById('tut-star-continue-wrap');
+  if (continueWrap) continueWrap.classList.toggle('tut-tt-visible', p >= 0.92);
+}
+
+function initTutorialStar(song) {
+  const metrics = TUT_SONG_METRICS[song.name];
+  if (!metrics) return;
+
+  document.getElementById('tut-star-song-title').textContent = song.name;
+  document.getElementById('tut-tt-bpm-val').textContent    = metrics.bpm;
+  document.getElementById('tut-tt-energy-val').textContent  = metrics.energy;
+  document.getElementById('tut-tt-dance-val').textContent   = metrics.danceability;
+  document.getElementById('tut-tt-happy-val').textContent   = metrics.happiness;
+
+  const geo = tutStarGeometry(metrics);
+  const svg = document.getElementById('tut-star-svg');
+  svg.innerHTML = '';
+
+  // Circle-polygon start: 8 pts on circle at radius = outerMax (92)
+  const R = 92;
+  tutStarStartPts = [
+    [0, -R], [R * 0.707, -R * 0.707], [R, 0], [R * 0.707, R * 0.707],
+    [0, R], [-R * 0.707, R * 0.707], [-R, 0], [-R * 0.707, -R * 0.707]
+  ];
+  tutStarEndPts = geo.points;
+
+  // Clip path (morphs with the star)
+  const clipId = 'tut-star-clip';
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const cp   = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  cp.setAttribute('id', clipId);
+  tutStarClipPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarClipPoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  cp.appendChild(tutStarClipPoly);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  // Root group translated to center (matching audio-stars viewBox 240×240)
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', 'translate(120,120)');
+  svg.appendChild(g);
+
+  // Axis lines
+  const axisLen = 108;
+  [[0, -axisLen, 0, axisLen], [-axisLen, 0, axisLen, 0]].forEach(([x1,y1,x2,y2]) => {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('x1', x1); ln.setAttribute('y1', y1);
+    ln.setAttribute('x2', x2); ln.setAttribute('y2', y2);
+    ln.setAttribute('stroke', 'rgba(243,237,232,0.10)');
+    ln.setAttribute('stroke-width', '1');
+    g.appendChild(ln);
+  });
+
+  // Outer guide octagon (at outerMax scale)
+  const guideOuter = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  guideOuter.setAttribute('points', tutGuideOctagonStr(92, 46));
+  guideOuter.setAttribute('fill', 'none');
+  guideOuter.setAttribute('stroke', 'rgba(243,237,232,0.07)');
+  guideOuter.setAttribute('stroke-width', '1');
+  g.appendChild(guideOuter);
+
+  // Inner guide octagon
+  const guideInner = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  guideInner.setAttribute('points', tutGuideOctagonStr(62, 30));
+  guideInner.setAttribute('fill', 'none');
+  guideInner.setAttribute('stroke', 'rgba(243,237,232,0.05)');
+  guideInner.setAttribute('stroke-width', '1');
+  g.appendChild(guideInner);
+
+  // Background fill polygon (morphs)
+  tutStarBgPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarBgPoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  tutStarBgPoly.setAttribute('fill', 'rgba(243,237,232,0.04)');
+  g.appendChild(tutStarBgPoly);
+
+  // Category ring — clipped to star shape
+  const ringWrap = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  ringWrap.setAttribute('clip-path', `url(#${clipId})`);
+  ringWrap.appendChild(buildCategoryRingGroup(parseClips(song).slice(0, 10), 0, 0, 92));
+  g.appendChild(ringWrap);
+
+  // Star outline polygon (morphs) — drawn on top of ring
+  tutStarOutlinePoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarOutlinePoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  tutStarOutlinePoly.setAttribute('fill', 'none');
+  tutStarOutlinePoly.setAttribute('stroke', 'rgba(243,237,232,0.75)');
+  tutStarOutlinePoly.setAttribute('stroke-width', '1.5');
+  tutStarOutlinePoly.setAttribute('stroke-linejoin', 'round');
+  g.appendChild(tutStarOutlinePoly);
+
+  // Core dot
+  const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  core.setAttribute('cx', '0'); core.setAttribute('cy', '0'); core.setAttribute('r', '5.5');
+  core.setAttribute('fill', 'none');
+  core.setAttribute('stroke', 'rgba(243,237,232,0.65)');
+  core.setAttribute('stroke-width', '1.2');
+  core.setAttribute('stroke-dasharray', '2 2');
+  g.appendChild(core);
+
+  tutStarScrollActive = true;
+}
+
+// ─── TUTORIAL OVERLAY ────────────────────────────────────────────────────────
+function renderTutorialCircle(song) {
+  const clips = parseClips(song);
+  const svg = document.getElementById('tut-circle-svg');
+  svg.innerHTML = '';
+  const size = 220;
+  const r = 93;
+  const cx = size / 2, cy = size / 2;
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const clipPathId = 'tut-circle-clip';
+  const cp = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  cp.setAttribute('id', clipPathId);
+  const cpCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  cpCircle.setAttribute('cx', cx); cpCircle.setAttribute('cy', cy); cpCircle.setAttribute('r', r);
+  cp.appendChild(cpCircle);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  bg.setAttribute('cx', cx); bg.setAttribute('cy', cy); bg.setAttribute('r', r);
+  bg.setAttribute('fill', '#111');
+  svg.appendChild(bg);
+
+  const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
+  fillGroup.setAttribute('opacity', '0.85');
+  fillGroup.appendChild(buildCategoryRingGroup(clips.slice(0, 10), cx, cy, r));
+  svg.appendChild(fillGroup);
+
+  const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  outline.setAttribute('cx', cx); outline.setAttribute('cy', cy); outline.setAttribute('r', r);
+  outline.setAttribute('fill', 'none');
+  outline.setAttribute('stroke', '#2a2a2a');
+  outline.setAttribute('stroke-width', '1.5');
+  svg.appendChild(outline);
+
+  const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  titleEl.setAttribute('x', cx); titleEl.setAttribute('y', cy - 8);
+  titleEl.setAttribute('text-anchor', 'middle');
+  titleEl.setAttribute('font-size', '12');
+  titleEl.setAttribute('fill', '#e8e8e8');
+  titleEl.setAttribute('font-weight', '600');
+  titleEl.setAttribute('font-family', '-apple-system, BlinkMacSystemFont, sans-serif');
+  titleEl.textContent = song.name;
+  svg.appendChild(titleEl);
+
+  const artistEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  artistEl.setAttribute('x', cx); artistEl.setAttribute('y', cy + 10);
+  artistEl.setAttribute('text-anchor', 'middle');
+  artistEl.setAttribute('font-size', '9');
+  artistEl.setAttribute('fill', '#777');
+  artistEl.setAttribute('font-family', '-apple-system, BlinkMacSystemFont, sans-serif');
+  artistEl.textContent = song.artist;
+  svg.appendChild(artistEl);
+
+  // Category legend
+  const legend = document.getElementById('tut-cat-legend');
+  legend.innerHTML = '';
+  const seen = new Set();
+  clips.forEach(c => {
+    if (seen.has(c.category)) return;
+    seen.add(c.category);
+    const item = document.createElement('div');
+    item.className = 'tut-cat-item';
+    item.innerHTML = `<span class="tut-cat-swatch" style="background:${c.color}"></span><span>${c.category}</span>`;
+    legend.appendChild(item);
+  });
+}
+
+function initTutorialVideoGrid(song) {
+  const clips = parseClips(song);
+  const grid = document.getElementById('tut-video-grid');
+  grid.innerHTML = '';
+
+  clips.slice(0, 10).forEach(clip => {
+    const cell = document.createElement('div');
+    cell.className = 'tut-video-cell';
+    cell.style.borderColor = clip.color;
+
+    const folder = clip.file.replace(/_\d+$/, '');
+    const video = document.createElement('video');
+    video.src = `tiktoks/${folder}/${clip.file}.mp4`;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.loop = true;
+    cell.appendChild(video);
+    grid.appendChild(cell);
+  });
+
+  // Autoplay videos muted when demo section scrolls into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      grid.querySelectorAll('video').forEach(v => {
+        if (entry.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      });
+    });
+  }, { threshold: 0.3 });
+  observer.observe(grid);
+}
+
+function initTutorial(song, viewType) {
+  const overlay = document.getElementById('tutorial-overlay');
+  overlay.classList.add('tut-visible');
+
+  const isOneHit = viewType === 'one-hit';
+  const trendLabel = isOneHit ? 'One Hit Wonders' : 'Long Lasting Trends';
+  const trendDesc = isOneHit
+    ? 'A top one-hit wonder — it spiked fast and burned bright in a tight window.'
+    : 'A top long-lasting trend — it stayed active across weeks on TikTok.';
+
+  const kicker = document.getElementById('tut-kicker');
+  kicker.textContent = trendLabel;
+  kicker.className = `tut-kicker ${viewType}`;
+
+  document.getElementById('tut-song-name').textContent = song.name;
+  document.getElementById('tut-song-artist').textContent = song.artist;
+  document.getElementById('tut-song-desc').textContent = trendDesc;
+
+  const btn = document.getElementById('tut-continue-btn');
+  btn.textContent = `Explore ${trendLabel} →`;
+  btn.className = viewType;
+
+  renderTutorialCircle(song);
+  initTutorialVideoGrid(song);
+  initTutorialStar(song);
+
+  function dismissTutorial() {
+    document.querySelectorAll('#tut-video-grid video').forEach(v => v.pause());
+    tutStarScrollActive = false;
+    overlay.classList.add('tut-dismissing');
+    setTimeout(() => overlay.classList.remove('tut-visible', 'tut-dismissing'), 520);
+  }
+
+  btn.addEventListener('click', dismissTutorial);
+
+  const starContinueBtn = document.getElementById('tut-star-continue-btn');
+  if (starContinueBtn) starContinueBtn.addEventListener('click', dismissTutorial);
+
+  // Scroll handler for star morph + tooltip reveals
+  let ticking = false;
+  overlay.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateTutorialStarScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderColorLegend();
 const initialViewParam = new URLSearchParams(window.location.search).get('view');
@@ -1876,6 +2788,13 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting' || ini
   currentView = 'one-hit';
 }
 applyView(currentView);
+
+// Show tutorial if coming from trend picker with a specific trend selected
+if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
+  const tutSongRank = initialViewParam === 'one-hit' ? 5 : 1;
+  const tutSong = SONGS.find(s => s.rank === tutSongRank);
+  if (tutSong) initTutorial(tutSong, initialViewParam);
+}
 </script>
 </body>
 </html>
