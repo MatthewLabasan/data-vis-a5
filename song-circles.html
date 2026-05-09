@@ -77,10 +77,10 @@
     background: #111;
     border: 1px solid #2a2a2a;
     color: #777;
-    padding: 6px 12px;
+    padding: 7px 14px;
     border-radius: 4px;
     text-decoration: none;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: all 0.2s;
@@ -93,10 +93,10 @@
     background: #111;
     border: 1px solid #2a2a2a;
     color: #777;
-    padding: 6px 12px;
+    padding: 7px 14px;
     border-radius: 4px;
     text-decoration: none;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: all 0.2s;
@@ -118,7 +118,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #666;
@@ -133,7 +133,7 @@
   }
 
   .sort-label {
-    font-size: 10px;
+    font-size: 12px;
     color: #555;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -143,9 +143,9 @@
     background: #1a1a1a;
     border: 1px solid #2a2a2a;
     color: #888;
-    padding: 4px 12px;
+    padding: 6px 14px;
     border-radius: 4px;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
@@ -161,30 +161,245 @@
 
   #circles-grid {
     display: grid;
-    gap: 20px;
     flex: 1;
     padding: 8px 0;
     align-content: stretch;
   }
 
-  .song-circle-wrap {
+  /* ─── OTHER-TREND PROMPT ─── */
+  #other-trend-prompt {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    background: rgba(13,13,13,0.72);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(4px);
   }
+
+  #other-trend-prompt.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .otp-card {
+    background: #171717;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    padding: 32px 36px 28px;
+    max-width: 420px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  }
+
+  .otp-kicker {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .otp-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #c8c8c8;
+    margin: 0;
+  }
+
+  .otp-text strong {
+    font-weight: 600;
+  }
+
+  .otp-btn {
+    margin-top: 6px;
+    background: none;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #e8e8e8;
+    font-size: 13px;
+    font-family: inherit;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .otp-btn:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  #grid-scroll-hint {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 0 8px;
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    animation: tut-bounce 2.4s ease-in-out infinite;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ─── COMPARISON SECTION ─── */
+  #compare-section {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0d0d0d;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    overflow-y: auto;
+  }
+
+  #compare-section.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .compare-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 52px 48px 36px;
+    gap: 24px;
+    min-height: 100vh;
+  }
+
+  .compare-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .compare-headline {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f0f0f0;
+    text-align: center;
+    max-width: 640px;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .compare-back-hint {
+    margin-top: auto;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    font-family: 'SF Mono', monospace;
+    padding-top: 12px;
+  }
+
+  .compare-inner .tut-cloud-stage {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .compare-inner .tut-cloud-col {
+    min-height: 0;
+  }
+
+  .compare-inner .tut-cloud-list {
+    flex: 1;
+    min-height: 320px;
+  }
+
+  .song-circle-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 10px;
+  }
+
+  .song-card-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+  }
+
+  .song-card-title {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: #e8e8e8;
+    max-width: 14ch;
+  }
+
+  .song-card-artist {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.65rem;
+    color: #555;
+    line-height: 1.2;
+    max-width: 16ch;
+  }
+
+  .song-card-genre {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.55rem;
+    color: #3a3a3a;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .song-card-genre span {
+    color: #666;
+  }
+
+  /* Long-lasting: more gap between star and label */
+  #circles-grid[data-view="long-lasting"] .song-circle-wrap { gap: 18px; }
+
+  /* One-hit wonders: larger metadata and more breathing room */
+  #circles-grid[data-view="one-hit"] .song-circle-wrap { gap: 20px; }
+  #circles-grid[data-view="one-hit"] .song-card-title  { font-size: 1.1rem; }
+  #circles-grid[data-view="one-hit"] .song-card-artist { font-size: 0.88rem; }
+  #circles-grid[data-view="one-hit"] .song-card-genre  { font-size: 0.72rem; }
 
   .song-circle-wrap svg {
     overflow: visible;
   }
 
   .song-circle {
-    transition: transform 0.2s ease;
     transform-origin: center;
   }
 
-  .song-circle-wrap:hover .song-circle {
-    transform: scale(1.06);
+  .song-circle-wrap {
+    transition: transform 0.2s ease;
+    transform-origin: center bottom;
+  }
+
+  .song-circle-wrap:hover {
+    transform: scale(1.08);
+    z-index: 10;
+    position: relative;
   }
 
   .circle-bg {
@@ -226,6 +441,35 @@
     font-family: 'SF Mono', monospace;
     text-anchor: middle;
     letter-spacing: 0.08em;
+  }
+
+  /* Star guide / axis decorations */
+  .sm-axis {
+    stroke: rgba(255,255,255,0.18);
+    stroke-width: 1;
+  }
+
+  .sm-guide {
+    fill: none;
+    stroke: rgba(255,255,255,0.12);
+    stroke-width: 1;
+    stroke-linejoin: round;
+    stroke-dasharray: 4 5;
+  }
+
+  .sm-core {
+    fill: none;
+    stroke: rgba(255,255,255,0.9);
+    stroke-width: 1.2;
+    stroke-dasharray: 2 2;
+    stroke-linecap: round;
+  }
+
+  .sm-axis-label {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    fill: rgba(243,237,232,0.55);
   }
 
   /* Clip density arc */
@@ -339,10 +583,41 @@
     align-items: center;
     justify-content: center;
     padding-bottom: 14px;
+    position: relative;
+  }
+
+  #song-circle-star-container {
+    position: relative;
+    width: 230px;
+    height: 230px;
+    flex-shrink: 0;
   }
 
   #song-circle-svg {
     overflow: visible;
+    display: block;
+  }
+
+  .sv-pt-tooltip {
+    position: absolute;
+    background: rgba(20,20,20,0.92);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(243,237,232,0.92);
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+    transform: translate(-50%, calc(-100% - 6px));
+  }
+
+  .sv-pt-tooltip.visible {
+    opacity: 1;
   }
 
   #clips-list-section {
@@ -668,9 +943,688 @@
     will-change: transform, opacity;
     transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.62s ease;
   }
+
+  /* ─── TUTORIAL OVERLAY ─── */
+  #tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: #0d0d0d;
+    overflow-y: scroll;
+    scroll-snap-type: y proximity;
+    display: none;
+  }
+
+  #tutorial-overlay.tut-visible {
+    display: block;
+  }
+
+  #tutorial-overlay.tut-dismissing {
+    transition: opacity 0.5s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #tutorial-overlay.tut-appearing {
+    animation: tut-fade-in 0.6s ease forwards;
+  }
+
+  @keyframes tut-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .tut-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-snap-align: start;
+  }
+
+  .tut-intro {
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+  }
+
+  #tut-outro-section {
+    height: 280vh;
+    min-height: unset;
+    scroll-snap-align: start;
+  }
+
+  .tut-outro-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tut-outro-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+    will-change: transform, opacity;
+  }
+
+  #tut-interlude-section {
+    height: 280vh;
+    scroll-snap-align: start;
+  }
+
+  .tut-interlude-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tut-interlude-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 48px;
+    gap: 0;
+    will-change: transform, opacity;
+  }
+
+  .tut-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    font-family: 'SF Mono', monospace;
+  }
+
+  .tut-kicker.one-hit { color: #f037a5; }
+  .tut-kicker.long-lasting { color: #93e9de; }
+
+  .tut-headline {
+    font-size: clamp(22px, 4vw, 40px);
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 620px;
+    line-height: 1.15;
+    margin: 0 0 20px;
+  }
+
+  .tut-body {
+    font-size: 16px;
+    color: #777;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 520px;
+    line-height: 1.65;
+    margin: 0 0 52px;
+  }
+
+  .tut-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #3a3a3a;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    animation: tut-bounce 2.2s ease-in-out infinite;
+  }
+
+  @keyframes tut-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(7px); opacity: 1; }
+  }
+
+  /* Bounce for elements that also need translateX(-50%) — can't share the keyframe */
+  @keyframes tut-bounce-centered {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+    50% { transform: translateX(-50%) translateY(7px); opacity: 1; }
+  }
+
+  @keyframes cluster-star-float {
+    0%, 100% { transform: translateY(0) rotate(var(--star-rotate, 0deg)); }
+    50%       { transform: translateY(var(--float-distance, -8px)) rotate(calc(var(--star-rotate, 0deg) + 2deg)); }
+  }
+
+  /* ─── SECTION 3.5: SIDE-BY-SIDE COMPARISON CLOUDS ─── */
+  .tut-cloud-stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 960px;
+    flex: 1;
+  }
+
+  .tut-cloud-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tut-cloud-header {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .tut-cloud-list {
+    position: relative;
+    flex: 1;
+    min-height: 400px;
+  }
+
+  .tut-cc-card {
+    position: absolute;
+    left: var(--cloud-x);
+    top: var(--cloud-y);
+    transform: translate(-50%, -50%) scale(var(--cloud-scale, 1));
+  }
+
+  .tut-cc-card:hover { z-index: 5; }
+
+  .tut-cc-card svg {
+    width: clamp(78px, 7.5vw, 104px);
+    height: clamp(78px, 7.5vw, 104px);
+    animation: cluster-star-float var(--float-duration, 5s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+    transform: rotate(var(--star-rotate, 0deg));
+    transform-origin: center;
+    overflow: visible;
+    display: block;
+  }
+
+  .cc-star-name {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    fill: rgba(243, 237, 232, 0.92);
+    stroke: rgba(15, 15, 15, 0.82);
+    stroke-width: 3.5px;
+    paint-order: stroke;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  /* ─── SECTION 2: SCROLLY CIRCLE + VIDEO BACKGROUND ─── */
+  .tut-demo {
+    position: relative;
+    height: 1100vh;
+    scroll-snap-align: start;
+  }
+
+  .tut-demo-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Background video grid */
+  .tut-video-bg-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    padding: 32px;
+  }
+
+  /* Radial vignette so the center circle pops */
+  .tut-demo-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 46% 56% at 50% 50%,
+      rgba(13,13,13,0.82) 0%,
+      rgba(13,13,13,0.45) 55%,
+      rgba(13,13,13,0.1) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .tut-video-cell {
+    border-radius: 8px;
+    overflow: hidden;
+    border-width: 2px;
+    border-style: solid;
+    background: #0a0a0a;
+    opacity: 0;
+    transition: opacity 0.55s ease;
+  }
+
+  .tut-video-cell.tut-clip-visible { opacity: 1; }
+
+  .tut-video-cell video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Centered foreground */
+  .tut-demo-center {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: rgba(10, 10, 10, 0.78);
+    border-radius: 20px;
+    padding: 24px 72px 20px;
+    backdrop-filter: blur(8px);
+  }
+
+  .tut-song-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
+
+  .tut-song-artist {
+    font-size: 15px;
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .tut-cat-legend {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 7px 14px;
+    justify-content: center;
+    max-width: 320px;
+    margin-top: 4px;
+  }
+
+  .tut-cat-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #777;
+    font-family: 'SF Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  .tut-cat-item.tut-clip-visible { opacity: 1; }
+
+  .tut-cat-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Scroll-driven info tooltips for section 2 */
+  .tut-demo-tooltip {
+    position: absolute;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 500px;
+    width: max-content;
+    background: rgba(18, 18, 18, 0.94);
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 18px 24px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #aaa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 3;
+    backdrop-filter: blur(8px);
+  }
+
+  .tut-demo-tooltip.tut-clip-visible { opacity: 1; }
+
+  /* ─── TUTORIAL STAR SECTION ─── */
+  .tut-star-section {
+    position: relative;
+    height: 320vh;
+  }
+
+  /* Sticky viewport — only .tut-star-outer is in the flex flow; everything
+     else is pulled out with position:absolute so it can't collide with tooltips */
+  .tut-star-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .tut-star-kicker {
+    position: absolute;
+    top: calc(50vh - 350px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #444;
+    white-space: nowrap;
+  }
+
+  .tut-star-song-title {
+    position: absolute;
+    top: calc(50vh - 330px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* Enlarged container so tooltips at all four sides have room */
+  .tut-star-outer {
+    position: relative;
+    width: 700px;
+    height: 460px;
+  }
+
+  /* SVG absolutely centered inside the 700×460 outer */
+  #tut-star-svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 280px;
+    display: block;
+    overflow: visible;
+  }
+
+  .tut-star-tooltip {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.55s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .tut-star-tooltip.tut-tt-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* All four positions use calc(50% + 170px) from the 700×460 outer center */
+  .tut-tt-bpm {
+    bottom: calc(50% + 170px);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .tut-tt-energy {
+    left: calc(50% + 170px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .tut-tt-dance {
+    top: calc(50% + 170px);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .tut-tt-happy {
+    right: calc(50% + 170px);
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+  }
+
+  .tut-tt-axis-name {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #cdfe34;
+    margin-bottom: 6px;
+  }
+
+  .tut-tt-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1;
+  }
+
+  .tut-tt-val span:last-child {
+    font-size: 28px;
+    color: #f0f0f0;
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  .tut-star-hint {
+    position: absolute;
+    top: calc(50vh - 292px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #666;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .tut-star-hint.tut-tt-visible {
+    opacity: 1;
+  }
+
+  /* Hover popup — replaces always-visible description */
+  .tut-tt-hover-popup {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    white-space: normal;
+    width: 220px;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    z-index: 10;
+  }
+
+  .tut-tt-happy .tut-tt-hover-popup {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+
+  .tut-tt-energy .tut-tt-hover-popup {
+    left: 0;
+    transform: none;
+  }
+
+  .tut-star-tooltip.tut-tt-visible:hover .tut-tt-hover-popup {
+    opacity: 1;
+  }
+
+  .tut-star-scroll-cue {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    color: #444;
+    white-space: nowrap;
+    text-align: center;
+    transition: opacity 0.4s ease;
+    animation: tut-bounce-centered 2.2s ease-in-out infinite;
+  }
+
 </style>
 </head>
 <body>
+
+<!-- TUTORIAL OVERLAY -->
+<div id="tutorial-overlay">
+  <!-- Section 1: Intro -->
+  <div class="tut-section tut-intro">
+    <div class="tut-kicker" id="tut-kicker">Long Lasting Trends</div>
+    <h2 class="tut-headline">Before we dive into a trend, let's examine a song fingerprint.</h2>
+    <p class="tut-body">We represent a song using color and different "spikes", creating a star. Each band of color maps to how people used that song on TikTok — animals, dance, humor, and more.</p>
+    <div class="tut-scroll-hint">
+      <span>Scroll to see an example</span>
+      <span style="font-size:15px; letter-spacing:0">↓</span>
+    </div>
+  </div>
+
+  <!-- Section 2: Scrolly circle + video background -->
+  <div class="tut-demo" id="tut-demo-section">
+    <div class="tut-demo-sticky">
+      <div id="tut-video-grid" class="tut-video-bg-grid"></div>
+      <div class="tut-demo-bg-overlay"></div>
+      <div class="tut-demo-center">
+        <div class="tut-song-name" id="tut-song-name">—</div>
+        <div class="tut-song-artist" id="tut-song-artist">—</div>
+        <svg id="tut-circle-svg" width="240" height="240" style="overflow:visible"></svg>
+        <div class="tut-cat-legend" id="tut-cat-legend"></div>
+      </div>
+
+      <!-- Scroll-driven info callouts -->
+      <div class="tut-demo-tooltip" id="tut-demo-tip-1">
+        We analyzed the top ten TikToks for each song. Each TikTok can be categorized, represented by a specific color in our fingerprint.
+      </div>
+      <div class="tut-demo-tooltip" id="tut-demo-tip-2">
+        For example, <em style="color:#e8e8e8; font-style:normal;">Pretty Little Baby</em> has a variety of TikToks, though a majority of them are categorized as <em style="color:#e8e8e8; font-style:normal;">animals</em>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2.5: Characteristics interlude -->
+  <div id="tut-interlude-section">
+    <div class="tut-interlude-sticky">
+      <div class="tut-interlude-content">
+        <div class="tut-kicker" id="tut-interlude-kicker"></div>
+        <h2 class="tut-headline">We also looked at different song characteristics, such as BPM, energy, happiness, and danceability.</h2>
+        <div class="tut-scroll-hint" style="margin-top:28px">
+          <span>Scroll to see how</span>
+          <span style="font-size:15px;letter-spacing:0">↓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Star Reveal -->
+  <div class="tut-star-section" id="tut-star-section">
+    <div class="tut-star-sticky">
+      <div class="tut-star-kicker">Song Fingerprint</div>
+      <div class="tut-star-song-title" id="tut-star-song-title">—</div>
+
+      <div class="tut-star-hint" id="tut-star-hint">Hover a label to see its description</div>
+
+      <div class="tut-star-outer" id="tut-star-outer">
+        <svg id="tut-star-svg" viewBox="0 0 240 240"></svg>
+
+        <!-- BPM: above -->
+        <div class="tut-star-tooltip tut-tt-bpm" id="tut-tt-bpm">
+          <div class="tut-tt-axis-name">BPM</div>
+          <div class="tut-tt-val" id="tut-tt-bpm-val">—</div>
+          <div class="tut-tt-hover-popup">Beats Per Minute — how fast the track moves.</div>
+        </div>
+
+        <!-- Energy: right -->
+        <div class="tut-star-tooltip tut-tt-energy" id="tut-tt-energy">
+          <div class="tut-tt-axis-name">Energy</div>
+          <div class="tut-tt-val"><span id="tut-tt-energy-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">Intensity and activity of the track, based on timbre, loudness, and dynamic range.</div>
+        </div>
+
+        <!-- Danceability: below -->
+        <div class="tut-star-tooltip tut-tt-dance" id="tut-tt-dance">
+          <div class="tut-tt-axis-name">Danceability</div>
+          <div class="tut-tt-val"><span id="tut-tt-dance-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">How suited the track is for dancing, based on rhythm, beat strength, and tempo stability.</div>
+        </div>
+
+        <!-- Happiness: left -->
+        <div class="tut-star-tooltip tut-tt-happy" id="tut-tt-happy">
+          <div class="tut-tt-axis-name">Happiness</div>
+          <div class="tut-tt-val"><span id="tut-tt-happy-val">—</span><span>/100</span></div>
+          <div class="tut-tt-hover-popup">How cheerful and positive the track sounds.</div>
+        </div>
+      </div>
+
+      <div class="tut-star-scroll-cue" id="tut-star-scroll-cue">↓ Keep scrolling</div>
+
+      <!-- Scroll-driven tooltip for star section -->
+      <div class="tut-demo-tooltip" id="tut-star-tip-1" style="position:absolute; bottom:72px; left:50%; transform:translateX(-50%); z-index:10;">
+        These characteristics form the points of our fingerprint.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 4: Transition into full trend view -->
+  <div id="tut-outro-section">
+    <div class="tut-outro-sticky">
+      <div class="tut-outro-content">
+        <div class="tut-kicker" id="tut-outro-kicker"></div>
+        <h2 class="tut-headline" id="tut-outro-headline">Now, let's explore the entire trend.</h2>
+        <div class="tut-scroll-hint" style="margin-top:28px">
+          <span>Scroll to dive in</span>
+          <span style="font-size:15px;letter-spacing:0">↓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- SMALL MULTIPLES VIEW -->
 <div id="small-multiples">
@@ -700,6 +1654,39 @@
     <div id="color-legend"></div>
   </div>
   <div id="circles-grid"></div>
+
+  <div id="other-trend-prompt">
+    <div class="otp-card">
+      <div class="otp-kicker">Before you continue</div>
+      <p class="otp-text" id="otp-text">—</p>
+      <button class="otp-btn" id="otp-switch-btn">—</button>
+    </div>
+  </div>
+
+  <div id="grid-scroll-hint">
+    <span>Scroll to compare both trends</span>
+    <span style="font-size:16px;letter-spacing:0;opacity:0.6">↓</span>
+  </div>
+
+</div>
+
+<!-- COMPARISON SECTION -->
+<div id="compare-section">
+  <div class="compare-inner">
+    <div class="compare-kicker">The Two Trends</div>
+    <h2 class="compare-headline">Now, let's compare the two trend types side by side.</h2>
+    <div class="tut-cloud-stage">
+      <div class="tut-cloud-col" data-trend="one-hit">
+        <div class="tut-cloud-header" style="color:#f037a5">One Hit Wonders</div>
+        <div class="tut-cloud-list" id="tut-cloud-one-hit"></div>
+      </div>
+      <div class="tut-cloud-col" data-trend="long">
+        <div class="tut-cloud-header" style="color:#93e9de">Long Lasting Trends</div>
+        <div class="tut-cloud-list" id="tut-cloud-long"></div>
+      </div>
+    </div>
+    <div class="compare-back-hint">↑ Scroll up to return</div>
+  </div>
 </div>
 
 <!-- SINGLE SONG VIEW -->
@@ -720,7 +1707,9 @@
       <!-- Left: circle + clips list -->
       <div id="song-left">
         <div id="song-circle-svg-wrap">
-          <svg id="song-circle-svg" width="230" height="230"></svg>
+          <div id="song-circle-star-container">
+            <svg id="song-circle-svg" width="230" height="230"></svg>
+          </div>
         </div>
         <div id="clips-list-section">
           <div id="clips-panel-header">
@@ -854,6 +1843,33 @@ function catColor(cat) {
   return CAT_COLORS[cat] || CAT_COLORS.default;
 }
 
+// Same 10 angles used in tiktok-audio-stars for consistent visual language
+const CAT_RING_ANGLES = [-90, -54, -18, 18, 54, 90, 126, 162, -162, -126];
+
+function buildCategoryRingGroup(clips, cx, cy, r) {
+  const blurAmount = Math.max(4, r * 0.068);
+  const dotR = Math.max(5, r * 0.38);
+  const fraction = 0.45;
+
+  const blurGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  blurGroup.style.filter = `blur(${blurAmount.toFixed(1)}px)`;
+
+  clips.slice(0, 10).forEach((clip, i) => {
+    const rad = CAT_RING_ANGLES[i] * Math.PI / 180;
+    const px = cx + Math.cos(rad) * r * fraction;
+    const py = cy + Math.sin(rad) * r * fraction;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', px.toFixed(1));
+    dot.setAttribute('cy', py.toFixed(1));
+    dot.setAttribute('r', dotR.toFixed(1));
+    dot.setAttribute('fill', clip.color || catColor(clip.category));
+    dot.setAttribute('opacity', '0.55');
+    blurGroup.appendChild(dot);
+  });
+
+  return blurGroup;
+}
+
 function renderColorLegend() {
   const legend = document.getElementById('color-legend');
   if (!legend) return;
@@ -954,9 +1970,9 @@ function sortSongs(by) {
 }
 
 function getGridLayoutForView() {
-  if (currentView === 'one-hit') return { cols: 3, rows: 2, gap: 30 };
-  if (currentView === 'long-lasting') return { cols: 5, rows: 3, gap: 22 };
-  return { cols: 5, rows: 4, gap: 20 };
+  if (currentView === 'one-hit')     return { cols: 3, rows: 2, colGap: 24, rowGap: 48 };
+  if (currentView === 'long-lasting') return { cols: 5, rows: 3, colGap: 16, rowGap: 44 };
+  return { cols: 5, rows: 4, colGap: 14, rowGap: 40 };
 }
 
 function renderGrid() {
@@ -965,14 +1981,17 @@ function renderGrid() {
   const layoutCfg = getGridLayoutForView();
   grid.style.gridTemplateColumns = `repeat(${layoutCfg.cols}, minmax(0, 1fr))`;
   grid.style.gridTemplateRows = `repeat(${layoutCfg.rows}, minmax(0, 1fr))`;
-  grid.style.gap = `${layoutCfg.gap}px`;
+  grid.style.columnGap = `${layoutCfg.colGap}px`;
+  grid.style.rowGap    = `${layoutCfg.rowGap}px`;
+  grid.dataset.view = currentView;
 
-  // Scale circles to fill available page area for filtered views.
-  const gridW = grid.clientWidth || 900;
+  // Reserve height for metadata label below each star
+  const labelReserve = currentView === 'one-hit' ? 90 : 52;
+  const gridW = grid.clientWidth  || 900;
   const gridH = grid.clientHeight || 600;
-  const cellW = (gridW - layoutCfg.gap * (layoutCfg.cols - 1)) / layoutCfg.cols;
-  const cellH = (gridH - layoutCfg.gap * (layoutCfg.rows - 1)) / layoutCfg.rows;
-  const size = Math.max(110, Math.floor(Math.min(cellW, cellH) * 0.9));
+  const cellW = (gridW - layoutCfg.colGap * (layoutCfg.cols - 1)) / layoutCfg.cols;
+  const cellH = (gridH - layoutCfg.rowGap * (layoutCfg.rows - 1)) / layoutCfg.rows;
+  const size = Math.max(70, Math.floor(Math.min(cellW, cellH - labelReserve) * 0.82));
   const r = Math.floor(size * 0.42);
   const titleFontSize = Math.max(10, Math.floor(size * 0.09));
   const lineH = Math.max(11, Math.floor(size * 0.1));
@@ -1000,89 +2019,143 @@ function renderGrid() {
     circle.className.baseVal = 'circle-bg';
     g.appendChild(circle);
 
-    // Category color fill (layered stripes, clipped to circle)
+    // Build star points for clip path (and later outline)
+    const songMetricsForClip = TUT_SONG_METRICS[song.name];
     const clipPathId = `sm-clip-${song.rank}`;
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
     clipPath.setAttribute('id', clipPathId);
-    const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    clipCircle.setAttribute('cx', cx);
-    clipCircle.setAttribute('cy', cy);
-    clipCircle.setAttribute('r', r - 0.5);
-    clipPath.appendChild(clipCircle);
+
+    if (songMetricsForClip) {
+      const starClipPts = starPointsScaled(songMetricsForClip, r);
+      const starClipStr = starClipPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
+      const clipPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      clipPoly.setAttribute('points', starClipStr);
+      clipPath.appendChild(clipPoly);
+    } else {
+      // Fallback to circle clip if no metrics
+      const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      clipCircle.setAttribute('cx', cx);
+      clipCircle.setAttribute('cy', cy);
+      clipCircle.setAttribute('r', r - 0.5);
+      clipPath.appendChild(clipCircle);
+    }
+
     defs.appendChild(clipPath);
     svg.appendChild(defs);
 
+    // Remove the dark circle bg — star shape is the new boundary
+    g.removeChild(circle);
+
     const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
-    fillGroup.setAttribute('opacity', '0.7');
+    fillGroup.setAttribute('opacity', '0.85');
 
-    const clips = (song.clips || []).slice(0, 10);
-    const bandCount = 10;
-    const stripeH = size / bandCount;
-    for (let idx = 0; idx < bandCount; idx++) {
-      const clip = clips[idx];
-      const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      stripe.setAttribute('x', '0');
-      stripe.setAttribute('y', String(size - (idx + 1) * stripeH));
-      stripe.setAttribute('width', String(size));
-      stripe.setAttribute('height', String(stripeH));
-      stripe.setAttribute('fill', clip ? catColor(clip.category) : catColor('default'));
-      fillGroup.appendChild(stripe);
-    }
+    const ringClips = (song.clips || []).slice(0, 10).map(c => ({ color: catColor(c.category) }));
+    fillGroup.appendChild(buildCategoryRingGroup(ringClips, cx, cy, r));
 
     g.appendChild(fillGroup);
 
-    // Title text (multi-line wrapping)
-    const words = song.name.split(' ');
-    const maxChars = 10;
-    let lines = [];
-    let currentLine = '';
-    words.forEach(w => {
-      if ((currentLine + ' ' + w).trim().length <= maxChars) {
-        currentLine = (currentLine + ' ' + w).trim();
-      } else {
-        if (currentLine) lines.push(currentLine);
-        currentLine = w;
-      }
-    });
-    if (currentLine) lines.push(currentLine);
 
-    const titleY = cy - (lines.length - 1) * lineH / 2 - 6;
+    // Guide octagon, axis lines, core dot, labels + star outline
+    if (songMetricsForClip) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const labelFs = Math.max(7, Math.round(r * 0.11));
+      const axisLen = r * 1.04;
+      const outerGuideR = r * 1.0;
+      const innerGuideR = r * 0.674;
 
-    lines.forEach((line, li) => {
-      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      t.setAttribute('x', cx);
-      t.setAttribute('y', titleY + li * lineH);
-      t.setAttribute('font-size', String(titleFontSize));
-      t.className.baseVal = 'circle-title';
-      t.textContent = line;
-      g.appendChild(t);
-    });
+      // Axis cross-hairs
+      const axisV = document.createElementNS(ns, 'line');
+      axisV.setAttribute('x1', cx); axisV.setAttribute('y1', cy - axisLen);
+      axisV.setAttribute('x2', cx); axisV.setAttribute('y2', cy + axisLen);
+      axisV.setAttribute('class', 'sm-axis');
+      g.appendChild(axisV);
 
-    // Artist
-    const artistEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    artistEl.setAttribute('x', cx);
-    artistEl.setAttribute('y', titleY + lines.length * lineH + 2);
-    artistEl.setAttribute('font-size', String(artistFontSize));
-    artistEl.className.baseVal = 'circle-artist';
-    const shortArtist = song.artist.length > 14 ? song.artist.substring(0, 13) + '…' : song.artist;
-    artistEl.textContent = shortArtist;
-    g.appendChild(artistEl);
+      const axisH = document.createElementNS(ns, 'line');
+      axisH.setAttribute('x1', cx - axisLen); axisH.setAttribute('y1', cy);
+      axisH.setAttribute('x2', cx + axisLen); axisH.setAttribute('y2', cy);
+      axisH.setAttribute('class', 'sm-axis');
+      g.appendChild(axisH);
 
-    // Rank
-    const rankEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    rankEl.setAttribute('x', cx);
-    rankEl.setAttribute('y', cy + r - 8);
-    rankEl.setAttribute('font-size', String(rankFontSize));
-    rankEl.setAttribute('fill', '#fff');
-    rankEl.setAttribute('text-anchor', 'middle');
-    rankEl.setAttribute('font-family', 'SF Mono, monospace');
-    rankEl.textContent = `#${song.rank}`;
-    g.appendChild(rankEl);
+      // Outer guide octagon
+      const outerGuide = document.createElementNS(ns, 'polygon');
+      outerGuide.setAttribute('points', smGuideStr(outerGuideR, r * 0.5, cx, cy));
+      outerGuide.setAttribute('class', 'sm-guide');
+      g.appendChild(outerGuide);
+
+      // Inner guide octagon
+      const innerGuide = document.createElementNS(ns, 'polygon');
+      innerGuide.setAttribute('points', smGuideStr(innerGuideR, r * 0.326, cx, cy));
+      innerGuide.setAttribute('class', 'sm-guide');
+      g.appendChild(innerGuide);
+
+      // Star outline
+      const starPts = starPointsScaled(songMetricsForClip, r);
+      const pStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
+      const starPoly = document.createElementNS(ns, 'polygon');
+      starPoly.setAttribute('points', pStr);
+      starPoly.setAttribute('fill', 'none');
+      starPoly.setAttribute('stroke', 'rgba(243,237,232,0.72)');
+      starPoly.setAttribute('stroke-width', '1.2');
+      starPoly.setAttribute('stroke-linejoin', 'round');
+      g.appendChild(starPoly);
+
+      // Center core dot
+      const core = document.createElementNS(ns, 'circle');
+      core.setAttribute('cx', cx); core.setAttribute('cy', cy);
+      core.setAttribute('r', Math.max(3, r * 0.07));
+      core.setAttribute('class', 'sm-core');
+      g.appendChild(core);
+
+      // Axis labels
+      const labelOffset = r * 1.22;
+      const labelsData = [
+        { text: `BPM ${songMetricsForClip.bpm}`,          x: cx,              y: cy - labelOffset, anchor: 'middle' },
+        { text: `ENG ${songMetricsForClip.energy}`,        x: cx + labelOffset, y: cy + labelFs * 0.35, anchor: 'start'  },
+        { text: `DNC ${songMetricsForClip.danceability}`,  x: cx,              y: cy + labelOffset + labelFs, anchor: 'middle' },
+        { text: `HAP ${songMetricsForClip.happiness}`,     x: cx - labelOffset, y: cy + labelFs * 0.35, anchor: 'end'    },
+      ];
+      labelsData.forEach(({ text, x, y, anchor }) => {
+        const lbl = document.createElementNS(ns, 'text');
+        lbl.setAttribute('x', x.toFixed(1));
+        lbl.setAttribute('y', y.toFixed(1));
+        lbl.setAttribute('font-size', labelFs);
+        lbl.setAttribute('text-anchor', anchor);
+        lbl.setAttribute('class', 'sm-axis-label');
+        lbl.textContent = text;
+        g.appendChild(lbl);
+      });
+    }
 
     svg.appendChild(g);
     wrap.appendChild(svg);
+
+    const label = document.createElement('div');
+    label.className = 'song-card-label';
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'song-card-title';
+    titleDiv.textContent = song.name;
+
+    const artistDiv = document.createElement('div');
+    artistDiv.className = 'song-card-artist';
+    const shortArtist = song.artist.length > 18 ? song.artist.substring(0, 17) + '…' : song.artist;
+    artistDiv.textContent = shortArtist;
+
+    // Top category by clip count
+    const catCounts = {};
+    (song.clips || []).forEach(c => { catCounts[c.category] = (catCounts[c.category] || 0) + 1; });
+    const topCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
+    const genreDiv = document.createElement('div');
+    genreDiv.className = 'song-card-genre';
+    genreDiv.innerHTML = `Top Genre: <span>${topCat ? topCat[0] : '—'}</span>`;
+
+    label.appendChild(titleDiv);
+    label.appendChild(artistDiv);
+    label.appendChild(genreDiv);
+    wrap.appendChild(label);
+
     grid.appendChild(wrap);
 
     wrap.addEventListener('click', () => zoomIntoSong(song, wrap));
@@ -1438,10 +2511,7 @@ let playbackTimelineBySecond = [];
 let lastSyncedAudioSecond = -1;
 let lastForcedResyncAtMs = 0;
 let hasPrimedVideos = false;
-let circleFillRevealRect = null;
-let circleFillProgress = 0;
-let circleFillTarget = 0;
-let circleFillAnimId = null;
+let songViewDotRefs = [];
 let lastSelectedRank = null;
 let isTransitioning = false;
 
@@ -1520,12 +2590,7 @@ function openSongView(song) {
   clipStartTimeline = buildClipStartTimeline(processedClips);
   playbackTimelineBySecond = buildPlaybackTimelineBySecond(processedClips, songDuration);
   lastSyncedAudioSecond = -1;
-  circleFillProgress = 0;
-  circleFillTarget = 0;
-  if (circleFillAnimId) {
-    cancelAnimationFrame(circleFillAnimId);
-    circleFillAnimId = null;
-  }
+  songViewDotRefs = [];
 
   document.getElementById('sv-title').textContent = song.name;
   document.getElementById('sv-artist').textContent = song.artist;
@@ -1554,146 +2619,163 @@ function renderSongCircle(song) {
   const svg = document.getElementById('song-circle-svg');
   svg.innerHTML = '';
   const size = 230;
-  const r = 98;
+  const r = 96;
   const cx = size / 2, cy = size / 2;
-  const clipPathId = 'song-circle-fill-clip';
-  const maskId = 'song-circle-fill-mask';
+  const ns = 'http://www.w3.org/2000/svg';
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const metrics = TUT_SONG_METRICS[song.name] || { bpm: 120, energy: 60, danceability: 60, happiness: 60 };
+  const starPts = starPointsScaled(metrics, r);
+  const starPtsStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
 
-  const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-  clipPath.setAttribute('id', clipPathId);
-  const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  clipCircle.setAttribute('cx', cx);
-  clipCircle.setAttribute('cy', cy);
-  clipCircle.setAttribute('r', r);
-  clipPath.appendChild(clipCircle);
-  defs.appendChild(clipPath);
-
-  const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
-  mask.setAttribute('id', maskId);
-
-  const maskBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  maskBg.setAttribute('x', 0);
-  maskBg.setAttribute('y', 0);
-  maskBg.setAttribute('width', size);
-  maskBg.setAttribute('height', size);
-  maskBg.setAttribute('fill', 'black');
-  mask.appendChild(maskBg);
-
-  circleFillRevealRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  circleFillRevealRect.setAttribute('x', 0);
-  circleFillRevealRect.setAttribute('y', size);
-  circleFillRevealRect.setAttribute('width', size);
-  circleFillRevealRect.setAttribute('height', 0);
-  circleFillRevealRect.setAttribute('fill', 'white');
-  mask.appendChild(circleFillRevealRect);
-  defs.appendChild(mask);
+  const defs = document.createElementNS(ns, 'defs');
+  const cp = document.createElementNS(ns, 'clipPath');
+  cp.setAttribute('id', 'sv-star-clip');
+  const cpPoly = document.createElementNS(ns, 'polygon');
+  cpPoly.setAttribute('points', starPtsStr);
+  cp.appendChild(cpPoly);
+  defs.appendChild(cp);
   svg.appendChild(defs);
 
-  const baseFill = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  baseFill.setAttribute('cx', cx);
-  baseFill.setAttribute('cy', cy);
-  baseFill.setAttribute('r', r);
-  baseFill.setAttribute('fill', '#111');
-  svg.appendChild(baseFill);
+  // Dark background star shape
+  const bg = document.createElementNS(ns, 'polygon');
+  bg.setAttribute('points', starPtsStr);
+  bg.setAttribute('fill', '#111');
+  svg.appendChild(bg);
 
-  const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
-  fillGroup.setAttribute('mask', `url(#${maskId})`);
-
-  const clipsForBands = processedClips.slice(0, 10);
-  const bandCount = 10;
-  const stripeH = size / bandCount;
-  for (let i = 0; i < bandCount; i++) {
-    const clip = clipsForBands[i];
-    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    stripe.setAttribute('x', 0);
-    stripe.setAttribute('y', size - (i + 1) * stripeH);
-    stripe.setAttribute('width', size);
-    stripe.setAttribute('height', stripeH);
-    stripe.setAttribute('fill', clip ? clip.color : catColor('default'));
-    fillGroup.appendChild(stripe);
-  }
-  svg.appendChild(fillGroup);
-
-  // Circle outline
-  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
-  circle.setAttribute('fill', 'none');
-  circle.setAttribute('stroke', '#2a2a2a');
-  circle.setAttribute('stroke-width', '1.5');
-  svg.appendChild(circle);
-
-  updateSongCircle(false);
-}
-
-function circleFillTargetProgress() {
-  if (!processedClips.length) return 0;
-  const started = processedClips.filter(c => currentTimeSec >= c.startSec).length;
-  return Math.max(0, Math.min(1, started / processedClips.length));
-}
-
-function setCircleReveal(progress) {
-  if (!circleFillRevealRect) return;
-  const size = 230;
-  const clamped = Math.max(0, Math.min(1, progress));
-  const h = size * clamped;
-  circleFillRevealRect.setAttribute('y', size - h);
-  circleFillRevealRect.setAttribute('height', h);
-}
-
-function animateCircleFillTo(target) {
-  if (target <= circleFillProgress + 0.0001) {
-    circleFillProgress = target;
-    setCircleReveal(circleFillProgress);
-    return;
-  }
-
-  if (circleFillAnimId) cancelAnimationFrame(circleFillAnimId);
-
-  const allStartSameTime =
-    processedClips.length > 1 &&
-    processedClips.every(c => c.startSec === processedClips[0].startSec);
-
-  const start = circleFillProgress;
-  const delta = target - start;
-  const duration = (allStartSameTime && target === 1)
-    ? 2000
-    : Math.max(350, delta * 900);
-  const t0 = performance.now();
-
-  function step(now) {
-    const t = Math.min(1, (now - t0) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    circleFillProgress = start + delta * eased;
-    setCircleReveal(circleFillProgress);
-
-    if (t < 1) {
-      circleFillAnimId = requestAnimationFrame(step);
+  // Axis cross-hairs
+  const axisLen = r * 1.04;
+  ['V', 'H'].forEach(dir => {
+    const line = document.createElementNS(ns, 'line');
+    if (dir === 'V') {
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy - axisLen);
+      line.setAttribute('x2', cx); line.setAttribute('y2', cy + axisLen);
     } else {
-      circleFillAnimId = null;
-      circleFillProgress = target;
-      setCircleReveal(circleFillProgress);
+      line.setAttribute('x1', cx - axisLen); line.setAttribute('y1', cy);
+      line.setAttribute('x2', cx + axisLen); line.setAttribute('y2', cy);
     }
-  }
+    line.setAttribute('class', 'sm-axis');
+    svg.appendChild(line);
+  });
 
-  circleFillAnimId = requestAnimationFrame(step);
+  // Guide octagons
+  const innerR = r * 0.50;
+  [{ outer: r * 1.0, inner: r * 0.5 }, { outer: r * 0.674, inner: r * 0.326 }].forEach(({ outer, inner }) => {
+    const g = document.createElementNS(ns, 'polygon');
+    g.setAttribute('points', smGuideStr(outer, inner, cx, cy));
+    g.setAttribute('class', 'sm-guide');
+    svg.appendChild(g);
+  });
+
+  // Category ring dots, individually referenced, clipped to star
+  const ringGroup = document.createElementNS(ns, 'g');
+  ringGroup.setAttribute('clip-path', 'url(#sv-star-clip)');
+  const clips10 = processedClips.slice(0, 10);
+  const dotR = Math.max(5, r * 0.38);
+  const ringR = r * 0.45;
+  songViewDotRefs = [];
+  CAT_RING_ANGLES.forEach((angleDeg, i) => {
+    if (i >= clips10.length) return;
+    const rad = (angleDeg * Math.PI) / 180;
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', (cx + ringR * Math.cos(rad)).toFixed(2));
+    dot.setAttribute('cy', (cy + ringR * Math.sin(rad)).toFixed(2));
+    dot.setAttribute('r', dotR);
+    dot.setAttribute('fill', clips10[i].color);
+    dot.setAttribute('opacity', '0');
+    dot.style.transition = 'opacity 0.4s ease';
+    ringGroup.appendChild(dot);
+    songViewDotRefs.push(dot);
+  });
+  svg.appendChild(ringGroup);
+
+  // Star outline
+  const starOutline = document.createElementNS(ns, 'polygon');
+  starOutline.setAttribute('points', starPtsStr);
+  starOutline.setAttribute('fill', 'none');
+  starOutline.setAttribute('stroke', 'rgba(243,237,232,0.72)');
+  starOutline.setAttribute('stroke-width', '1.5');
+  starOutline.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(starOutline);
+
+  // Center core dot
+  const core = document.createElementNS(ns, 'circle');
+  core.setAttribute('cx', cx); core.setAttribute('cy', cy);
+  core.setAttribute('r', Math.max(3, r * 0.07));
+  core.setAttribute('class', 'sm-core');
+  svg.appendChild(core);
+
+  // Axis labels with exact values + hover targets
+  const labelFs = 10;
+  const labelOffset = r * 1.26;
+  const axisLabels = [
+    { key: 'bpm',          text: `BPM`,  value: metrics.bpm,          x: cx,               y: cy - labelOffset,           anchor: 'middle', ptIdx: 0, hx: cx,               hy: cy - r * 0.95 },
+    { key: 'energy',       text: `ENG`,  value: metrics.energy,        x: cx + labelOffset,  y: cy + labelFs * 0.35,        anchor: 'start',  ptIdx: 2, hx: cx + r * 0.95,    hy: cy },
+    { key: 'danceability', text: `DNC`,  value: metrics.danceability,  x: cx,               y: cy + labelOffset + labelFs, anchor: 'middle', ptIdx: 4, hx: cx,               hy: cy + r * 0.95 },
+    { key: 'happiness',    text: `HAP`,  value: metrics.happiness,     x: cx - labelOffset,  y: cy + labelFs * 0.35,        anchor: 'end',    ptIdx: 6, hx: cx - r * 0.95,    hy: cy },
+  ];
+
+  // Tooltip container (HTML, positioned absolutely within the 230×230 star container)
+  const starContainer = document.getElementById('song-circle-star-container');
+  starContainer.querySelectorAll('.sv-pt-tooltip').forEach(el => el.remove());
+
+  axisLabels.forEach(({ text, value, x, y, anchor, hx, hy, key }) => {
+    // SVG label
+    const lbl = document.createElementNS(ns, 'text');
+    lbl.setAttribute('x', x.toFixed(1));
+    lbl.setAttribute('y', y.toFixed(1));
+    lbl.setAttribute('font-size', labelFs);
+    lbl.setAttribute('text-anchor', anchor);
+    lbl.setAttribute('class', 'sm-axis-label');
+    lbl.textContent = `${text} ${value}`;
+    svg.appendChild(lbl);
+
+    // Invisible hover circle at star point tip
+    const hitR = Math.max(10, r * 0.18);
+    const hit = document.createElementNS(ns, 'circle');
+    hit.setAttribute('cx', hx.toFixed(2));
+    hit.setAttribute('cy', hy.toFixed(2));
+    hit.setAttribute('r', hitR);
+    hit.setAttribute('fill', 'transparent');
+    hit.setAttribute('cursor', 'pointer');
+    svg.appendChild(hit);
+
+    // Tooltip div
+    const tip = document.createElement('div');
+    tip.className = 'sv-pt-tooltip';
+    tip.dataset.key = key;
+    tip.textContent = `${text}: ${value}`;
+    starContainer.appendChild(tip);
+
+    const svgSize = 230;
+
+    function showTip() {
+      tip.classList.add('visible');
+      // hx/hy are absolute SVG coords; convert to % of svgSize for CSS positioning
+      tip.style.left = `${((hx / svgSize) * 100).toFixed(2)}%`;
+      tip.style.top  = `${((hy / svgSize) * 100).toFixed(2)}%`;
+      if (anchor === 'start')       { tip.style.transform = 'translate(8px,-50%)'; }
+      else if (anchor === 'end')    { tip.style.transform = 'translate(calc(-100% - 8px),-50%)'; }
+      else if (hy < cy)             { tip.style.transform = 'translate(-50%,calc(-100% - 8px))'; }
+      else                          { tip.style.transform = 'translate(-50%,8px)'; }
+    }
+    function hideTip() { tip.classList.remove('visible'); }
+    hit.addEventListener('mouseenter', showTip);
+    hit.addEventListener('mouseleave', hideTip);
+  });
+
+  updateSongCircle();
 }
 
-function updateSongCircle(animate = true) {
-  circleFillTarget = circleFillTargetProgress();
-  if (!animate) {
-    if (circleFillAnimId) {
-      cancelAnimationFrame(circleFillAnimId);
-      circleFillAnimId = null;
-    }
-    circleFillProgress = circleFillTarget;
-    setCircleReveal(circleFillProgress);
-    return;
-  }
-  animateCircleFillTo(circleFillTarget);
+function updateSongCircle() {
+  if (!songViewDotRefs.length) return;
+  const clips10 = processedClips.slice(0, 10);
+  clips10.forEach((clip, i) => {
+    const dot = songViewDotRefs[i];
+    if (!dot) return;
+    const started = currentTimeSec >= clip.startSec;
+    dot.setAttribute('opacity', started ? '0.85' : '0');
+  });
 }
 
 function renderClipsList(song) {
@@ -1867,6 +2949,653 @@ document.getElementById('restart-btn').addEventListener('click', () => {
 
 // Scrubbing disabled: navigation is controlled by skip buttons.
 
+// ─── TUTORIAL STAR GEOMETRY ──────────────────────────────────────────────────
+// BPM range across all 20 songs in the dataset (93 min, 149 max)
+const TUT_BPM_MIN = 93;
+const TUT_BPM_MAX = 149;
+
+function tutBpmNormalized(bpm) {
+  return (bpm - TUT_BPM_MIN) / (TUT_BPM_MAX - TUT_BPM_MIN);
+}
+
+// Audio metrics for the two tutorial songs (from tiktok-audio-stars dataset)
+const TUT_SONG_METRICS = {
+  'Pretty Little Baby':                    { bpm: 121, energy: 40,  danceability: 78, happiness: 63 },
+  'Hold My Hand':                          { bpm: 123, energy: 82,  danceability: 64, happiness: 43 },
+  'Rock That Body':                        { bpm: 125, energy: 91,  danceability: 72, happiness: 84 },
+  'Azul':                                  { bpm: 94,  energy: 84,  danceability: 84, happiness: 65 },
+  'Dame Un Grrr':                          { bpm: 118, energy: 83,  danceability: 90, happiness: 90 },
+  'APT.':                                  { bpm: 149, energy: 78,  danceability: 78, happiness: 94 },
+  'Te Quería Ver':                         { bpm: 100, energy: 76,  danceability: 80, happiness: 45 },
+  'Stecu Stecu':                           { bpm: 103, energy: 82,  danceability: 83, happiness: 92 },
+  'Anxiety':                               { bpm: 129, energy: 59,  danceability: 81, happiness: 89 },
+  'Sailor Song':                           { bpm: 95,  energy: 41,  danceability: 49, happiness: 27 },
+  'Shake it To The Max':                   { bpm: 98,  energy: 55,  danceability: 86, happiness: 56 },
+  'ocean eyes':                            { bpm: 145, energy: 36,  danceability: 51, happiness: 17 },
+  'No One Noticed':                        { bpm: 98,  energy: 34,  danceability: 70, happiness: 46 },
+  'back to friends':                       { bpm: 93,  energy: 72,  danceability: 44, happiness: 24 },
+  'Sparks':                                { bpm: 103, energy: 27,  danceability: 37, happiness: 16 },
+  "That's So True":                        { bpm: 109, energy: 81,  danceability: 55, happiness: 37 },
+  'Let Down':                              { bpm: 102, energy: 68,  danceability: 35, happiness: 14 },
+  'Suave':                                 { bpm: 120, energy: 91,  danceability: 88, happiness: 52 },
+  'My Darling':                            { bpm: 115, energy: 49,  danceability: 83, happiness: 62 },
+  'We Hug Now':                            { bpm: 120, energy: 33,  danceability: 37, happiness: 21 },
+};
+
+function tutStarGeometry(metrics) {
+  const outerMax = 92, outerMin = 30, innerRadius = 46;
+  const diag = innerRadius * 0.74;
+  const m = [
+    tutBpmNormalized(metrics.bpm),
+    metrics.energy / 100,
+    metrics.danceability / 100,
+    metrics.happiness / 100
+  ];
+  const top    = outerMin + m[0] * (outerMax - outerMin);
+  const right  = outerMin + m[1] * (outerMax - outerMin);
+  const bottom = outerMin + m[2] * (outerMax - outerMin);
+  const left   = outerMin + m[3] * (outerMax - outerMin);
+  return {
+    top, right, bottom, left,
+    points: [
+      [0, -top], [diag, -diag], [right, 0], [diag, diag],
+      [0, bottom], [-diag, diag], [-left, 0], [-diag, -diag]
+    ]
+  };
+}
+
+function tutPtStr(pts) {
+  return pts.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+// Returns SVG points string for an 8-pt guide octagon, offset by (ox, oy)
+function smGuideStr(radius, innerR, ox, oy) {
+  const d = innerR * 0.74;
+  const pts = [[0,-radius],[d,-d],[radius,0],[d,d],[0,radius],[-d,d],[-radius,0],[-d,-d]];
+  return pts.map(([x,y]) => `${(ox+x).toFixed(1)},${(oy+y).toFixed(1)}`).join(' ');
+}
+
+// Returns 8-point star polygon points scaled to radius r, centered at origin
+function starPointsScaled(metrics, r) {
+  const outerMax = r * 0.95;
+  const outerMin = r * 0.30;
+  const inner    = r * 0.50;
+  const diag     = inner * 0.74;
+  const bpmN  = tutBpmNormalized(metrics.bpm);
+  const top    = outerMin + bpmN                      * (outerMax - outerMin);
+  const right  = outerMin + (metrics.energy       /100) * (outerMax - outerMin);
+  const bottom = outerMin + (metrics.danceability /100) * (outerMax - outerMin);
+  const left   = outerMin + (metrics.happiness    /100) * (outerMax - outerMin);
+  return [[0,-top],[diag,-diag],[right,0],[diag,diag],[0,bottom],[-diag,diag],[-left,0],[-diag,-diag]];
+}
+
+function tutGuideOctagonStr(outerR, innerR) {
+  const d = innerR * 0.74;
+  return [[0,-outerR],[d,-d],[outerR,0],[d,d],[0,outerR],[-d,d],[-outerR,0],[-d,-d]]
+    .map(([x,y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+// Morph state
+let tutStarOutlinePoly = null;
+let tutStarBgPoly = null;
+let tutStarClipPoly = null;
+let tutStarStartPts = null;
+let tutStarEndPts   = null;
+let tutStarScrollActive = false;
+
+function applyStarMorph(t) {
+  if (!tutStarOutlinePoly || !tutStarStartPts || !tutStarEndPts) return;
+  const e = 1 - Math.pow(1 - Math.min(1, t), 3); // ease-out cubic
+  const pts = tutStarStartPts.map(([sx, sy], i) => {
+    const [ex, ey] = tutStarEndPts[i];
+    return [sx + (ex - sx) * e, sy + (ey - sy) * e];
+  });
+  const pStr = tutPtStr(pts);
+  tutStarOutlinePoly.setAttribute('points', pStr);
+  if (tutStarBgPoly)   tutStarBgPoly.setAttribute('points', pStr);
+  if (tutStarClipPoly) tutStarClipPoly.setAttribute('points', pStr);
+}
+
+function setTutTooltip(id, visible) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('tut-tt-visible', visible);
+}
+
+function updateTutorialStarScroll() {
+  if (!tutStarScrollActive) return;
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section3 = document.getElementById('tut-star-section');
+  if (!overlay || !section3) return;
+
+  const scrollTop   = overlay.scrollTop;
+  const sec3Top     = section3.offsetTop;
+  const scrollRange = section3.offsetHeight - overlay.clientHeight;
+  const p = Math.max(0, Math.min(1, (scrollTop - sec3Top) / scrollRange));
+
+  applyStarMorph(p / 0.22); // morph completes by 22% scroll
+
+  // "These characteristics form the points…" — visible after morph, gone before BPM label
+  const starTip1 = document.getElementById('tut-star-tip-1');
+  if (starTip1) starTip1.classList.toggle('tut-clip-visible', p >= 0.24);
+
+  setTutTooltip('tut-tt-bpm',    p >= 0.30);
+  setTutTooltip('tut-tt-energy', p >= 0.48);
+  setTutTooltip('tut-tt-dance',  p >= 0.66);
+  setTutTooltip('tut-tt-happy',  p >= 0.84);
+  setTutTooltip('tut-star-hint', p >= 0.30);
+
+  const scrollCue = document.getElementById('tut-star-scroll-cue');
+  if (scrollCue) scrollCue.style.opacity = p >= 0.84 ? '0' : '1';
+
+}
+
+function initTutorialStar(song) {
+  const metrics = TUT_SONG_METRICS[song.name];
+  if (!metrics) return;
+
+  document.getElementById('tut-star-song-title').textContent = song.name;
+  document.getElementById('tut-tt-bpm-val').textContent    = metrics.bpm;
+  document.getElementById('tut-tt-energy-val').textContent  = metrics.energy;
+  document.getElementById('tut-tt-dance-val').textContent   = metrics.danceability;
+  document.getElementById('tut-tt-happy-val').textContent   = metrics.happiness;
+
+  const geo = tutStarGeometry(metrics);
+  const svg = document.getElementById('tut-star-svg');
+  svg.innerHTML = '';
+
+  // Circle-polygon start: 8 pts on circle at radius = outerMax (92)
+  const R = 92;
+  tutStarStartPts = [
+    [0, -R], [R * 0.707, -R * 0.707], [R, 0], [R * 0.707, R * 0.707],
+    [0, R], [-R * 0.707, R * 0.707], [-R, 0], [-R * 0.707, -R * 0.707]
+  ];
+  tutStarEndPts = geo.points;
+
+  // Clip path (morphs with the star)
+  const clipId = 'tut-star-clip';
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const cp   = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  cp.setAttribute('id', clipId);
+  tutStarClipPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarClipPoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  cp.appendChild(tutStarClipPoly);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  // Root group translated to center (matching audio-stars viewBox 240×240)
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', 'translate(120,120)');
+  svg.appendChild(g);
+
+  // Axis lines
+  const axisLen = 108;
+  [[0, -axisLen, 0, axisLen], [-axisLen, 0, axisLen, 0]].forEach(([x1,y1,x2,y2]) => {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('x1', x1); ln.setAttribute('y1', y1);
+    ln.setAttribute('x2', x2); ln.setAttribute('y2', y2);
+    ln.setAttribute('stroke', 'rgba(243,237,232,0.10)');
+    ln.setAttribute('stroke-width', '1');
+    g.appendChild(ln);
+  });
+
+  // Outer guide octagon (at outerMax scale)
+  const guideOuter = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  guideOuter.setAttribute('points', tutGuideOctagonStr(92, 46));
+  guideOuter.setAttribute('fill', 'none');
+  guideOuter.setAttribute('stroke', 'rgba(243,237,232,0.07)');
+  guideOuter.setAttribute('stroke-width', '1');
+  g.appendChild(guideOuter);
+
+  // Inner guide octagon
+  const guideInner = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  guideInner.setAttribute('points', tutGuideOctagonStr(62, 30));
+  guideInner.setAttribute('fill', 'none');
+  guideInner.setAttribute('stroke', 'rgba(243,237,232,0.05)');
+  guideInner.setAttribute('stroke-width', '1');
+  g.appendChild(guideInner);
+
+  // Background fill polygon (morphs)
+  tutStarBgPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarBgPoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  tutStarBgPoly.setAttribute('fill', 'rgba(243,237,232,0.04)');
+  g.appendChild(tutStarBgPoly);
+
+  // Category ring — clipped to star shape
+  const ringWrap = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  ringWrap.setAttribute('clip-path', `url(#${clipId})`);
+  ringWrap.appendChild(buildCategoryRingGroup(parseClips(song).slice(0, 10), 0, 0, 92));
+  g.appendChild(ringWrap);
+
+  // Star outline polygon (morphs) — drawn on top of ring
+  tutStarOutlinePoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  tutStarOutlinePoly.setAttribute('points', tutPtStr(tutStarStartPts));
+  tutStarOutlinePoly.setAttribute('fill', 'none');
+  tutStarOutlinePoly.setAttribute('stroke', 'rgba(243,237,232,0.75)');
+  tutStarOutlinePoly.setAttribute('stroke-width', '1.5');
+  tutStarOutlinePoly.setAttribute('stroke-linejoin', 'round');
+  g.appendChild(tutStarOutlinePoly);
+
+  // Core dot
+  const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  core.setAttribute('cx', '0'); core.setAttribute('cy', '0'); core.setAttribute('r', '5.5');
+  core.setAttribute('fill', 'none');
+  core.setAttribute('stroke', 'rgba(243,237,232,0.65)');
+  core.setAttribute('stroke-width', '1.2');
+  core.setAttribute('stroke-dasharray', '2 2');
+  g.appendChild(core);
+
+  tutStarScrollActive = true;
+}
+
+// ─── TUTORIAL OVERLAY ────────────────────────────────────────────────────────
+let tutDotRefs = [];
+let tutRingBlurGroup = null;
+let tutDismiss = null;
+
+function renderTutorialCircle(song) {
+  const clips = parseClips(song);
+  tutDotRefs = [];
+
+  const svg = document.getElementById('tut-circle-svg');
+  svg.innerHTML = '';
+  const size = 240;
+  const r = 100;
+  const cx = size / 2, cy = size / 2;
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const clipPathId = 'tut-circle-clip';
+  const cp = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  cp.setAttribute('id', clipPathId);
+  const cpCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  cpCircle.setAttribute('cx', cx); cpCircle.setAttribute('cy', cy); cpCircle.setAttribute('r', r);
+  cp.appendChild(cpCircle);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  bg.setAttribute('cx', cx); bg.setAttribute('cy', cy); bg.setAttribute('r', r);
+  bg.setAttribute('fill', '#111');
+  svg.appendChild(bg);
+
+  // Build each dot individually so we can reveal them one by one
+  const dotR = Math.max(5, r * 0.38);
+  const fraction = 0.45;
+
+  const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
+  fillGroup.setAttribute('opacity', '0.85');
+
+  // No blur initially — will be applied via scroll at end of section
+  tutRingBlurGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+  clips.slice(0, 10).forEach((clip, i) => {
+    const rad = CAT_RING_ANGLES[i] * Math.PI / 180;
+    const px = cx + Math.cos(rad) * r * fraction;
+    const py = cy + Math.sin(rad) * r * fraction;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', px.toFixed(1));
+    dot.setAttribute('cy', py.toFixed(1));
+    dot.setAttribute('r', dotR.toFixed(1));
+    dot.setAttribute('fill', clip.color || catColor(clip.category));
+    dot.setAttribute('opacity', '0');
+    dot.style.transition = 'opacity 0.5s ease';
+    tutRingBlurGroup.appendChild(dot);
+    tutDotRefs.push(dot);
+  });
+
+  fillGroup.appendChild(tutRingBlurGroup);
+  svg.appendChild(fillGroup);
+
+  const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  outline.setAttribute('cx', cx); outline.setAttribute('cy', cy); outline.setAttribute('r', r);
+  outline.setAttribute('fill', 'none');
+  outline.setAttribute('stroke', '#2a2a2a');
+  outline.setAttribute('stroke-width', '1.5');
+  svg.appendChild(outline);
+
+  // Category legend — items start invisible, revealed by scroll
+  const legend = document.getElementById('tut-cat-legend');
+  legend.innerHTML = '';
+  clips.slice(0, 10).forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'tut-cat-item';
+    item.dataset.category = c.category;
+    item.innerHTML = `<span class="tut-cat-swatch" style="background:${c.color || catColor(c.category)}"></span><span>${c.category}</span>`;
+    legend.appendChild(item);
+  });
+}
+
+function initTutorialVideoGrid(song) {
+  const clips = parseClips(song);
+  const grid = document.getElementById('tut-video-grid');
+  grid.innerHTML = '';
+
+  clips.slice(0, 10).forEach(clip => {
+    const cell = document.createElement('div');
+    cell.className = 'tut-video-cell';
+    cell.style.borderColor = clip.color || catColor(clip.category);
+
+    const folder = clip.file.replace(/_\d+$/, '');
+    const video = document.createElement('video');
+    video.src = `tiktoks/${folder}/${clip.file}.mp4`;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.loop = true;
+    cell.appendChild(video);
+    grid.appendChild(cell);
+  });
+}
+
+function updateTutorialDemoScroll() {
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section2 = document.getElementById('tut-demo-section');
+  if (!overlay || !section2) return;
+
+  const scrollRange = section2.offsetHeight - overlay.clientHeight;
+  const p = Math.max(0, Math.min(1, (overlay.scrollTop - section2.offsetTop) / scrollRange));
+
+  const cells = document.querySelectorAll('#tut-video-grid .tut-video-cell');
+  const legendItems = document.querySelectorAll('#tut-cat-legend .tut-cat-item');
+
+  cells.forEach((cell, i) => {
+    const threshold = 0.04 + i * 0.09;
+    const visible = p >= threshold;
+    cell.classList.toggle('tut-clip-visible', visible);
+    const vid = cell.querySelector('video');
+    if (vid) { if (visible) vid.play().catch(() => {}); else vid.pause(); }
+    if (tutDotRefs[i]) tutDotRefs[i].setAttribute('opacity', visible ? '0.55' : '0');
+  });
+
+  // Legend items mirror clip visibility
+  legendItems.forEach((item, i) => {
+    if (cells[i]?.classList.contains('tut-clip-visible')) item.classList.add('tut-clip-visible');
+  });
+
+  // Scroll-driven info tooltips
+  const tip1 = document.getElementById('tut-demo-tip-1');
+  const tip2 = document.getElementById('tut-demo-tip-2');
+  if (tip1) tip1.classList.toggle('tut-clip-visible', p >= 0.02 && p < 0.55);
+  if (tip2) tip2.classList.toggle('tut-clip-visible', p >= 0.82 && p < 0.98);
+
+  // Blur the ring dots as we exit toward the star section
+  if (tutRingBlurGroup) {
+    const blurStart = 0.88;
+    const maxBlur = Math.max(4, 100 * 0.068);
+    const blurPx = p >= blurStart ? ((p - blurStart) / (1 - blurStart)) * maxBlur : 0;
+    tutRingBlurGroup.style.filter = blurPx > 0 ? `blur(${blurPx.toFixed(1)}px)` : '';
+  }
+}
+
+function updateTutorialInterludeScroll() {
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section  = document.getElementById('tut-interlude-section');
+  const content  = document.querySelector('.tut-interlude-content');
+  if (!overlay || !section || !content) return;
+
+  const scrollTop = overlay.scrollTop;
+  const secTop    = section.offsetTop;
+  const secH      = section.offsetHeight;
+  const viewH     = overlay.clientHeight;
+
+  const scrollable = secH - viewH;
+  const p = scrollable > 0 ? Math.max(0, Math.min(1, (scrollTop - secTop) / scrollable)) : 0;
+
+  const fadeStart = 0.40;
+  if (p <= fadeStart) {
+    content.style.opacity = '';
+    content.style.transform = '';
+  } else {
+    const t = (p - fadeStart) / (1 - fadeStart);
+    const eased = t * t;
+    content.style.opacity = Math.max(0, 1 - eased * 1.6);
+    content.style.transform = `translateY(${-eased * 80}px)`;
+  }
+}
+
+function updateTutorialOutroScroll() {
+  const overlay  = document.getElementById('tutorial-overlay');
+  const section  = document.getElementById('tut-outro-section');
+  const content  = document.querySelector('.tut-outro-content');
+  if (!overlay || !section || !content) return;
+
+  const scrollTop = overlay.scrollTop;
+  const secTop    = section.offsetTop;
+  const secH      = section.offsetHeight;
+  const viewH     = overlay.clientHeight;
+
+  // p goes 0→1 as the section scrolls from entry to exit
+  const scrollable = secH - viewH;
+  const p = scrollable > 0 ? Math.max(0, Math.min(1, (scrollTop - secTop) / scrollable)) : 0;
+
+  // Hold centered until 40% through, then fade up over the remaining 60%
+  const fadeStart = 0.40;
+  if (p <= fadeStart) {
+    content.style.opacity = '';
+    content.style.transform = '';
+  } else {
+    const t = (p - fadeStart) / (1 - fadeStart);
+    const eased = t * t; // ease-in so fade accelerates
+    content.style.opacity = Math.max(0, 1 - eased * 1.6);
+    content.style.transform = `translateY(${-eased * 80}px)`;
+  }
+}
+
+// ─── COMPARISON CLOUDS ───────────────────────────────────────────────────────
+
+function seededRandom(seedText) {
+  let seed = 1337;
+  for (let i = 0; i < seedText.length; i++) {
+    seed = Math.imul(seed ^ seedText.charCodeAt(i), 3432918353);
+    seed = (seed << 13) | (seed >>> 19);
+  }
+  return () => {
+    seed = Math.imul(seed ^ (seed >>> 16), 2246822507);
+    seed = Math.imul(seed ^ (seed >>> 13), 3266489909);
+    seed ^= seed >>> 16;
+    return (seed >>> 0) / 4294967296;
+  };
+}
+
+function cloudPositions(items, groupKind) {
+  const placed = [];
+  const minDist = 20;
+  const spread  = groupKind === 'long' ? 32 : 28;
+  const clamp   = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  items.forEach((item, index) => {
+    const rng = seededRandom(`${groupKind}-${item.name}-${index}`);
+    let best = null, bestDist = -1;
+    for (let attempt = 0; attempt < 400; attempt++) {
+      const angle = rng() * Math.PI * 2;
+      const radius = Math.sqrt(rng()) * spread;
+      const cand = {
+        x: clamp(50 + Math.cos(angle) * radius, 12, 88),
+        y: clamp(50 + Math.sin(angle) * radius * 0.9, 12, 88),
+      };
+      const nearest = placed.length
+        ? Math.min(...placed.map(p => Math.hypot(cand.x - p.x, (cand.y - p.y) * 1.08)))
+        : Infinity;
+      if (nearest > bestDist) { bestDist = nearest; best = cand; }
+      if (nearest >= minDist) break;
+    }
+    placed.push({
+      ...best,
+      scale: 1 + rng() * 0.1,
+      rotate: Math.round(rng() * 84 - 42),
+      floatDuration: (4.6 + rng() * 1.4).toFixed(2),
+      floatDelay: (-rng() * 3.5).toFixed(2),
+      floatDistance: Math.round(5 + rng() * 6),
+    });
+  });
+  return placed;
+}
+
+function cloudSongNameLines(name) {
+  const words = name.split(/\s+/);
+  const lines = [];
+  let cur = '';
+  words.forEach(w => {
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length > 11 && cur) { lines.push(cur); cur = w; }
+    else cur = next;
+  });
+  if (cur) lines.push(cur);
+  return lines.slice(0, 3);
+}
+
+function buildCloudStarCard(song, position, index, groupKind) {
+  const metrics = TUT_SONG_METRICS[song.name] || { bpm: 120, energy: 60, danceability: 60, happiness: 60 };
+  const r = 80, cx = 100, cy = 100;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const starPts = starPointsScaled(metrics, r);
+  const starPtsStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
+
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 200 200');
+  svg.setAttribute('class', 'cc-star-svg');
+
+  const clipId = `cc-clip-${groupKind}-${index}`;
+  const defs = document.createElementNS(ns, 'defs');
+  const cp = document.createElementNS(ns, 'clipPath');
+  cp.setAttribute('id', clipId);
+  const cpPoly = document.createElementNS(ns, 'polygon');
+  cpPoly.setAttribute('points', starPtsStr);
+  cp.appendChild(cpPoly);
+  defs.appendChild(cp);
+  svg.appendChild(defs);
+
+  // Dark fill behind ring
+  const bgPoly = document.createElementNS(ns, 'polygon');
+  bgPoly.setAttribute('points', starPtsStr);
+  bgPoly.setAttribute('fill', 'rgba(15,15,15,0.7)');
+  svg.appendChild(bgPoly);
+
+  // Blurred category ring, clipped to star
+  const clipGroup = document.createElementNS(ns, 'g');
+  clipGroup.setAttribute('clip-path', `url(#${clipId})`);
+  const blurGroup = document.createElementNS(ns, 'g');
+  blurGroup.style.filter = 'blur(7px)';
+  const ringClips = (song.clips || []).slice(0, 10).map(c => ({ color: catColor(c.category) }));
+  blurGroup.appendChild(buildCategoryRingGroup(ringClips, cx, cy, r));
+  clipGroup.appendChild(blurGroup);
+  svg.appendChild(clipGroup);
+
+  // Star outline
+  const outline = document.createElementNS(ns, 'polygon');
+  outline.setAttribute('points', starPtsStr);
+  outline.setAttribute('fill', 'none');
+  outline.setAttribute('stroke', 'rgba(243,237,232,0.76)');
+  outline.setAttribute('stroke-width', '1.5');
+  outline.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(outline);
+
+  // Song name centered on star
+  const lines = cloudSongNameLines(song.name);
+  const fontSize = lines.length > 2 ? 11 : 13;
+  const lineGap = fontSize + 2;
+  const startY = cy - ((lines.length - 1) * lineGap) / 2;
+  const textEl = document.createElementNS(ns, 'text');
+  textEl.setAttribute('class', 'cc-star-name');
+  textEl.setAttribute('font-size', fontSize);
+  textEl.setAttribute('text-anchor', 'middle');
+  textEl.setAttribute('x', cx);
+  lines.forEach((line, i) => {
+    const tspan = document.createElementNS(ns, 'tspan');
+    tspan.setAttribute('x', cx);
+    if (i === 0) tspan.setAttribute('y', startY);
+    else tspan.setAttribute('dy', lineGap);
+    tspan.textContent = line;
+    textEl.appendChild(tspan);
+  });
+  svg.appendChild(textEl);
+
+  // Card wrapper with CSS custom props for positioning + float
+  const card = document.createElement('article');
+  card.className = 'tut-cc-card';
+  card.style.setProperty('--cloud-x', `${position.x}%`);
+  card.style.setProperty('--cloud-y', `${position.y}%`);
+  card.style.setProperty('--cloud-scale', position.scale);
+  card.style.setProperty('--star-rotate', `${position.rotate}deg`);
+  card.style.setProperty('--float-duration', `${position.floatDuration}s`);
+  card.style.setProperty('--float-delay', `${position.floatDelay}s`);
+  card.style.setProperty('--float-distance', `-${position.floatDistance}px`);
+  card.appendChild(svg);
+  return card;
+}
+
+function renderComparisonClouds() {
+  const oneHitSongs = SONGS.filter(s => ONE_HIT_RANKS.has(s.rank));
+  const longSongs   = SONGS.filter(s => !ONE_HIT_RANKS.has(s.rank));
+
+  [
+    { songs: oneHitSongs, kind: 'one-hit', id: 'tut-cloud-one-hit' },
+    { songs: longSongs,   kind: 'long',    id: 'tut-cloud-long'    },
+  ].forEach(({ songs, kind, id }) => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.innerHTML = '';
+    const positions = cloudPositions(songs, kind);
+    songs.forEach((song, i) => {
+      container.appendChild(buildCloudStarCard(song, positions[i], i, kind));
+    });
+  });
+}
+
+function initTutorial(song, viewType) {
+  const overlay = document.getElementById('tutorial-overlay');
+  overlay.classList.add('tut-visible');
+
+  const isOneHit = viewType === 'one-hit';
+  const trendLabel = isOneHit ? 'One Hit Wonders' : 'Long Lasting Trends';
+
+  const kicker = document.getElementById('tut-kicker');
+  kicker.textContent = trendLabel;
+  kicker.className = `tut-kicker ${viewType}`;
+
+  const interludeKicker = document.getElementById('tut-interlude-kicker');
+  if (interludeKicker) { interludeKicker.textContent = trendLabel; interludeKicker.className = `tut-kicker ${viewType}`; }
+
+  document.getElementById('tut-song-name').textContent = song.name;
+  document.getElementById('tut-song-artist').textContent = song.artist;
+
+  renderTutorialCircle(song);
+  initTutorialVideoGrid(song);
+  initTutorialStar(song);
+
+  // Set outro section label
+  const outroKicker = document.getElementById('tut-outro-kicker');
+  if (outroKicker) { outroKicker.textContent = trendLabel; outroKicker.className = `tut-kicker ${viewType}`; }
+  const outroHeadline = document.getElementById('tut-outro-headline');
+  if (outroHeadline) outroHeadline.textContent = `Now, let's explore the entire ${trendLabel} dataset.`;
+
+  tutDismiss = function() {
+    document.querySelectorAll('#tut-video-grid video').forEach(v => v.pause());
+    tutStarScrollActive = false;
+    overlay.classList.add('tut-dismissing');
+    setTimeout(() => overlay.classList.remove('tut-visible', 'tut-dismissing'), 520);
+  };
+
+  // Scroll handler: drives section-2 reveals, section-3 star morph, and auto-dismiss
+  let ticking = false;
+  overlay.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateTutorialDemoScroll();
+        updateTutorialStarScroll();
+        updateTutorialInterludeScroll();
+        updateTutorialOutroScroll();
+        // Auto-dismiss when user scrolls to the very bottom of the overlay
+        if (overlay.scrollTop + overlay.clientHeight >= overlay.scrollHeight - 8) {
+          tutDismiss();
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderColorLegend();
 const initialViewParam = new URLSearchParams(window.location.search).get('view');
@@ -1876,6 +3605,141 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting' || ini
   currentView = 'one-hit';
 }
 applyView(currentView);
+
+// Show tutorial if coming from trend picker with a specific trend selected
+if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
+  const tutSongRank = initialViewParam === 'one-hit' ? 5 : 1;
+  const tutSong = SONGS.find(s => s.rank === tutSongRank);
+  if (tutSong) initTutorial(tutSong, initialViewParam);
+}
+
+// ─── COMPARE SECTION ─────────────────────────────────────────────────────────
+let compareRendered = false;
+let compareVisible = false;
+let compareCooldown = false;
+let scrollAccum = 0;          // accumulated downward scroll in grid view
+let scrollUpAccum = 0;        // accumulated upward scroll in grid view (for re-opening tutorial)
+let promptShown = false;      // has the other-trend prompt been shown?
+let promptDismissed = false;  // has the user clicked through the prompt?
+
+// Each wheel event is capped so fast trackpad swipes don't dump huge deltas at once
+const TICK_CAP = 20;            // max px credited per wheel event
+const PROMPT_THRESHOLD  = 480;  // capped px before prompt appears
+const COMPARE_THRESHOLD = 300;  // capped px (after prompt dismissed) to reach compare
+const REOPEN_THRESHOLD  = 400;  // capped px upward to re-open tutorial
+
+function showCompareSection() {
+  if (compareVisible || compareCooldown) return;
+  if (!compareRendered) {
+    renderComparisonClouds();
+    compareRendered = true;
+  }
+  compareVisible = true;
+  compareCooldown = true;
+  scrollAccum = 0;
+  setTimeout(() => { compareCooldown = false; }, 600);
+  document.getElementById('compare-section').classList.add('visible');
+}
+
+function hideCompareSection() {
+  if (!compareVisible || compareCooldown) return;
+  compareVisible = false;
+  compareCooldown = true;
+  scrollAccum = 0;
+  scrollUpAccum = 0;
+  setTimeout(() => { compareCooldown = false; }, 600);
+  document.getElementById('compare-section').classList.remove('visible');
+}
+
+// Wire up the other-trend prompt button
+(function () {
+  const btn = document.getElementById('otp-switch-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const other = currentView === 'one-hit' ? 'long-lasting' : 'one-hit';
+    applyView(other);
+    document.getElementById('other-trend-prompt').classList.remove('visible');
+    promptDismissed = true;
+    scrollAccum = 0;
+  });
+})();
+
+function showOtherTrendPrompt() {
+  if (promptShown) return;
+  promptShown = true;
+  const isOneHit = currentView === 'one-hit';
+  const otherLabel = isOneHit ? 'Long Lasting Trends' : 'One Hit Wonders';
+  const otherColor = isOneHit ? '#93e9de' : '#f037a5';
+  document.getElementById('otp-text').innerHTML =
+    `Have you seen the <strong style="color:${otherColor}">${otherLabel}</strong> view? Explore it before diving into the full comparison.`;
+  const btn2 = document.getElementById('otp-switch-btn');
+  btn2.textContent = `Switch to ${otherLabel} →`;
+  btn2.style.borderColor = otherColor;
+  btn2.style.color = otherColor;
+  document.getElementById('other-trend-prompt').classList.add('visible');
+}
+
+// Wheel listener: grid ↔ compare, grid ↔ tutorial
+document.addEventListener('wheel', (e) => {
+  // Ignore accidental light touches / micro-scrolls
+  if (Math.abs(e.deltaY) < 12) return;
+
+  const overlay = document.getElementById('tutorial-overlay');
+  const tick = Math.min(Math.abs(e.deltaY), TICK_CAP); // cap per-event contribution
+
+  // ── Inside compare section: scroll up at top → back to grid ──
+  if (compareVisible && !compareCooldown) {
+    const compareEl = document.getElementById('compare-section');
+    if (e.deltaY < 0 && compareEl.scrollTop <= 4) {
+      hideCompareSection();
+    }
+    return;
+  }
+
+  // ── Skip if tutorial or song view is active ──
+  if (overlay?.classList.contains('tut-visible')) return;
+  if (document.getElementById('song-view')?.classList.contains('visible')) return;
+
+  // ── Scroll down in grid view ──
+  if (e.deltaY > 0) {
+    scrollUpAccum = 0;
+    if (promptShown && !promptDismissed) return; // blocked until user clicks prompt
+
+    scrollAccum += tick;
+
+    if (!promptDismissed && scrollAccum >= PROMPT_THRESHOLD) {
+      showOtherTrendPrompt();
+      scrollAccum = 0;
+      return;
+    }
+
+    if (promptDismissed && scrollAccum >= COMPARE_THRESHOLD) {
+      showCompareSection();
+    }
+    return;
+  }
+
+  // ── Scroll up in grid view → re-open tutorial (needs sustained upward scroll) ──
+  if (e.deltaY < 0) {
+    scrollAccum = 0;
+    if (!tutDismiss) return;
+
+    scrollUpAccum += tick;
+    if (scrollUpAccum < REOPEN_THRESHOLD) return;
+    scrollUpAccum = 0;
+
+    tutStarScrollActive = true;
+    overlay.style.opacity = '0';
+    overlay.classList.add('tut-visible');
+    overlay.scrollTop = overlay.scrollHeight;
+    void overlay.offsetHeight;
+    overlay.classList.add('tut-appearing');
+    setTimeout(() => {
+      overlay.classList.remove('tut-appearing');
+      overlay.style.opacity = '';
+    }, 650);
+  }
+}, { passive: true });
 </script>
 </body>
 </html>
