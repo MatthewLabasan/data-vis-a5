@@ -28,27 +28,30 @@
   }
 
   .view-header {
-    margin-bottom: 28px;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+    /* Leave room on the right for the fixed "Return to calendar" button. */
+    padding-right: 220px;
   }
 
   .view-title {
-    font-size: 11px;
-    letter-spacing: 0.25em;
+    font-size: 9px;
+    letter-spacing: 0.22em;
     color: #555;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   .view-heading {
-    font-size: 28px;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #f0f0f0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   .view-subtitle {
-    margin-top: 8px;
-    font-size: 13px;
+    margin-top: 4px;
+    font-size: 11px;
     color: #777;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
@@ -56,7 +59,7 @@
   .sort-bar {
     display: flex;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 8px;
     align-items: center;
   }
   .view-controls {
@@ -64,7 +67,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 8px;
     flex-wrap: wrap;
   }
   .view-filter-bar {
@@ -73,67 +76,64 @@
     gap: 8px;
     flex-wrap: wrap;
   }
+
+  /* The View selector buttons stay hidden during the guided linear flow.
+     They are revealed only after the user clicks "Explore all songs". */
+  #view-filter-views { display: none; }
+  #view-filter-views.is-revealed { display: flex; }
   .home-btn {
-    background: #111;
-    border: 1px solid #2a2a2a;
-    color: #777;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 30;
+    background: rgba(17, 17, 17, 0.78);
+    border: 1px solid rgba(42, 42, 42, 0.9);
+    color: #888;
     padding: 7px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    transition: all 0.2s;
+    font-family: 'SF Mono', monospace;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
   .home-btn:hover {
-    border-color: #444;
-    color: #ddd;
-  }
-  .next-btn {
-    background: #111;
-    border: 1px solid #2a2a2a;
-    color: #777;
-    padding: 7px 14px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .next-btn:hover {
-    border-color: #444;
-    color: #ddd;
+    border-color: rgba(68, 68, 68, 0.95);
+    color: #e8e8e8;
+    background: rgba(26, 26, 26, 0.9);
   }
 
   #color-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 14px;
-    margin-top: 10px;
+    gap: 4px 12px;
+    margin-top: 6px;
     max-width: 980px;
   }
 
   .legend-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 5px;
+    font-size: 10px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #666;
   }
 
   .legend-swatch {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .sort-label {
-    font-size: 12px;
+    font-size: 10px;
     color: #555;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -143,9 +143,9 @@
     background: #1a1a1a;
     border: 1px solid #2a2a2a;
     color: #888;
-    padding: 6px 14px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
@@ -159,12 +159,174 @@
     color: #e8e8e8;
   }
 
-  #circles-grid {
-    display: grid;
+  /* Fills remaining viewport height; inner grid expands and scales to fit. */
+  .circles-grid-clip {
     flex: 1;
-    padding: 8px 0;
-    align-content: stretch;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
   }
+
+  #circles-grid {
+    --card-w: 220px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    /* Flex (not grid) so each row's cards spread evenly across the width —
+       including the final partial row. align-content: space-evenly does the
+       same vertically, so the grid always fills the visible clip. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+    padding: 4px 8px;
+    transform-origin: top left;
+  }
+
+  /* ─── NEW STAR CARD STYLES ─── */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .control {
+    border-radius: 999px;
+    border: 1px solid rgba(243, 237, 232, 0.12);
+    background: rgba(39, 31, 34, 0.88);
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: #e8e8e8;
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, sans-serif;
+    cursor: pointer;
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  }
+  .control:hover {
+    transform: translateY(-1px);
+    border-color: rgba(147, 233, 222, 0.28);
+    background: rgba(147, 233, 222, 0.14);
+  }
+  .control.is-active {
+    background: linear-gradient(180deg, rgba(255, 70, 50, 0.34), rgba(240, 55, 165, 0.24));
+    border-color: rgba(240, 55, 165, 0.42);
+    color: #fff0f7;
+  }
+
+  #circles-grid .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    will-change: transform;
+    transform-origin: center center;
+    width: var(--card-w);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  #circles-grid svg {
+    width: 100%;
+    max-width: var(--card-w);
+    height: auto;
+    overflow: visible;
+  }
+  /* Zero-height flex line-break used by forced layouts to fix row sizes. */
+  .flex-row-break {
+    flex: 1 0 100%;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+  .sm-viz-wrap {
+    display: grid;
+    place-items: center;
+    position: relative;
+    transition: opacity 180ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center;
+    width: 100%;
+  }
+  #circles-grid:hover .card .sm-viz-wrap,
+  #circles-grid:focus-within .card .sm-viz-wrap {
+    opacity: 0.46;
+    transform: scale(0.94);
+  }
+  #circles-grid:hover .card:hover .sm-viz-wrap,
+  #circles-grid:focus-within .card:focus-within .sm-viz-wrap {
+    opacity: 1;
+    transform: scale(1.1);
+    z-index: 3;
+    position: relative;
+  }
+  .sm-star-outline {
+    fill: none;
+    stroke: var(--stroke, rgba(243, 237, 232, 0.76));
+    stroke-width: 0.5pt;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.24));
+    transition: stroke-width 140ms ease;
+  }
+  .sm-viz-wrap:hover .sm-star-outline {
+    stroke-width: 1.35pt;
+  }
+  .sm-title {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.05;
+    margin: 12px 0 0;
+    max-width: 14ch;
+    font-weight: 600;
+    color: #f0f0f0;
+  }
+  .sm-artist {
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.82rem;
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, sans-serif;
+  }
+  .trend-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    margin-top: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--trend-border, rgba(243, 237, 232, 0.1));
+    background: var(--trend-bg, rgba(243, 237, 232, 0.04));
+    color: var(--trend-ink, #888);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .trend-badge[data-trend="long"] {
+    --trend-bg: rgba(147, 233, 222, 0.1);
+    --trend-border: rgba(147, 233, 222, 0.36);
+    --trend-ink: #b9fff7;
+  }
+  .trend-badge[data-trend="one-hit"] {
+    --trend-bg: rgba(255, 70, 50, 0.12);
+    --trend-border: rgba(255, 70, 50, 0.34);
+    --trend-ink: #ffc2ba;
+  }
+
+  /* In the final "All songs" view we drop the trend pill below each star
+     and instead color the song title by trend class. */
+  #small-multiples[data-view="all"] .trend-badge { display: none; }
+  #small-multiples[data-view="all"] .card[data-trend="long-lasting"] .sm-title { color: #b9fff7; }
+  #small-multiples[data-view="all"] .card[data-trend="one-hit"]      .sm-title { color: #ffc2ba; }
+
+  /* The "scroll to compare both trends" hint is only useful during the
+     guided flow; once the user reaches the all-songs view it's gone. */
+  #small-multiples[data-view="all"] #grid-scroll-hint { display: none; }
 
   /* ─── OTHER-TREND PROMPT ─── */
   #other-trend-prompt {
@@ -187,6 +349,7 @@
   }
 
   .otp-card {
+    position: relative;
     background: #171717;
     border: 1px solid #2a2a2a;
     border-radius: 14px;
@@ -199,6 +362,31 @@
     gap: 14px;
     text-align: center;
     box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  }
+
+  .otp-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .otp-close:hover {
+    color: #e8e8e8;
+    background: rgba(255,255,255,0.06);
   }
 
   .otp-kicker {
@@ -276,12 +464,37 @@
 
   .compare-inner {
     flex: 1;
+    position: relative;
+    /* Tall scroll surface so the sticky stage can stay pinned through the
+       reveal phases: dark → headline → diamonds → notation → button. */
+    min-height: 360vh;
+  }
+
+  .compare-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 52px 48px 36px;
     gap: 24px;
-    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .compare-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .compare-text.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .compare-kicker {
@@ -311,11 +524,24 @@
     color: #3a3a3a;
     font-family: 'SF Mono', monospace;
     padding-top: 12px;
+    transition: color 0.3s ease;
   }
+
+  .compare-back-hint .hint-back { display: none; }
+  .compare-back-hint.is-revealed .hint-start { display: none; }
+  .compare-back-hint.is-revealed .hint-back  { display: inline; }
 
   .compare-inner .tut-cloud-stage {
     flex: 1;
     min-height: 0;
+    opacity: 0;
+    transform: translateY(48px);
+    transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .compare-inner .tut-cloud-stage.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .compare-inner .tut-cloud-col {
@@ -324,7 +550,53 @@
 
   .compare-inner .tut-cloud-list {
     flex: 1;
-    min-height: 320px;
+    min-height: 220px;
+  }
+
+  .compare-notation {
+    max-width: 620px;
+    text-align: center;
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #9a9a9a;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .compare-notation.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .explore-all-btn {
+    background: linear-gradient(180deg, rgba(255, 70, 50, 0.34), rgba(240, 55, 165, 0.24));
+    border: 1px solid rgba(240, 55, 165, 0.42);
+    color: #fff0f7;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(24px);
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .explore-all-btn.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .explore-all-btn.is-revealed:hover {
+    background: linear-gradient(180deg, rgba(255, 70, 50, 0.5), rgba(240, 55, 165, 0.38));
+    border-color: rgba(240, 55, 165, 0.62);
   }
 
   .song-circle-wrap {
@@ -467,6 +739,7 @@
 
   .sm-axis-label {
     font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     fill: rgba(243,237,232,0.55);
@@ -990,7 +1263,10 @@
   }
 
   #tut-outro-section {
-    height: 280vh;
+    /* Single-viewport section: user reads the headline and clicks "Dive In"
+       to leave the tutorial. No extra scroll room (was 280vh) so there is no
+       auto-dismiss-on-scroll-past behavior. */
+    height: 100vh;
     min-height: unset;
     scroll-snap-align: start;
   }
@@ -1012,6 +1288,26 @@
     padding: 60px 48px;
     gap: 0;
     will-change: transform, opacity;
+  }
+
+  .tut-dive-in-btn {
+    margin-top: 28px;
+    background: linear-gradient(180deg, rgba(255, 70, 50, 0.34), rgba(240, 55, 165, 0.24));
+    border: 1px solid rgba(240, 55, 165, 0.42);
+    color: #fff0f7;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  }
+  .tut-dive-in-btn:hover {
+    background: linear-gradient(180deg, rgba(255, 70, 50, 0.5), rgba(240, 55, 165, 0.38));
+    border-color: rgba(240, 55, 165, 0.62);
+    transform: translateY(-1px);
   }
 
   #tut-interlude-section {
@@ -1305,6 +1601,11 @@
 
   .tut-demo-tooltip.tut-clip-visible { opacity: 1; }
 
+  /* Star section: keep scroll callout behind axis hover popups (see .tut-star-outer) */
+  #tut-star-tip-1.tut-demo-tooltip {
+    z-index: 0;
+  }
+
   /* ─── TUTORIAL STAR SECTION ─── */
   .tut-star-section {
     position: relative;
@@ -1352,8 +1653,10 @@
   /* Enlarged container so tooltips at all four sides have room */
   .tut-star-outer {
     position: relative;
+    z-index: 2;
     width: 700px;
     height: 460px;
+    isolation: isolate;
   }
 
   /* SVG absolutely centered inside the 700×460 outer */
@@ -1379,6 +1682,11 @@
   .tut-star-tooltip.tut-tt-visible {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* Hovered axis sits above siblings so its description popup isn't covered */
+  .tut-star-tooltip.tut-tt-visible:hover {
+    z-index: 20;
   }
 
   /* All four positions use calc(50% + 170px) from the 700×460 outer center */
@@ -1475,7 +1783,7 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease;
-    z-index: 10;
+    z-index: 30;
   }
 
   .tut-tt-happy .tut-tt-hover-popup {
@@ -1497,6 +1805,7 @@
     position: absolute;
     bottom: 32px;
     left: 50%;
+    z-index: 1;
     font-size: 12px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -1506,6 +1815,29 @@
     text-align: center;
     transition: opacity 0.4s ease;
     animation: tut-bounce-centered 2.2s ease-in-out infinite;
+  }
+
+  /* Small data attribution in the star-section corner. */
+  .tut-star-attribution {
+    position: absolute;
+    bottom: 18px;
+    left: 22px;
+    z-index: 1;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    font-family: 'SF Mono', monospace;
+    color: #444;
+  }
+  .tut-star-attribution a {
+    color: #777;
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(243, 237, 232, 0.18);
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tut-star-attribution a:hover {
+    color: #cdfe34;
+    border-bottom-color: #cdfe34;
   }
 
 </style>
@@ -1604,8 +1936,14 @@
       <div class="tut-star-scroll-cue" id="tut-star-scroll-cue">↓ Keep scrolling</div>
 
       <!-- Scroll-driven tooltip for star section -->
-      <div class="tut-demo-tooltip" id="tut-star-tip-1" style="position:absolute; bottom:72px; left:50%; transform:translateX(-50%); z-index:10;">
+      <div class="tut-demo-tooltip" id="tut-star-tip-1">
         These characteristics form the points of our fingerprint.
+      </div>
+
+      <!-- Data attribution: the four axis characteristics come from Tunebat -->
+      <div class="tut-star-attribution">
+        Audio characteristics from
+        <a href="https://tunebat.com/" target="_blank" rel="noopener noreferrer">tunebat.com</a>
       </div>
 
     </div>
@@ -1617,10 +1955,7 @@
       <div class="tut-outro-content">
         <div class="tut-kicker" id="tut-outro-kicker"></div>
         <h2 class="tut-headline" id="tut-outro-headline">Now, let's explore the entire trend.</h2>
-        <div class="tut-scroll-hint" style="margin-top:28px">
-          <span>Scroll to dive in</span>
-          <span style="font-size:15px;letter-spacing:0">↓</span>
-        </div>
+        <button type="button" class="tut-dive-in-btn" id="tut-dive-in-btn">Dive In →</button>
       </div>
     </div>
   </div>
@@ -1633,30 +1968,27 @@
     <div class="view-heading" id="view-heading">TREND EXPLORER</div>
     <div class="view-subtitle" id="view-subtitle"></div>
     <div class="view-controls">
-      <div class="view-filter-bar">
+      <div class="view-filter-bar" id="view-filter-views">
         <span class="sort-label">View</span>
         <button class="sort-btn" id="view-all">All Songs</button>
         <button class="sort-btn" id="view-one-hit">One Hit Wonders</button>
         <button class="sort-btn" id="view-long-lasting">Long Lasting Trends</button>
       </div>
-      <div class="view-filter-bar">
-        <a class="home-btn" href="opening_view.html">← Home</a>
-        <a class="next-btn" href="tiktok-audio-stars.html">Next →</a>
-      </div>
     </div>
+    <a class="home-btn" href="opening_view.html">← Return to calendar</a>
     <div class="sort-bar">
       <span class="sort-label">Sort by</span>
-      <button class="sort-btn active" id="sort-rank">Rank</button>
-      <button class="sort-btn" id="sort-clips">Clip Density</button>
-      <button class="sort-btn" id="sort-genre">Genre</button>
-      <button class="sort-btn" id="sort-category">Top Category</button>
+      <div class="controls" id="sm-controls"></div>
     </div>
     <div id="color-legend"></div>
   </div>
-  <div id="circles-grid"></div>
+  <div id="circles-grid-clip" class="circles-grid-clip">
+    <div id="circles-grid"></div>
+  </div>
 
   <div id="other-trend-prompt">
     <div class="otp-card">
+      <button class="otp-close" id="otp-close-btn" aria-label="Close and return to trend explore">×</button>
       <div class="otp-kicker">Before you continue</div>
       <p class="otp-text" id="otp-text">—</p>
       <button class="otp-btn" id="otp-switch-btn">—</button>
@@ -1673,19 +2005,28 @@
 <!-- COMPARISON SECTION -->
 <div id="compare-section">
   <div class="compare-inner">
-    <div class="compare-kicker">The Two Trends</div>
-    <h2 class="compare-headline">Now, let's compare the two trend types side by side.</h2>
-    <div class="tut-cloud-stage">
-      <div class="tut-cloud-col" data-trend="one-hit">
-        <div class="tut-cloud-header" style="color:#f037a5">One Hit Wonders</div>
-        <div class="tut-cloud-list" id="tut-cloud-one-hit"></div>
+    <div class="compare-stage">
+      <div class="compare-text">
+        <div class="compare-kicker">The Two Trends</div>
+        <h2 class="compare-headline">Now, let's compare the two trend types side by side.</h2>
       </div>
-      <div class="tut-cloud-col" data-trend="long">
-        <div class="tut-cloud-header" style="color:#93e9de">Long Lasting Trends</div>
-        <div class="tut-cloud-list" id="tut-cloud-long"></div>
+      <div class="tut-cloud-stage">
+        <div class="tut-cloud-col" data-trend="one-hit">
+          <div class="tut-cloud-header" style="color:#f037a5">One Hit Wonders</div>
+          <div class="tut-cloud-list" id="tut-cloud-one-hit"></div>
+        </div>
+        <div class="tut-cloud-col" data-trend="long">
+          <div class="tut-cloud-header" style="color:#93e9de">Long Lasting Trends</div>
+          <div class="tut-cloud-list" id="tut-cloud-long"></div>
+        </div>
+      </div>
+      <p class="compare-notation">Looking at the two trends side by side, there isn't a clear reason why specific songs go viral. Or maybe there isn't something we're seeing… try exploring on your own!</p>
+      <button class="explore-all-btn" id="explore-all-btn">Explore all songs →</button>
+      <div class="compare-back-hint">
+        <span class="hint-start">↓ Keep scrolling</span>
+        <span class="hint-back">↑ Scroll up to return</span>
       </div>
     </div>
-    <div class="compare-back-hint">↑ Scroll up to return</div>
   </div>
 </div>
 
@@ -1909,9 +2250,7 @@ const VIDEO_CATEGORY_COLOR_MAP = SONGS.reduce((acc, song) => {
 }, {});
 
 // ─── SMALL MULTIPLES ────────────────────────────────────────────────────────
-let currentSort = 'rank';
 let currentView = 'all';
-let displayOrder = [...SONGS];
 
 function songsForCurrentView() {
   if (currentView === 'one-hit') return SONGS.filter(s => s.trendClass === 'one-hit');
@@ -1950,246 +2289,348 @@ function updateViewButtons() {
 
 function applyView(view) {
   currentView = view;
+  const panel = document.getElementById('small-multiples');
+  if (panel) panel.dataset.view = view;
   updateViewHeader();
   updateViewButtons();
-  sortSongs(currentSort);
+  render(currentSortMode);
 }
 
-function sortSongs(by) {
-  currentSort = by;
-  const base = songsForCurrentView();
-  if (by === 'rank') displayOrder = [...base].sort((a, b) => a.rank - b.rank);
-  else if (by === 'clips') displayOrder = [...base].sort((a, b) => b.clips.length - a.clips.length);
-  else if (by === 'genre') displayOrder = [...base].sort((a, b) => a.genre.localeCompare(b.genre));
-  else if (by === 'category') {
-    displayOrder = [...base].sort((a, b) =>
-      dominantCategory(a).localeCompare(dominantCategory(b)) || a.rank - b.rank
-    );
+// ─── SMALL MULTIPLES: RAY-CAST GEOMETRY HELPERS ────────────────────────────
+function smCrossProduct(ax, ay, bx, by) { return ax * by - ay * bx; }
+
+function smPointInPolygon([px, py], polygon) {
+  let inside = false;
+  for (let i = 0, prev = polygon.length - 1; i < polygon.length; prev = i, i++) {
+    const [x1, y1] = polygon[i], [x2, y2] = polygon[prev];
+    if ((y1 > py) !== (y2 > py)) {
+      const xAtY = ((x2 - x1) * (py - y1)) / ((y2 - y1) || 1) + x1;
+      if (px < xAtY) inside = !inside;
+    }
   }
-  renderGrid();
+  return inside;
 }
 
-function getGridLayoutForView() {
-  if (currentView === 'one-hit')     return { cols: 3, rows: 2, colGap: 24, rowGap: 48 };
-  if (currentView === 'long-lasting') return { cols: 5, rows: 3, colGap: 16, rowGap: 44 };
-  return { cols: 5, rows: 4, colGap: 14, rowGap: 40 };
+function smDistToSegment(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  const len2 = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
 }
 
-function renderGrid() {
-  const grid = document.getElementById('circles-grid');
-  grid.innerHTML = '';
-  const layoutCfg = getGridLayoutForView();
-  grid.style.gridTemplateColumns = `repeat(${layoutCfg.cols}, minmax(0, 1fr))`;
-  grid.style.gridTemplateRows = `repeat(${layoutCfg.rows}, minmax(0, 1fr))`;
-  grid.style.columnGap = `${layoutCfg.colGap}px`;
-  grid.style.rowGap    = `${layoutCfg.rowGap}px`;
-  grid.dataset.view = currentView;
+function smDistToPolyEdge([px, py], polygon) {
+  return polygon.reduce((min, pt, i) => {
+    const next = polygon[(i + 1) % polygon.length];
+    return Math.min(min, smDistToSegment(px, py, pt[0], pt[1], next[0], next[1]));
+  }, Infinity);
+}
 
-  // Reserve height for metadata label below each star
-  const labelReserve = currentView === 'one-hit' ? 90 : 52;
-  const gridW = grid.clientWidth  || 900;
-  const gridH = grid.clientHeight || 600;
-  const cellW = (gridW - layoutCfg.colGap * (layoutCfg.cols - 1)) / layoutCfg.cols;
-  const cellH = (gridH - layoutCfg.rowGap * (layoutCfg.rows - 1)) / layoutCfg.rows;
-  const size = Math.max(70, Math.floor(Math.min(cellW, cellH - labelReserve) * 0.82));
-  const r = Math.floor(size * 0.42);
-  const titleFontSize = Math.max(10, Math.floor(size * 0.09));
-  const lineH = Math.max(11, Math.floor(size * 0.1));
-  const artistFontSize = Math.max(8, Math.floor(size * 0.07));
-  const rankFontSize = Math.max(8, Math.floor(size * 0.075));
+function smRayDistToPoly(polygon, angle) {
+  const dx = Math.cos(angle), dy = Math.sin(angle);
+  let nearest = Infinity;
+  polygon.forEach((pt, i) => {
+    const next = polygon[(i + 1) % polygon.length];
+    const sx = next[0] - pt[0], sy = next[1] - pt[1];
+    const denom = smCrossProduct(dx, dy, sx, sy);
+    if (Math.abs(denom) < 0.00001) return;
+    const t = smCrossProduct(pt[0], pt[1], sx, sy) / denom;
+    const u = smCrossProduct(pt[0], pt[1], dx, dy) / denom;
+    if (t > 0 && u >= 0 && u <= 1) nearest = Math.min(nearest, t);
+  });
+  return Number.isFinite(nearest) ? nearest : 0;
+}
 
-  displayOrder.forEach((song) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'song-circle-wrap';
-    wrap.dataset.rank = song.rank;
+const SM_CAT_ANGLES = [-90, -18, 54, 126, -162, -54, 18, 90, 162, -126];
+const SM_CAT_FRACTIONS = [0.62, 0.54, 0.46, 0.38, 0.3, 0.24, 0.18];
 
-    const cx = size / 2, cy = size / 2;
-
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', size);
-    svg.setAttribute('height', size);
-    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
-
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.className.baseVal = 'song-circle';
-
-    // Main circle
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
-    circle.className.baseVal = 'circle-bg';
-    g.appendChild(circle);
-
-    // Build star points for clip path (and later outline)
-    const songMetricsForClip = TUT_SONG_METRICS[song.name];
-    const clipPathId = `sm-clip-${song.rank}`;
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    clipPath.setAttribute('id', clipPathId);
-
-    if (songMetricsForClip) {
-      const starClipPts = starPointsScaled(songMetricsForClip, r);
-      const starClipStr = starClipPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
-      const clipPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-      clipPoly.setAttribute('points', starClipStr);
-      clipPath.appendChild(clipPoly);
-    } else {
-      // Fallback to circle clip if no metrics
-      const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      clipCircle.setAttribute('cx', cx);
-      clipCircle.setAttribute('cy', cy);
-      clipCircle.setAttribute('r', r - 0.5);
-      clipPath.appendChild(clipCircle);
+function smCatCircleMarkup(geo, videoCats, desiredR = 18, blurPad = 5) {
+  const polygon = geo.points;
+  return SM_CAT_ANGLES.map((deg, i) => {
+    const angle = (deg * Math.PI) / 180;
+    const dx = Math.cos(angle), dy = Math.sin(angle);
+    const boundary = smRayDistToPoly(polygon, angle);
+    let sel = null;
+    for (const frac of SM_CAT_FRACTIONS) {
+      const pt = [dx * boundary * frac, dy * boundary * frac];
+      if (!smPointInPolygon(pt, polygon)) continue;
+      const safe = smDistToPolyEdge(pt, polygon);
+      if (safe >= desiredR + blurPad) { sel = { pt, safe }; break; }
+      if (!sel || safe > sel.safe) sel = { pt, safe };
     }
+    sel ||= { pt: [0, 0], safe: smDistToPolyEdge([0, 0], polygon) };
+    const r = Math.max(3, Math.min(desiredR, sel.safe - blurPad));
+    const cat = videoCats[i] || '';
+    return `<circle cx="${sel.pt[0].toFixed(1)}" cy="${sel.pt[1].toFixed(1)}" r="${r.toFixed(1)}" fill="${catColor(cat)}" opacity="0.46"></circle>`;
+  }).join('');
+}
 
-    defs.appendChild(clipPath);
-    svg.appendChild(defs);
+function smOctagonStr(outerR, innerR) {
+  const d = innerR * 0.74;
+  return [[0,-outerR],[d,-d],[outerR,0],[d,d],[0,outerR],[-d,d],[-outerR,0],[-d,-d]]
+    .map(([x,y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
 
-    // Remove the dark circle bg — star shape is the new boundary
-    g.removeChild(circle);
+// ─── SMALL MULTIPLES: RENDER ENGINE ─────────────────────────────────────────
+let currentSortMode = 'original';
 
-    const fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    fillGroup.setAttribute('clip-path', `url(#${clipPathId})`);
-    fillGroup.setAttribute('opacity', '0.85');
+const SM_CONTROLS = [
+  { key: 'original',     label: 'TikTok Rank' },
+  { key: 'longestTrend', label: 'Longest Trend' },
+  { key: 'bpm',          label: 'Highest BPM' },
+  { key: 'energy',       label: 'Most Energy' },
+  { key: 'danceability', label: 'Most Danceable' },
+  { key: 'happiness',    label: 'Happiest' },
+];
 
-    const ringClips = (song.clips || []).slice(0, 10).map(c => ({ color: catColor(c.category) }));
-    fillGroup.appendChild(buildCategoryRingGroup(ringClips, cx, cy, r));
-
-    g.appendChild(fillGroup);
-
-
-    // Guide octagon, axis lines, core dot, labels + star outline
-    if (songMetricsForClip) {
-      const ns = 'http://www.w3.org/2000/svg';
-      const labelFs = Math.max(7, Math.round(r * 0.11));
-      const axisLen = r * 1.04;
-      const outerGuideR = r * 1.0;
-      const innerGuideR = r * 0.674;
-
-      // Axis cross-hairs
-      const axisV = document.createElementNS(ns, 'line');
-      axisV.setAttribute('x1', cx); axisV.setAttribute('y1', cy - axisLen);
-      axisV.setAttribute('x2', cx); axisV.setAttribute('y2', cy + axisLen);
-      axisV.setAttribute('class', 'sm-axis');
-      g.appendChild(axisV);
-
-      const axisH = document.createElementNS(ns, 'line');
-      axisH.setAttribute('x1', cx - axisLen); axisH.setAttribute('y1', cy);
-      axisH.setAttribute('x2', cx + axisLen); axisH.setAttribute('y2', cy);
-      axisH.setAttribute('class', 'sm-axis');
-      g.appendChild(axisH);
-
-      // Outer guide octagon
-      const outerGuide = document.createElementNS(ns, 'polygon');
-      outerGuide.setAttribute('points', smGuideStr(outerGuideR, r * 0.5, cx, cy));
-      outerGuide.setAttribute('class', 'sm-guide');
-      g.appendChild(outerGuide);
-
-      // Inner guide octagon
-      const innerGuide = document.createElementNS(ns, 'polygon');
-      innerGuide.setAttribute('points', smGuideStr(innerGuideR, r * 0.326, cx, cy));
-      innerGuide.setAttribute('class', 'sm-guide');
-      g.appendChild(innerGuide);
-
-      // Star outline
-      const starPts = starPointsScaled(songMetricsForClip, r);
-      const pStr = starPts.map(([x, y]) => `${(cx + x).toFixed(2)},${(cy + y).toFixed(2)}`).join(' ');
-      const starPoly = document.createElementNS(ns, 'polygon');
-      starPoly.setAttribute('points', pStr);
-      starPoly.setAttribute('fill', 'none');
-      starPoly.setAttribute('stroke', 'rgba(243,237,232,0.72)');
-      starPoly.setAttribute('stroke-width', '1.2');
-      starPoly.setAttribute('stroke-linejoin', 'round');
-      g.appendChild(starPoly);
-
-      // Center core dot
-      const core = document.createElementNS(ns, 'circle');
-      core.setAttribute('cx', cx); core.setAttribute('cy', cy);
-      core.setAttribute('r', Math.max(3, r * 0.07));
-      core.setAttribute('class', 'sm-core');
-      g.appendChild(core);
-
-      // Axis labels
-      const labelOffset = r * 1.22;
-      const labelsData = [
-        { text: `BPM ${songMetricsForClip.bpm}`,          x: cx,              y: cy - labelOffset, anchor: 'middle' },
-        { text: `ENG ${songMetricsForClip.energy}`,        x: cx + labelOffset, y: cy + labelFs * 0.35, anchor: 'start'  },
-        { text: `DNC ${songMetricsForClip.danceability}`,  x: cx,              y: cy + labelOffset + labelFs, anchor: 'middle' },
-        { text: `HAP ${songMetricsForClip.happiness}`,     x: cx - labelOffset, y: cy + labelFs * 0.35, anchor: 'end'    },
-      ];
-      labelsData.forEach(({ text, x, y, anchor }) => {
-        const lbl = document.createElementNS(ns, 'text');
-        lbl.setAttribute('x', x.toFixed(1));
-        lbl.setAttribute('y', y.toFixed(1));
-        lbl.setAttribute('font-size', labelFs);
-        lbl.setAttribute('text-anchor', anchor);
-        lbl.setAttribute('class', 'sm-axis-label');
-        lbl.textContent = text;
-        g.appendChild(lbl);
-      });
-    }
-
-    svg.appendChild(g);
-    wrap.appendChild(svg);
-
-    const label = document.createElement('div');
-    label.className = 'song-card-label';
-
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'song-card-title';
-    titleDiv.textContent = song.name;
-
-    const artistDiv = document.createElement('div');
-    artistDiv.className = 'song-card-artist';
-    const shortArtist = song.artist.length > 18 ? song.artist.substring(0, 17) + '…' : song.artist;
-    artistDiv.textContent = shortArtist;
-
-    // Top category by clip count
-    const catCounts = {};
-    (song.clips || []).forEach(c => { catCounts[c.category] = (catCounts[c.category] || 0) + 1; });
-    const topCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
-    const genreDiv = document.createElement('div');
-    genreDiv.className = 'song-card-genre';
-    genreDiv.innerHTML = `Top Genre: <span>${topCat ? topCat[0] : '—'}</span>`;
-
-    label.appendChild(titleDiv);
-    label.appendChild(artistDiv);
-    label.appendChild(genreDiv);
-    wrap.appendChild(label);
-
-    grid.appendChild(wrap);
-
-    wrap.addEventListener('click', () => zoomIntoSong(song, wrap));
+function renderSmControls(activeKey) {
+  const el = document.getElementById('sm-controls');
+  if (!el) return;
+  el.innerHTML = SM_CONTROLS.map(c =>
+    `<button class="control${c.key === activeKey ? ' is-active' : ''}" type="button" data-sm-mode="${c.key}">${c.label}</button>`
+  ).join('');
+  el.querySelectorAll('[data-sm-mode]').forEach(btn => {
+    btn.addEventListener('click', () => render(btn.dataset.smMode));
   });
 }
 
-// Sort buttons
-document.getElementById('sort-rank').addEventListener('click', function() {
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  this.classList.add('active');
-  sortSongs('rank');
-});
-document.getElementById('sort-clips').addEventListener('click', function() {
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  this.classList.add('active');
-  sortSongs('clips');
-});
-document.getElementById('sort-genre').addEventListener('click', function() {
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  this.classList.add('active');
-  sortSongs('genre');
-});
-document.getElementById('sort-category').addEventListener('click', function() {
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  this.classList.add('active');
-  sortSongs('category');
-});
+function smSortedData(mode) {
+  const base = songsForCurrentView();
+  if (mode === 'original') return [...base].sort((a, b) => a.rank - b.rank);
+  if (mode === 'longestTrend') {
+    return [...base].sort((a, b) => {
+      if (a.trendClass !== b.trendClass) {
+        if (a.trendClass === 'long-lasting') return -1;
+        if (b.trendClass === 'long-lasting') return 1;
+      }
+      return b.clips.length - a.clips.length || a.rank - b.rank;
+    });
+  }
+  const metricKey = { bpm: 'bpm', energy: 'energy', danceability: 'danceability', happiness: 'happiness' }[mode];
+  if (metricKey) {
+    return [...base].sort((a, b) => {
+      const mA = TUT_SONG_METRICS[a.name], mB = TUT_SONG_METRICS[b.name];
+      if (!mA && !mB) return 0;
+      if (!mA) return 1;
+      if (!mB) return -1;
+      return (mB[metricKey] || 0) - (mA[metricKey] || 0) || a.rank - b.rank;
+    });
+  }
+  return [...base].sort((a, b) => a.rank - b.rank);
+}
+
+function captureSmPositions() {
+  const grid = document.getElementById('circles-grid');
+  return new Map([...grid.querySelectorAll('.card[data-card-key]')].map(card => [
+    card.dataset.cardKey, card.getBoundingClientRect()
+  ]));
+}
+
+function animateSmReorder(prev) {
+  if (!prev.size) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const grid = document.getElementById('circles-grid');
+  grid.querySelectorAll('.card[data-card-key]').forEach((card, i) => {
+    const first = prev.get(card.dataset.cardKey);
+    if (!first) return;
+    const last = card.getBoundingClientRect();
+    const dx = first.left - last.left, dy = first.top - last.top;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    card.animate(
+      [
+        { transform: `translate(${dx}px, ${dy}px) scale(0.985)`, opacity: 0.92 },
+        { transform: 'translate(0,0) scale(1)', opacity: 1 }
+      ],
+      { duration: 640, delay: Math.min(i * 10, 90), easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'both' }
+    );
+  });
+}
+
+function smTrendBadge(song) {
+  if (song.trendClass === 'one-hit')     return `<span class="trend-badge" data-trend="one-hit">One-Hit Wonder</span>`;
+  if (song.trendClass === 'long-lasting') return `<span class="trend-badge" data-trend="long">Long Lasting</span>`;
+  return '';
+}
+
+function render(mode) {
+  const prev = captureSmPositions();
+  currentSortMode = mode;
+  renderSmControls(mode);
+
+  const grid = document.getElementById('circles-grid');
+  const items = smSortedData(mode);
+
+  grid.innerHTML = items.map((song, index) => {
+    const metrics = TUT_SONG_METRICS[song.name] || { bpm: 120, energy: 60, danceability: 60, happiness: 60 };
+    const geo = tutStarGeometry(metrics);
+    const clipId = `sc-clip-${song.rank}`;
+    const pts = tutPtStr(geo.points);
+    const videoCats = (song.clips || []).map(c => c.category);
+    const circleMkp = smCatCircleMarkup(geo, videoCats);
+    const safeName = song.name.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `
+      <article class="card" data-card-key="${safeName}" data-rank="${song.rank}" data-trend="${song.trendClass}" style="--stroke:rgba(243,237,232,0.76)">
+        <div class="sm-viz-wrap" tabindex="0" role="button" aria-label="Open ${safeName}">
+          <svg viewBox="0 0 240 240" role="img" aria-label="${safeName} audio star">
+            <defs>
+              <clipPath id="${clipId}">
+                <polygon points="${pts}"></polygon>
+              </clipPath>
+            </defs>
+            <g transform="translate(120 120)">
+              <line class="sm-axis" x1="0" y1="-96" x2="0" y2="96"></line>
+              <line class="sm-axis" x1="-96" y1="0" x2="96" y2="0"></line>
+              <polygon class="sm-guide" points="${smOctagonStr(92, 46)}"></polygon>
+              <polygon class="sm-guide" points="${smOctagonStr(62, 30)}"></polygon>
+              <g clip-path="url(#${clipId})">
+                <polygon points="${pts}" fill="rgba(243,237,232,0.05)"></polygon>
+                <g style="filter:blur(6px)">${circleMkp}</g>
+              </g>
+              <polygon class="sm-star-outline" points="${pts}"></polygon>
+              <circle class="sm-core" cx="0" cy="0" r="6.4"></circle>
+              <text class="sm-axis-label" text-anchor="middle" x="0" y="-108">BPM ${metrics.bpm}</text>
+              <text class="sm-axis-label" text-anchor="start" x="102" y="-1"><tspan x="102" dy="0">ENG</tspan><tspan x="102" dy="12">${metrics.energy}</tspan></text>
+              <text class="sm-axis-label" text-anchor="middle" x="0" y="122">DNC ${metrics.danceability}</text>
+              <text class="sm-axis-label" text-anchor="end" x="-102" y="-1"><tspan x="-102" dy="0">HAP</tspan><tspan x="-102" dy="12">${metrics.happiness}</tspan></text>
+            </g>
+          </svg>
+        </div>
+        <h2 class="sm-title">${song.name}</h2>
+        <div class="sm-artist">${song.artist}</div>
+        ${smTrendBadge(song)}
+      </article>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach((card) => {
+    const rank = parseInt(card.dataset.rank, 10);
+    const song = SONGS.find(s => s.rank === rank);
+    if (!song) return;
+    card.querySelector('.sm-viz-wrap').addEventListener('click', () => zoomIntoSong(song, card));
+    card.querySelector('.sm-viz-wrap').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); zoomIntoSong(song, card); }
+    });
+  });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fitCirclesGridToViewport();
+      animateSmReorder(prev);
+    });
+  });
+}
+
+/** Per-view forced row layouts. Each entry is the cards-per-row sequence for
+ *  that view's full set of songs. If the entry's total matches the rendered
+ *  card count we apply it; otherwise we fall back to auto-packing. */
+const FORCED_LAYOUTS = {
+  'one-hit': [3, 3],
+  'all':     [7, 6, 7],
+};
+
+/** Fit every small-multiples star in the visible clip without scrolling and
+ *  without leaving empty space.
+ *
+ *  Two paths:
+ *  - Forced layout: flex line-break divs are inserted at the row boundaries
+ *    so each row has the exact number of cards we want. justify-content:
+ *    space-evenly distributes each row's cards across the full width
+ *    independently, so rows with fewer cards just have larger gaps.
+ *  - Auto layout: scan every plausible cards-per-row count and pick the cpr
+ *    that yields the largest scale satisfying both axes.
+ *
+ *  In both paths the grid is sized to exactly clipW × clipH (logical) so
+ *  align-content: space-evenly fills the screen vertically too. */
+function fitCirclesGridToViewport() {
+  const panel = document.getElementById('small-multiples');
+  const clip = document.getElementById('circles-grid-clip');
+  const grid = document.getElementById('circles-grid');
+  if (!panel || !clip || !grid) return;
+  if (panel.style.pointerEvents === 'none') return;
+
+  // Reset transforms, any prior flex-basis pinning, and remove old line breaks.
+  grid.style.transform = '';
+  grid.style.width = '';
+  grid.style.height = '';
+  grid.querySelectorAll('.flex-row-break').forEach(b => b.remove());
+  const cards = Array.from(grid.querySelectorAll('.card'));
+  for (const c of cards) {
+    c.style.flexBasis = '';
+    c.style.maxWidth = '';
+    c.style.minWidth = '';
+  }
+
+  const clipW = clip.clientWidth;
+  const clipH = clip.clientHeight;
+  if (clipW < 48 || clipH < 48) return;
+
+  const n = cards.length;
+  if (n === 0) return;
+
+  let cardW = 0, cardH = 0;
+  for (const c of cards) {
+    if (c.offsetWidth  > cardW) cardW = c.offsetWidth;
+    if (c.offsetHeight > cardH) cardH = c.offsetHeight;
+  }
+  if (cardW < 1 || cardH < 1) return;
+
+  const MAX_SCALE = 1.85;
+  const horzMargin = 1.06;
+  const vertMargin = 1.06;
+
+  const candidateLayout = FORCED_LAYOUTS[panel.dataset.view];
+  const layout = (candidateLayout && candidateLayout.reduce((a, b) => a + b, 0) === n)
+    ? candidateLayout
+    : null;
+
+  let scale;
+  if (layout) {
+    const maxCpr = Math.max(...layout);
+    const rows   = layout.length;
+    const sW = clipW / (maxCpr * cardW * horzMargin);
+    const sH = clipH / (rows   * cardH * vertMargin);
+    scale = Math.min(MAX_SCALE, sW, sH);
+  } else {
+    let best = { scale: 0, cpr: 1 };
+    const maxCpr = Math.min(n, 12);
+    for (let c = 1; c <= maxCpr; c++) {
+      const r = Math.ceil(n / c);
+      const sW = clipW / (c * cardW * horzMargin);
+      const sH = clipH / (r * cardH * vertMargin);
+      const s = Math.min(MAX_SCALE, sW, sH);
+      if (s > best.scale) best = { scale: s, cpr: c };
+    }
+    scale = best.scale;
+  }
+
+  if (!(scale > 0)) return;
+
+  // Insert flex line-break divs at the row boundaries to lock the layout.
+  if (layout) {
+    let position = 0;
+    for (let i = 0; i < layout.length - 1; i++) {
+      position += layout[i];
+      const cardAtPos = cards[position];
+      if (cardAtPos) {
+        const brk = document.createElement('div');
+        brk.className = 'flex-row-break';
+        grid.insertBefore(brk, cardAtPos);
+      }
+    }
+  }
+
+  grid.style.width  = `${clipW / scale}px`;
+  grid.style.height = `${clipH / scale}px`;
+  grid.style.transform = `scale(${scale})`;
+}
 
 document.getElementById('view-all').addEventListener('click', () => applyView('all'));
 document.getElementById('view-one-hit').addEventListener('click', () => applyView('one-hit'));
 document.getElementById('view-long-lasting').addEventListener('click', () => applyView('long-lasting'));
 window.addEventListener('resize', () => {
   if (document.getElementById('small-multiples').style.pointerEvents !== 'none') {
-    renderGrid();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => fitCirclesGridToViewport());
+    });
   }
 });
 
@@ -2272,7 +2713,7 @@ function zoomOut() {
   zoomOverlay.innerHTML = '';
 
   const targetWrap = lastSelectedRank != null
-    ? document.querySelector(`.song-circle-wrap[data-rank="${lastSelectedRank}"]`)
+    ? document.querySelector(`.card[data-rank="${lastSelectedRank}"]`)
     : null;
   const targetSvg = targetWrap ? targetWrap.querySelector('svg') : null;
 
@@ -2285,6 +2726,9 @@ function zoomOut() {
       smallMultiples.style.pointerEvents = 'all';
       smallMultiples.style.transition = '';
       isTransitioning = false;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => fitCirclesGridToViewport());
+      });
     }, 300);
     return;
   }
@@ -2325,6 +2769,9 @@ function zoomOut() {
     smallMultiples.style.pointerEvents = 'all';
     smallMultiples.style.transition = '';
     isTransitioning = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => fitCirclesGridToViewport());
+    });
   }, 700);
 }
 
@@ -3559,6 +4006,21 @@ function initTutorial(song, viewType) {
   document.getElementById('tut-song-name').textContent = song.name;
   document.getElementById('tut-song-artist').textContent = song.artist;
 
+  // Build the second scroll callout dynamically so it references the tutorial
+  // song picked for this trend (e.g. "Dame Un Grrr" for one-hit wonders) and
+  // its actual majority category.
+  const tip2 = document.getElementById('tut-demo-tip-2');
+  if (tip2 && song.clips?.length) {
+    const counts = {};
+    for (const c of song.clips) counts[c.category] = (counts[c.category] || 0) + 1;
+    let majority = '', maxCount = 0;
+    for (const [cat, n] of Object.entries(counts)) {
+      if (n > maxCount) { maxCount = n; majority = cat; }
+    }
+    const em = (text) => `<em style="color:#e8e8e8; font-style:normal;">${text}</em>`;
+    tip2.innerHTML = `For example, ${em(song.name)} has a variety of TikToks, though a majority of them are categorized as ${em(majority.toLowerCase())}.`;
+  }
+
   renderTutorialCircle(song);
   initTutorialVideoGrid(song);
   initTutorialStar(song);
@@ -3576,7 +4038,14 @@ function initTutorial(song, viewType) {
     setTimeout(() => overlay.classList.remove('tut-visible', 'tut-dismissing'), 520);
   };
 
-  // Scroll handler: drives section-2 reveals, section-3 star morph, and auto-dismiss
+  // The "Dive In" button is the explicit way to leave the tutorial — no more
+  // auto-dismiss-on-scroll-past.
+  const diveBtn = document.getElementById('tut-dive-in-btn');
+  if (diveBtn) {
+    diveBtn.onclick = () => tutDismiss();
+  }
+
+  // Scroll handler: drives section-2 reveals, section-3 star morph, and outro fade
   let ticking = false;
   overlay.addEventListener('scroll', () => {
     if (!ticking) {
@@ -3585,10 +4054,6 @@ function initTutorial(song, viewType) {
         updateTutorialStarScroll();
         updateTutorialInterludeScroll();
         updateTutorialOutroScroll();
-        // Auto-dismiss when user scrolls to the very bottom of the overlay
-        if (overlay.scrollTop + overlay.clientHeight >= overlay.scrollHeight - 8) {
-          tutDismiss();
-        }
         ticking = false;
       });
       ticking = true;
@@ -3613,20 +4078,32 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
   if (tutSong) initTutorial(tutSong, initialViewParam);
 }
 
+// If a user lands directly on the all-songs view, skip the guided flow entirely:
+// the View selector is visible and scrolling no longer triggers the prompt/compare.
+
 // ─── COMPARE SECTION ─────────────────────────────────────────────────────────
 let compareRendered = false;
 let compareVisible = false;
 let compareCooldown = false;
 let scrollAccum = 0;          // accumulated downward scroll in grid view
-let scrollUpAccum = 0;        // accumulated upward scroll in grid view (for re-opening tutorial)
 let promptShown = false;      // has the other-trend prompt been shown?
 let promptDismissed = false;  // has the user clicked through the prompt?
+// Once the user clicks "Explore all songs" (or lands on ?view=all), the guided
+// flow is over: the prompt and compare section no longer auto-trigger on scroll,
+// and the View selector buttons stay visible.
+let flowComplete = false;
+
+// If the URL already requested the all-songs view, treat the guided flow as
+// complete: reveal the View selector and skip the prompt/compare gating.
+if (initialViewParam === 'all') {
+  flowComplete = true;
+  document.getElementById('view-filter-views')?.classList.add('is-revealed');
+}
 
 // Each wheel event is capped so fast trackpad swipes don't dump huge deltas at once
 const TICK_CAP = 20;            // max px credited per wheel event
 const PROMPT_THRESHOLD  = 480;  // capped px before prompt appears
 const COMPARE_THRESHOLD = 300;  // capped px (after prompt dismissed) to reach compare
-const REOPEN_THRESHOLD  = 400;  // capped px upward to re-open tutorial
 
 function showCompareSection() {
   if (compareVisible || compareCooldown) return;
@@ -3638,15 +4115,73 @@ function showCompareSection() {
   compareCooldown = true;
   scrollAccum = 0;
   setTimeout(() => { compareCooldown = false; }, 600);
-  document.getElementById('compare-section').classList.add('visible');
+  const compareEl = document.getElementById('compare-section');
+  // Reset to the top so the staged reveal plays from the beginning each visit.
+  compareEl.scrollTop = 0;
+  compareEl.querySelector('.compare-text')?.classList.remove('is-revealed');
+  compareEl.querySelector('.tut-cloud-stage')?.classList.remove('is-revealed');
+  compareEl.querySelector('.compare-notation')?.classList.remove('is-revealed');
+  compareEl.querySelector('.explore-all-btn')?.classList.remove('is-revealed');
+  compareEl.querySelector('.compare-back-hint')?.classList.remove('is-revealed');
+  compareEl.classList.add('visible');
 }
+
+// Drive the staged reveal as the user scrolls inside the compare section.
+// Phase 1: dark screen (scrollTop ≈ 0)
+// Phase 2: "Now let's compare…" headline appears
+// Phase 3: hovering diamonds drift into view
+// Phase 4: closing notation fades in
+// Phase 5: "Explore all songs" button appears
+(function setupCompareScrollPhases() {
+  const compareEl = document.getElementById('compare-section');
+  if (!compareEl) return;
+  const textEl     = compareEl.querySelector('.compare-text');
+  const cloudsEl   = compareEl.querySelector('.tut-cloud-stage');
+  const notationEl = compareEl.querySelector('.compare-notation');
+  const buttonEl   = compareEl.querySelector('.explore-all-btn');
+  const hintEl     = compareEl.querySelector('.compare-back-hint');
+  if (!textEl || !cloudsEl) return;
+  let raf = false;
+  compareEl.addEventListener('scroll', () => {
+    if (raf) return;
+    raf = true;
+    requestAnimationFrame(() => {
+      const t = compareEl.scrollTop;
+      const h = window.innerHeight || 1;
+      const showText     = t > h * 0.30;
+      const showClouds   = t > h * 0.85;
+      const showNotation = t > h * 1.55;
+      const showButton   = t > h * 2.15;
+      textEl.classList.toggle('is-revealed',     showText);
+      cloudsEl.classList.toggle('is-revealed',   showClouds);
+      notationEl?.classList.toggle('is-revealed', showNotation);
+      buttonEl?.classList.toggle('is-revealed',   showButton);
+      hintEl?.classList.toggle('is-revealed',    showText);
+      raf = false;
+    });
+  }, { passive: true });
+})();
+
+// "Explore all songs" → finish the guided flow and switch to the All Songs view
+// with the view selector buttons revealed.
+(function () {
+  const btn = document.getElementById('explore-all-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    flowComplete = true;
+    document.getElementById('view-filter-views')?.classList.add('is-revealed');
+    applyView('all');
+    // Bypass the normal cooldown so the close happens immediately on click.
+    compareCooldown = false;
+    hideCompareSection();
+  });
+})();
 
 function hideCompareSection() {
   if (!compareVisible || compareCooldown) return;
   compareVisible = false;
   compareCooldown = true;
   scrollAccum = 0;
-  scrollUpAccum = 0;
   setTimeout(() => { compareCooldown = false; }, 600);
   document.getElementById('compare-section').classList.remove('visible');
 }
@@ -3662,6 +4197,18 @@ function hideCompareSection() {
     promptDismissed = true;
     scrollAccum = 0;
   });
+
+  // X button: dismiss prompt and stay in the current trend explore view.
+  // We reset promptShown so the user can be re-prompted if they scroll down
+  // again (since they haven't actually explored the other trend yet).
+  const closeBtn = document.getElementById('otp-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      document.getElementById('other-trend-prompt').classList.remove('visible');
+      promptShown = false;
+      scrollAccum = 0;
+    });
+  }
 })();
 
 function showOtherTrendPrompt() {
@@ -3702,7 +4249,7 @@ document.addEventListener('wheel', (e) => {
 
   // ── Scroll down in grid view ──
   if (e.deltaY > 0) {
-    scrollUpAccum = 0;
+    if (flowComplete) return; // user finished the guided flow; free exploration
     if (promptShown && !promptDismissed) return; // blocked until user clicks prompt
 
     scrollAccum += tick;
@@ -3719,25 +4266,11 @@ document.addEventListener('wheel', (e) => {
     return;
   }
 
-  // ── Scroll up in grid view → re-open tutorial (needs sustained upward scroll) ──
+  // Scroll-up in grid view used to re-open the tutorial; that caused a janky
+  // jump back to the dive-in screen. With the explicit "Dive In" button the
+  // tutorial is no longer re-entrant via scroll.
   if (e.deltaY < 0) {
     scrollAccum = 0;
-    if (!tutDismiss) return;
-
-    scrollUpAccum += tick;
-    if (scrollUpAccum < REOPEN_THRESHOLD) return;
-    scrollUpAccum = 0;
-
-    tutStarScrollActive = true;
-    overlay.style.opacity = '0';
-    overlay.classList.add('tut-visible');
-    overlay.scrollTop = overlay.scrollHeight;
-    void overlay.offsetHeight;
-    overlay.classList.add('tut-appearing');
-    setTimeout(() => {
-      overlay.classList.remove('tut-appearing');
-      overlay.style.opacity = '';
-    }, 650);
   }
 }, { passive: true });
 </script>

@@ -3876,9 +3876,9 @@
                   <polygon class="star-outline" points="${outlinePoints}"></polygon>
                   <circle class="core" cx="0" cy="0" r="6.4"></circle>
                   <text class="axis-label axis-label-bpm" text-anchor="middle" x="0" y="-108">BPM ${item.bpm}</text>
-                  <text class="axis-label axis-label-energy" text-anchor="start" x="102" y="4">ENG ${item.energy}</text>
+                  <text class="axis-label axis-label-energy" text-anchor="start" x="102" y="-1"><tspan x="102" dy="0">ENG</tspan><tspan x="102" dy="12">${item.energy}</tspan></text>
                   <text class="axis-label axis-label-dance" text-anchor="middle" x="0" y="122">DNC ${item.danceability}</text>
-                  <text class="axis-label axis-label-happy" text-anchor="end" x="-102" y="4">HAP ${item.happiness}</text>
+                  <text class="axis-label axis-label-happy" text-anchor="end" x="-102" y="-1"><tspan x="-102" dy="0">HAP</tspan><tspan x="-102" dy="12">${item.happiness}</tspan></text>
                 </g>
               </svg>
               <div class="tooltip" role="tooltip" aria-hidden="true">
