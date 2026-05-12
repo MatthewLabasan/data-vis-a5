@@ -152,6 +152,7 @@
     max-width: 980px;
   }
 
+
   .legend-item {
     display: inline-flex;
     align-items: center;
@@ -321,6 +322,59 @@
     font-weight: 600;
     color: #f0f0f0;
   }
+
+  /* Per-card "Click to open" cue. Hidden until the card is hovered/focused
+     so it doesn't clutter the grid, but always reachable via keyboard.
+     Anchored inside .sm-viz-wrap so it scales with the hovered star and
+     never gets clipped by the grid-clip's overflow:hidden. */
+  .sm-click-cue {
+    /* Color follows the card's trend class — long-lasting teal by default,
+       one-hit pink via the override below. */
+    --cue-ink: #93e9de;
+    --cue-border: rgba(147, 233, 222, 0.5);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% + 6px)) scale(0.92);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--cue-border);
+    background: rgba(13, 13, 13, 0.78);
+    color: var(--cue-ink);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 5;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  }
+  #circles-grid .card:hover .sm-click-cue,
+  #circles-grid .card:focus-within .sm-click-cue {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  #circles-grid .card[data-trend="one-hit"] .sm-click-cue {
+    --cue-ink: #f037a5;
+    --cue-border: rgba(240, 55, 165, 0.55);
+  }
+  #circles-grid .card[data-trend="long-lasting"] .sm-click-cue {
+    --cue-ink: #93e9de;
+    --cue-border: rgba(147, 233, 222, 0.5);
+  }
+  .sm-click-cue .cue-icon {
+    font-size: 11px;
+    line-height: 1;
+  }
   .sm-artist {
     margin-top: 5px;
     color: #666;
@@ -351,16 +405,16 @@
     --trend-ink: #b9fff7;
   }
   .trend-badge[data-trend="one-hit"] {
-    --trend-bg: rgba(255, 70, 50, 0.12);
-    --trend-border: rgba(255, 70, 50, 0.34);
-    --trend-ink: #ffc2ba;
+    --trend-bg: rgba(240, 55, 165, 0.12);
+    --trend-border: rgba(240, 55, 165, 0.38);
+    --trend-ink: #f037a5;
   }
 
   /* In the final "All songs" view we drop the trend pill below each star
      and instead color the song title by trend class. */
   #small-multiples[data-view="all"] .trend-badge { display: none; }
   #small-multiples[data-view="all"] .card[data-trend="long-lasting"] .sm-title { color: #b9fff7; }
-  #small-multiples[data-view="all"] .card[data-trend="one-hit"]      .sm-title { color: #ffc2ba; }
+  #small-multiples[data-view="all"] .card[data-trend="one-hit"]      .sm-title { color: #f037a5; }
 
   /* The "scroll to compare both trends" hint is only useful during the
      guided flow; once the user reaches the all-songs view it's gone. */
@@ -2578,6 +2632,7 @@ function render(mode) {
               <text class="sm-axis-label" text-anchor="end" x="-102" y="-1"><tspan x="-102" dy="0">HAP</tspan><tspan x="-102" dy="12">${metrics.happiness}</tspan></text>
             </g>
           </svg>
+          <div class="sm-click-cue" aria-hidden="true"><span class="cue-icon">↗</span>Click to open</div>
         </div>
         <h2 class="sm-title">${song.name}</h2>
         <div class="sm-artist">${song.artist}</div>
