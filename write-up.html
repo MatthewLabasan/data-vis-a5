@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Looped Write Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'TikTok Sans';
+    src: url('./fonts/TikTokSans-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TikTok Sans';
+    src: url('./fonts/TikTokSans-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TikTok Sans';
+    src: url('./fonts/TikTokSans-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TikTok Sans';
+    src: url('./fonts/TikTokSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+
+  :root {
+    --bg: #191414;
+    --surface: #221d1d;
+    --ink: #F3EDE8;
+    --muted: #BAB1B1;
+    --line: #3a3434;
+    --accent: #CDFE34;
+  }
+
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'TikTok Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  .page {
+    display: grid;
+    grid-template-columns: minmax(0, 860px) 220px;
+    gap: 42px;
+    align-items: start;
+    max-width: 1180px;
+    padding: 46px 48px 76px;
+  }
+
+  main {
+    width: 100%;
+    max-width: 860px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  section {
+    border-top: 1px solid var(--line);
+    padding: 34px 0 10px;
+    scroll-margin-top: 28px;
+  }
+
+  h2 {
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    line-height: 1.35;
+    margin: 0 0 18px;
+    text-transform: uppercase;
+  }
+
+  p {
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.72;
+    margin: 0 0 18px;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  figure {
+    margin: 34px 0 10px;
+  }
+
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+  }
+
+  figcaption {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+
+  .toc {
+    position: sticky;
+    top: 50vh;
+    transform: translateY(-50%);
+    max-height: 70vh;
+    overflow-y: auto;
+    border-left: 1px solid var(--line);
+    padding-left: 18px;
+    text-align: right;
+  }
+
+  .toc a {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+    margin: 0 0 10px;
+    text-decoration: none;
+  }
+
+  .toc a.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      display: block;
+      max-width: 100%;
+      padding: 30px 22px 54px;
+    }
+
+    .toc {
+      position: static;
+      transform: none;
+      max-height: none;
+      overflow: visible;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin: 24px 0 10px;
+      padding: 16px 0 6px;
+    }
+
+    p {
+      font-size: 15px;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .page {
+      max-width: 390px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <main>
+    <h1>A5.5 Write up</h1>
+
+    <section id="introduction">
+    <h2>Introduction</h2>
+    <p>TikTok has redefined music, turning full compositions into fleeting fifteen-second "moments." This raises the question: is there a predictable pattern to TikTok virality, or is it just random? <em>Looped: Inside the Audio Fingerprint of TikTok's Biggest Songs</em> addresses this by analyzing the top 20 TikTok tracks of 2025 across 200 videos. We aim to see if these viral hits share specific patterns, examining how audio and content are utilized to better understand modern digital success.</p>
+  </section>
+
+    <section id="related-work">
+    <h2>Related Work</h2>
+    <p>A few projects shaped how we thought about this. <em>Broadway Motifs</em> by The Pudding showed us that you can make musical structure feel emotional and visual rather than technical. <em>Beatles Analysis</em> gave us a model for comparing songs across a shared framework without losing what makes each one distinct. <em>Lyrical Fingerprint</em> was more of an artistic inspiration.</p>
+  </section>
+
+    <section id="methodology">
+    <h2>Methodology</h2>
+    <p>We started with the top 20 TikTok songs of 2025 from TikTok's trend rankings, collecting data from the top 10 videos for each - 200 TikToks total. For each video, we recorded view counts, likes, posting dates, clip timestamps, BPM, repetition ratios, genre, release year, and content category.</p>
+    <p>Yet, the manual process had limitations. Content categories were not mutually exclusive as a video could belong to multiple categories, and assignments were ultimately subjective judgments. Also, raw view counts are misleading when comparing videos posted years apart, since older videos have had more time to accumulate views. We initially considered engagement ratio (likes divided by views) as a normalized alternative, but found it confusing. We ultimately used raw view count as the primary measure of a video's reach.</p>
+    <p>Early analysis attempting to correlate virality with variables like BPM, clip placement, and repetition ratio did not produce strong findings. We shifted the project's focus to comparing two broader patterns of virality: one-hit wonders and long-lasting trends, emphasizing artistic design and exploration. This categorization created a more intuitive framework and avoided overly deterministic claims about virality.</p>
+  </section>
+
+    <section id="design">
+    <h2>Design</h2>
+    <p>The decision we made early on was that the project should not feel like a traditional dashboard. TikTok itself is fast and immersive; users often fall into endless scrolling without consciously analyzing what they are seeing. Because of this, we wanted the visualization to reveal information gradually through scrollytelling.</p>
+    <p>Users first land on a timeline that shows how songs spread over time, then move into more focused interactive views that compare one-hit wonders and longer-lasting trends. We intentionally used dark backgrounds and vibrant colors to create an interface that matches TikTok's aesthetics.</p>
+    <p>The second visualization allows users to better understand our "song fingerprints" through a tutorial-like walkthrough. In the latter half of the second visualization, users are able to see the TikTok videos alongside the source audio. As the full song plays, videos appear at their corresponding clip timestamps, letting users observe the content directly rather than relying solely on our categorical classifications. This design decision acknowledged the subjectivity of manual classification by exposing the raw material, and users could form their own interpretations of why a particular clip circulated. Each song is also represented by a radar chart encoding audio characteristics (from https://tunebat.com/) designed to communicate the "feeling" of songs.</p>
+    <p>Interaction encodings centered on hover states, filtering, and progressive exploration: users can isolate song groups, sort by content category, and toggle between virality types.</p>
+    <p>Throughout the design process, we experimented with more technically complex approaches such as waveform analysis, BPM timelines, and Spotify synchronization data. However, because many of these visualizations distracted from the central narrative or introduced unnecessary complexity, we had to remove most of them or combine them to make the whole visualization feel more cohesive.</p>
+  </section>
+
+    <figure>
+    <img src="images/initial-sketch.png" alt="Initial hand-drawn sketch of the waveform analysis concept.">
+    <figcaption>Our Initial Sketch</figcaption>
+  </figure>
+
+    <figure>
+    <img src="images/waveform-analysis.png" alt="Waveform analysis interface for APT.">
+    <figcaption>The Waveform Analysis</figcaption>
+  </figure>
+
+    <section id="implementation">
+    <h2>Implementation</h2>
+    <p>Our final project was built as a self-hosted website using D3.js for custom visualizations and interactions, rather than Observable, to support more customized techniques. Figma was used for prototyping and interface iteration. Data cleaning and organization were handled manually through spreadsheets and CSV processing. Performance issues were minimal due to the relatively small dataset size.</p>
+  </section>
+
+    <section id="discussion">
+    <h2>Discussion</h2>
+    <p>During the open table session, classmates strongly favored the interactive video playback feature and enjoyed watching the actual TikToks. We observed that people gravitated toward songs they already knew, especially <em>APT</em>, and found the radar chart encodings for attributes like danceability and energy intuitive. Users initially expected a clear "formula" for virality, but became more interested in comparing different trend types. Ultimately, the project became a fun exploration rather than a system proving a strict formula. In the final iteration, we combined the last two visualizations, merging views with similar data into a more fluid experience.</p>
+  </section>
+
+    <section id="future-work">
+    <h2>Future Work</h2>
+    <p>Future work includes expanding the project by analyzing a much larger historical dataset and incorporating additional platform metrics like creator follower counts and subscriber behavior. We are also interested in developing a more advanced scrollytelling experience and experimenting with automated audio analysis techniques (e.g., waveform or spectrogram processing). Expanding the project across platforms like Spotify or Instagram Reels could also reveal how different recommendation systems shape music consumption.</p>
+  </section>
+
+    <section id="references">
+    <h2>Acknowledgements or References</h2>
+    <p>Special thanks to all critics for feedback.</p>
+    <p>Data on each song's danceability, happiness, energy levels, and BPM was sourced from Tunebat.</p>
+  </section>
+
+  </main>
+
+  <aside class="toc" aria-label="Table of contents">
+    <a class="active" href="#introduction">Introduction</a>
+    <a href="#related-work">Related Work</a>
+    <a href="#methodology">Methodology</a>
+    <a href="#design">Design</a>
+    <a href="#implementation">Implementation</a>
+    <a href="#discussion">Discussion</a>
+    <a href="#future-work">Future Work</a>
+    <a href="#references">Acknowledgements or References</a>
+  </aside>
+</div>
+<script>
+  const tocLinks = Array.from(document.querySelectorAll('.toc a'));
+  const tocSections = tocLinks
+    .map((link) => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+
+  function updateActiveSection() {
+    const anchor = window.scrollY + window.innerHeight * 0.38;
+    let activeSection = tocSections[0];
+
+    tocSections.forEach((section) => {
+      if (section.offsetTop <= anchor) activeSection = section;
+    });
+
+    tocLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${activeSection.id}`);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveSection, { passive: true });
+  window.addEventListener('resize', updateActiveSection);
+  updateActiveSection();
+</script>
+</body>
+</html>
