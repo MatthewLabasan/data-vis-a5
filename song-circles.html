@@ -106,6 +106,44 @@
     background: rgba(26, 26, 26, 0.9);
   }
 
+  /* After switching trends in the guided flow, this control REPLACES the
+     "Return to calendar" button in the top-right. */
+  .guided-trend-back-btn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 30;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(17, 17, 17, 0.78);
+    border: 1px solid rgba(42, 42, 42, 0.9);
+    color: #888;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'SF Mono', monospace;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    line-height: 1.25;
+  }
+  .guided-trend-back-btn.is-visible {
+    display: inline-flex;
+  }
+  .guided-trend-back-btn:hover {
+    border-color: rgba(68, 68, 68, 0.95);
+    color: #e8e8e8;
+    background: rgba(26, 26, 26, 0.9);
+  }
+  /* When the trend-back button is visible, hide the Return-to-calendar button. */
+  #small-multiples.has-guided-back .home-btn {
+    display: none;
+  }
+
   #color-legend {
     display: flex;
     flex-wrap: wrap;
@@ -1975,6 +2013,9 @@
         <button class="sort-btn" id="view-long-lasting">Long Lasting Trends</button>
       </div>
     </div>
+    <button type="button" class="guided-trend-back-btn" id="guided-trend-back-btn" aria-label="Back to the previous trend view">
+      ← Back
+    </button>
     <a class="home-btn" href="opening_view.html">← Return to calendar</a>
     <div class="sort-bar">
       <span class="sort-label">Sort by</span>
@@ -2020,7 +2061,7 @@
           <div class="tut-cloud-list" id="tut-cloud-long"></div>
         </div>
       </div>
-      <p class="compare-notation">Looking at the two trends side by side, there isn't a clear reason why specific songs go viral. Or maybe there isn't something we're seeing… try exploring on your own!</p>
+      <p class="compare-notation"> Looking at this visual comparison, there isn't a clear reason why specific songs go viral. Or maybe there isn't something we're seeing… try exploring on your own!</p>
       <button class="explore-all-btn" id="explore-all-btn">Explore all songs →</button>
       <div class="compare-back-hint">
         <span class="hint-start">↓ Keep scrolling</span>
@@ -2251,6 +2292,18 @@ const VIDEO_CATEGORY_COLOR_MAP = SONGS.reduce((acc, song) => {
 
 // ─── SMALL MULTIPLES ────────────────────────────────────────────────────────
 let currentView = 'all';
+/** First trend in the URL-guided flow (?view=one-hit | long-lasting); null if not in that flow. */
+let guidedFlowFirstView = null;
+/** True after the user confirms the prompt and switches to the other trend. */
+let guidedFlowVisitedOtherTrend = false;
+
+let compareRendered = false;
+let compareVisible = false;
+let compareCooldown = false;
+let scrollAccum = 0;
+let promptShown = false;
+let promptDismissed = false;
+let flowComplete = false;
 
 function songsForCurrentView() {
   if (currentView === 'one-hit') return SONGS.filter(s => s.trendClass === 'one-hit');
@@ -2287,6 +2340,37 @@ function updateViewButtons() {
   });
 }
 
+function guidedTrendBackLabel(view) {
+  return view === 'one-hit' ? 'One Hit Wonders' : 'Long Lasting Trends';
+}
+
+function updateGuidedTrendBackButton() {
+  const btn = document.getElementById('guided-trend-back-btn');
+  const panel = document.getElementById('small-multiples');
+  if (!btn || !panel) return;
+
+  const overlay = document.getElementById('tutorial-overlay');
+  const songView = document.getElementById('song-view');
+  const tutOpen = overlay?.classList.contains('tut-visible');
+  const songOpen = songView?.classList.contains('visible');
+
+  const show = Boolean(
+    guidedFlowFirstView &&
+    guidedFlowVisitedOtherTrend &&
+    !flowComplete &&
+    currentView !== guidedFlowFirstView &&
+    !compareVisible &&
+    !tutOpen &&
+    !songOpen
+  );
+
+  btn.classList.toggle('is-visible', show);
+  panel.classList.toggle('has-guided-back', show);
+  if (guidedFlowFirstView) {
+    btn.textContent = `← Back to ${guidedTrendBackLabel(guidedFlowFirstView)}`;
+  }
+}
+
 function applyView(view) {
   currentView = view;
   const panel = document.getElementById('small-multiples');
@@ -2294,6 +2378,7 @@ function applyView(view) {
   updateViewHeader();
   updateViewButtons();
   render(currentSortMode);
+  updateGuidedTrendBackButton();
 }
 
 // ─── SMALL MULTIPLES: RAY-CAST GEOMETRY HELPERS ────────────────────────────
@@ -2645,6 +2730,7 @@ function zoomIntoSong(song, wrapEl) {
     document.getElementById('small-multiples').style.opacity = '0';
     document.getElementById('small-multiples').style.pointerEvents = 'none';
     document.getElementById('song-view').classList.add('visible');
+    updateGuidedTrendBackButton();
     isTransitioning = false;
     return;
   }
@@ -2676,6 +2762,7 @@ function zoomIntoSong(song, wrapEl) {
 
   if (targetWrap) targetWrap.style.visibility = 'hidden';
   songView.classList.add('visible');
+  updateGuidedTrendBackButton();
   songView.style.opacity = '0';
   songView.style.pointerEvents = 'none';
 
@@ -2726,6 +2813,7 @@ function zoomOut() {
       smallMultiples.style.pointerEvents = 'all';
       smallMultiples.style.transition = '';
       isTransitioning = false;
+      updateGuidedTrendBackButton();
       requestAnimationFrame(() => {
         requestAnimationFrame(() => fitCirclesGridToViewport());
       });
@@ -2769,6 +2857,7 @@ function zoomOut() {
     smallMultiples.style.pointerEvents = 'all';
     smallMultiples.style.transition = '';
     isTransitioning = false;
+    updateGuidedTrendBackButton();
     requestAnimationFrame(() => {
       requestAnimationFrame(() => fitCirclesGridToViewport());
     });
@@ -4006,19 +4095,28 @@ function initTutorial(song, viewType) {
   document.getElementById('tut-song-name').textContent = song.name;
   document.getElementById('tut-song-artist').textContent = song.artist;
 
-  // Build the second scroll callout dynamically so it references the tutorial
-  // song picked for this trend (e.g. "Dame Un Grrr" for one-hit wonders) and
-  // its actual majority category.
+  // Build the second scroll callout. Each tutorial song gets its own copy so
+  // the takeaway about TikTok-category breakdown reads accurately.
   const tip2 = document.getElementById('tut-demo-tip-2');
-  if (tip2 && song.clips?.length) {
-    const counts = {};
-    for (const c of song.clips) counts[c.category] = (counts[c.category] || 0) + 1;
-    let majority = '', maxCount = 0;
-    for (const [cat, n] of Object.entries(counts)) {
-      if (n > maxCount) { maxCount = n; majority = cat; }
-    }
+  if (tip2) {
     const em = (text) => `<em style="color:#e8e8e8; font-style:normal;">${text}</em>`;
-    tip2.innerHTML = `For example, ${em(song.name)} has a variety of TikToks, though a majority of them are categorized as ${em(majority.toLowerCase())}.`;
+    const songEm = em(song.name);
+    let tail;
+    if (song.name === 'Dame Un Grrr') {
+      tail = `has a variety of TikToks, though a majority of them are categorized as ${em('animals')} or ${em('lip sync')}.`;
+    } else if (song.name === 'Pretty Little Baby') {
+      tail = `has a variety of TikToks, though the most common trend is ${em('animals')}.`;
+    } else if (song.clips?.length) {
+      // Fallback: derive the majority category from the song's own clip data.
+      const counts = {};
+      for (const c of song.clips) counts[c.category] = (counts[c.category] || 0) + 1;
+      let majority = '', maxCount = 0;
+      for (const [cat, n] of Object.entries(counts)) {
+        if (n > maxCount) { maxCount = n; majority = cat; }
+      }
+      tail = `has a variety of TikToks, though a majority of them are categorized as ${em(majority.toLowerCase())}.`;
+    }
+    if (tail) tip2.innerHTML = `For example, ${songEm} ${tail}`;
   }
 
   renderTutorialCircle(song);
@@ -4035,7 +4133,10 @@ function initTutorial(song, viewType) {
     document.querySelectorAll('#tut-video-grid video').forEach(v => v.pause());
     tutStarScrollActive = false;
     overlay.classList.add('tut-dismissing');
-    setTimeout(() => overlay.classList.remove('tut-visible', 'tut-dismissing'), 520);
+    setTimeout(() => {
+      overlay.classList.remove('tut-visible', 'tut-dismissing');
+      updateGuidedTrendBackButton();
+    }, 520);
   };
 
   // The "Dive In" button is the explicit way to leave the tutorial — no more
@@ -4069,6 +4170,9 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting' || ini
 } else {
   currentView = 'one-hit';
 }
+if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
+  guidedFlowFirstView = initialViewParam;
+}
 applyView(currentView);
 
 // Show tutorial if coming from trend picker with a specific trend selected
@@ -4082,17 +4186,6 @@ if (initialViewParam === 'one-hit' || initialViewParam === 'long-lasting') {
 // the View selector is visible and scrolling no longer triggers the prompt/compare.
 
 // ─── COMPARE SECTION ─────────────────────────────────────────────────────────
-let compareRendered = false;
-let compareVisible = false;
-let compareCooldown = false;
-let scrollAccum = 0;          // accumulated downward scroll in grid view
-let promptShown = false;      // has the other-trend prompt been shown?
-let promptDismissed = false;  // has the user clicked through the prompt?
-// Once the user clicks "Explore all songs" (or lands on ?view=all), the guided
-// flow is over: the prompt and compare section no longer auto-trigger on scroll,
-// and the View selector buttons stay visible.
-let flowComplete = false;
-
 // If the URL already requested the all-songs view, treat the guided flow as
 // complete: reveal the View selector and skip the prompt/compare gating.
 if (initialViewParam === 'all') {
@@ -4124,6 +4217,7 @@ function showCompareSection() {
   compareEl.querySelector('.explore-all-btn')?.classList.remove('is-revealed');
   compareEl.querySelector('.compare-back-hint')?.classList.remove('is-revealed');
   compareEl.classList.add('visible');
+  updateGuidedTrendBackButton();
 }
 
 // Drive the staged reveal as the user scrolls inside the compare section.
@@ -4184,6 +4278,7 @@ function hideCompareSection() {
   scrollAccum = 0;
   setTimeout(() => { compareCooldown = false; }, 600);
   document.getElementById('compare-section').classList.remove('visible');
+  updateGuidedTrendBackButton();
 }
 
 // Wire up the other-trend prompt button
@@ -4192,6 +4287,7 @@ function hideCompareSection() {
   if (!btn) return;
   btn.addEventListener('click', () => {
     const other = currentView === 'one-hit' ? 'long-lasting' : 'one-hit';
+    guidedFlowVisitedOtherTrend = true;
     applyView(other);
     document.getElementById('other-trend-prompt').classList.remove('visible');
     promptDismissed = true;
@@ -4209,6 +4305,16 @@ function hideCompareSection() {
       scrollAccum = 0;
     });
   }
+})();
+
+(function () {
+  const btn = document.getElementById('guided-trend-back-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (!guidedFlowFirstView) return;
+    applyView(guidedFlowFirstView);
+    scrollAccum = 0;
+  });
 })();
 
 function showOtherTrendPrompt() {

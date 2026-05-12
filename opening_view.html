@@ -34,11 +34,11 @@
 
   :root {
     --bg: #0d0d0d;
-    --surface: #221d1d;
-    --ink: #F3EDE8;
-    --muted: #BAB1B1;
-    --line: #3a3434;
-    --gray: #4a4444;
+    --surface: #161616;
+    --ink: #f0f0f0;
+    --muted: #888;
+    --line: #2a2a2a;
+    --gray: #444;
     --accent: #CDFE34;
     --bpm: #FF4632;
     --energy: #4100F5;
@@ -62,19 +62,47 @@
 
   .main {
     display: grid;
-    grid-template-columns: 1fr 240px;
+    grid-template-columns: minmax(0, 1fr) 240px;
     gap: 28px;
     padding: 8px 48px 40px;
     max-width: 1400px;
   }
 
-  .viz-col { position: relative; }
+  .viz-col {
+    position: relative;
+    min-width: 0; /* allow the viz column to shrink so the legend stays in view */
+  }
   .sticky-wrap {
     position: sticky;
     top: 16px;
-    height: 660px;
   }
   svg { display: block; }
+
+  /* Swarm scales with the column, capped at its natural size */
+  #swarm {
+    width: 100%;
+    height: auto;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Narrower screens — keep the legend in view by tightening the page padding,
+     then dropping the legend column width before finally stacking it. */
+  @media (max-width: 1240px) {
+    .main { padding: 8px 28px 40px; gap: 20px; grid-template-columns: minmax(0, 1fr) 220px; }
+    .intro { padding: 36px 28px 16px; }
+  }
+  @media (max-width: 1020px) {
+    .main { grid-template-columns: minmax(0, 1fr) 200px; gap: 16px; padding: 8px 20px 32px; }
+    .intro { padding: 30px 20px 14px; }
+    .legend-panel { padding: 12px 12px; font-size: 11px; }
+  }
+  @media (max-width: 820px) {
+    /* Stack: visualization on top, full-width legend below */
+    .main { grid-template-columns: minmax(0, 1fr); }
+    .sticky-wrap { position: relative; top: 0; }
+    .legend-panel { position: static; max-height: none; }
+  }
 
   .scroll-hint-bar {
     height: 20px;
@@ -350,6 +378,27 @@
     z-index: 200;
     transition: width 0.05s linear;
   }
+
+  body.leaving-up {
+    transition: opacity 0.45s ease;
+    opacity: 0;
+  }
+
+  /* ─── Smooth, staggered page-load entrance ─────────────────────────────
+     When arriving from the title page (which fades to 0 before navigating),
+     these elements ease in instead of popping. */
+  @keyframes ovFadeRise {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ovFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .intro        { animation: ovFadeRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
+  .viz-col      { animation: ovFade     0.95s ease-out                          0.28s both; }
+  .legend-panel { animation: ovFadeRise 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.48s both; }
+  .scroll-progress { animation: ovFade 0.5s ease-out 0.40s both; }
 </style>
 </head>
 <body>
@@ -357,7 +406,7 @@
 <div class="scroll-progress" id="scrollProg"></div>
 
 <div class="intro">
-  <h1>Looped: Inside the Audio Fingerprint of TikTok's Biggest Songs</h1>
+  <h1>When did each of TikTok's biggest songs trend?</h1>
 </div>
 
 <div id="tooltip" class="tooltip"></div>
@@ -365,7 +414,7 @@
 <div class="main">
   <div class="viz-col">
     <div class="sticky-wrap">
-      <svg id="swarm" width="1100" height="640"></svg>
+      <svg id="swarm" width="1100" height="640" viewBox="0 0 1100 640" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="scroll-hint-bar">
         <span id="hintDown">↓ scroll to split into one-hit wonders &amp; long-lasting trends</span>
         <span id="hintUp" style="opacity:0">↑ scroll up to return to the calendar</span>
@@ -4447,6 +4496,50 @@ buildLegend();
 renderStatic();
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
+
+// ─── Scroll-up at the top of the page returns to the title page (index.html).
+// We accumulate upward wheel delta only while window.scrollY === 0, so normal
+// scrolling within the page is unaffected.
+(function setupReturnToTitle() {
+  let upAccum = 0;
+  let leaving = false;
+  const UP_THRESHOLD = 240; // pixels of accumulated upward delta
+  let resetTimer = null;
+
+  function leaveUp() {
+    if (leaving) return;
+    leaving = true;
+    document.body.classList.add('leaving-up');
+    setTimeout(() => { window.location.href = 'index.html'; }, 430);
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (leaving) return;
+    if (window.scrollY > 0) {
+      upAccum = 0;
+      return;
+    }
+    if (e.deltaY < 0) {
+      upAccum += -e.deltaY;
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => { upAccum = 0; }, 350);
+      if (upAccum >= UP_THRESHOLD) leaveUp();
+    } else if (e.deltaY > 0) {
+      upAccum = 0;
+    }
+  }, { passive: true });
+
+  // Touch support: track sustained downward drag at the top of the page.
+  let touchStartY = null;
+  window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0] ? e.touches[0].clientY : null;
+  }, { passive: true });
+  window.addEventListener('touchmove', (e) => {
+    if (leaving || window.scrollY > 0 || touchStartY == null) return;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (dy > 140) leaveUp();
+  }, { passive: true });
+})();
 
 }
 </script>
