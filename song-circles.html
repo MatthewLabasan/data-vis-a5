@@ -3004,7 +3004,8 @@ function syncVideoGrid(forceResync = false) {
   videoSlots.forEach(slot => {
     if (!slot.clip) return;
     const shouldBeActiveBySongTime = activeClipSet.has(slot.clip.index);
-    const targetVideoTime = Math.max(0, currentTimeSec - slot.clip.startSec);
+    const rate = slot.clip.playbackRate || 1;
+    const targetVideoTime = Math.max(0, (currentTimeSec - slot.clip.startSec) * rate);
     const videoDuration = slot.video && Number.isFinite(slot.video.duration) ? slot.video.duration : null;
     const hasRemainingVideo =
       videoDuration == null || videoDuration <= 0 || targetVideoTime < (videoDuration - 0.05);
@@ -3014,6 +3015,7 @@ function syncVideoGrid(forceResync = false) {
       slot.active = true;
       if (slot.video) {
         if (forceResync && !slot.video.paused) slot.video.pause();
+        slot.video.playbackRate = rate;
         slot.video.currentTime = targetVideoTime;
         if (isPlaying && forceResync) videosToStartTogether.push(slot.video);
         else if (isPlaying) slot.video.play().catch(() => {});
@@ -3023,6 +3025,7 @@ function syncVideoGrid(forceResync = false) {
       if (slot.video) {
         // Keep active clip videos aligned with audio position, but avoid
         // aggressive re-seeking that causes visual stutter.
+        if (slot.video.playbackRate !== rate) slot.video.playbackRate = rate;
         if (
           forceResync ||
           (!inResyncCooldown && Math.abs(slot.video.currentTime - targetVideoTime) > 0.45)
@@ -3106,6 +3109,207 @@ let songViewDotRefs = [];
 let lastSelectedRank = null;
 let isTransitioning = false;
 
+// Per-clip playback start offsets (seconds). Positive = starts later in song, negative = earlier.
+// Key is the clip's file name (e.g. 'PrettyLittleBaby_3': -0.4).
+const CLIP_START_OFFSETS = {
+  // Pretty Little Baby
+  'PrettyLittleBaby_1':  0, 'PrettyLittleBaby_2':  0.5, 'PrettyLittleBaby_3':  0,
+  'PrettyLittleBaby_4':  0.6, 'PrettyLittleBaby_5':  0, 'PrettyLittleBaby_6':  0,
+  'PrettyLittleBaby_7':  0, 'PrettyLittleBaby_8':  0, 'PrettyLittleBaby_9':  0,
+  'PrettyLittleBaby_10': 0,
+  // Hold My Hand
+  'HoldMyHand_1':  1, 'HoldMyHand_2':  1, 'HoldMyHand_3':  1,
+  'HoldMyHand_4':  1, 'HoldMyHand_5':  1, 'HoldMyHand_6':  1,
+  'HoldMyHand_7':  1, 'HoldMyHand_8':  1, 'HoldMyHand_9':  1,
+  'HoldMyHand_10': 1,
+  // Rock That Body
+  'RockThatBody_1':  0, 'RockThatBody_2':  0, 'RockThatBody_3':  0,
+  'RockThatBody_4':  0, 'RockThatBody_5':  0, 'RockThatBody_6':  0,
+  'RockThatBody_7':  0, 'RockThatBody_8':  0, 'RockThatBody_9':  0,
+  'RockThatBody_10': 0,
+  // Azul
+  'Azul_1':  0, 'Azul_2':  0, 'Azul_3':  0,
+  'Azul_4':  0, 'Azul_5':  0, 'Azul_6':  0,
+  'Azul_7':  0, 'Azul_8':  0, 'Azul_9':  0,
+  'Azul_10': 0,
+  // Dame Un Grrr (no _6)
+  'DameUnGrrr_1':  0, 'DameUnGrrr_2':  0, 'DameUnGrrr_3':  0,
+  'DameUnGrrr_4':  0, 'DameUnGrrr_5':  0, 'DameUnGrrr_7':  0,
+  'DameUnGrrr_8':  0, 'DameUnGrrr_9':  0, 'DameUnGrrr_10': 0,
+  // APT.
+  'APT_1':  0, 'APT_2':  0, 'APT_3':  0,
+  'APT_4':  0, 'APT_5':  0, 'APT_6':  0,
+  'APT_7':  0, 'APT_8':  0, 'APT_9':  0,
+  'APT_10': 0,
+  // Te Quería Ver (no _8)
+  'TeQueriaVer_1':  0, 'TeQueriaVer_2':  0, 'TeQueriaVer_3':  0,
+  'TeQueriaVer_4':  0, 'TeQueriaVer_5':  0, 'TeQueriaVer_6':  0,
+  'TeQueriaVer_7':  0, 'TeQueriaVer_9':  0, 'TeQueriaVer_10': 0,
+  // Stecu Stecu
+  'StecuStecu_1':  0, 'StecuStecu_2':  0, 'StecuStecu_3':  0,
+  'StecuStecu_4':  0, 'StecuStecu_5':  0, 'StecuStecu_6':  0,
+  'StecuStecu_7':  0, 'StecuStecu_8':  0, 'StecuStecu_9':  0,
+  'StecuStecu_10': 0,
+  // Anxiety
+  'Anxiety_1':  0, 'Anxiety_2':  0, 'Anxiety_3':  0,
+  'Anxiety_4':  0, 'Anxiety_5':  0, 'Anxiety_6':  0,
+  'Anxiety_7':  0, 'Anxiety_8':  0, 'Anxiety_9':  0,
+  'Anxiety_10': 0,
+  // Sailor Song (8 clips)
+  'SailorSong_1': 0, 'SailorSong_2': 0, 'SailorSong_3': 0, 'SailorSong_4': 0,
+  'SailorSong_5': 0, 'SailorSong_6': 0, 'SailorSong_7': 0, 'SailorSong_8': 0,
+  // Shake it To The Max
+  'ShakeItToTheMax_1':  0, 'ShakeItToTheMax_2':  0, 'ShakeItToTheMax_3':  0,
+  'ShakeItToTheMax_4':  0, 'ShakeItToTheMax_5':  0, 'ShakeItToTheMax_6':  0,
+  'ShakeItToTheMax_7':  0, 'ShakeItToTheMax_8':  0, 'ShakeItToTheMax_9':  0,
+  'ShakeItToTheMax_10': 0,
+  // ocean eyes
+  'OceanEyes_1':  0, 'OceanEyes_2':  0, 'OceanEyes_3':  0,
+  'OceanEyes_4':  0, 'OceanEyes_5':  0, 'OceanEyes_6':  0,
+  'OceanEyes_7':  0, 'OceanEyes_8':  0, 'OceanEyes_9':  0,
+  'OceanEyes_10': 0,
+  // No One Noticed
+  'NoOneNoticed_1':  0, 'NoOneNoticed_2':  0, 'NoOneNoticed_3':  0,
+  'NoOneNoticed_4':  0, 'NoOneNoticed_5':  0, 'NoOneNoticed_6':  0,
+  'NoOneNoticed_7':  0, 'NoOneNoticed_8':  0, 'NoOneNoticed_9':  0,
+  'NoOneNoticed_10': 0,
+  // back to friends
+  'BackToFriends_1':  0, 'BackToFriends_2':  0, 'BackToFriends_3':  0,
+  'BackToFriends_4':  0, 'BackToFriends_5':  0, 'BackToFriends_6':  0,
+  'BackToFriends_7':  0, 'BackToFriends_8':  0, 'BackToFriends_9':  0,
+  'BackToFriends_10': 0,
+  // Sparks
+  'Sparks_1':  0, 'Sparks_2':  0, 'Sparks_3':  0,
+  'Sparks_4':  0, 'Sparks_5':  0, 'Sparks_6':  0,
+  'Sparks_7':  0, 'Sparks_8':  0, 'Sparks_9':  0,
+  'Sparks_10': 0,
+  // That's So True
+  'ThatsSoTrue_1':  0, 'ThatsSoTrue_2':  0, 'ThatsSoTrue_3':  0,
+  'ThatsSoTrue_4':  0, 'ThatsSoTrue_5':  0, 'ThatsSoTrue_6':  0,
+  'ThatsSoTrue_7':  0, 'ThatsSoTrue_8':  0, 'ThatsSoTrue_9':  0,
+  'ThatsSoTrue_10': 0,
+  // Let Down
+  'LetDown_1':  0, 'LetDown_2':  0, 'LetDown_3':  0,
+  'LetDown_4':  0, 'LetDown_5':  0, 'LetDown_6':  0,
+  'LetDown_7':  0, 'LetDown_8':  0, 'LetDown_9':  0,
+  'LetDown_10': 0,
+  // Suave
+  'Suave_1':  0, 'Suave_2':  0, 'Suave_3':  0,
+  'Suave_4':  0, 'Suave_5':  0, 'Suave_6':  0,
+  'Suave_7':  0, 'Suave_8':  0, 'Suave_9':  0,
+  'Suave_10': 0,
+  // My Darling
+  'MyDarling_1':  0, 'MyDarling_2':  0, 'MyDarling_3':  0,
+  'MyDarling_4':  0, 'MyDarling_5':  0, 'MyDarling_6':  0,
+  'MyDarling_7':  0, 'MyDarling_8':  0, 'MyDarling_9':  0,
+  'MyDarling_10': 0,
+  // We Hug Now
+  'WeHugNow_1':  0, 'WeHugNow_2':  0, 'WeHugNow_3':  0,
+  'WeHugNow_4':  0, 'WeHugNow_5':  0, 'WeHugNow_6':  0,
+  'WeHugNow_7':  0, 'WeHugNow_8':  0, 'WeHugNow_9':  0,
+  'WeHugNow_10': 0,
+};
+
+// Per-clip playback speed multiplier. 1 = normal, 2 = double speed, 0.5 = half speed.
+const CLIP_PLAYBACK_RATES = {
+  // Pretty Little Baby
+  'PrettyLittleBaby_1':  1, 'PrettyLittleBaby_2':  1, 'PrettyLittleBaby_3':  1,
+  'PrettyLittleBaby_4':  1, 'PrettyLittleBaby_5':  1, 'PrettyLittleBaby_6':  1,
+  'PrettyLittleBaby_7':  1, 'PrettyLittleBaby_8':  1, 'PrettyLittleBaby_9':  1,
+  'PrettyLittleBaby_10': 1,
+  // Hold My Hand
+  'HoldMyHand_1':  1, 'HoldMyHand_2':  1, 'HoldMyHand_3':  1,
+  'HoldMyHand_4':  1, 'HoldMyHand_5':  1, 'HoldMyHand_6':  1,
+  'HoldMyHand_7':  1, 'HoldMyHand_8':  1, 'HoldMyHand_9':  1,
+  'HoldMyHand_10': 1,
+  // Rock That Body
+  'RockThatBody_1':  1, 'RockThatBody_2':  1, 'RockThatBody_3':  1,
+  'RockThatBody_4':  1, 'RockThatBody_5':  1, 'RockThatBody_6':  1,
+  'RockThatBody_7':  1, 'RockThatBody_8':  1, 'RockThatBody_9':  1,
+  'RockThatBody_10': 1,
+  // Azul
+  'Azul_1':  1, 'Azul_2':  1, 'Azul_3':  1,
+  'Azul_4':  1, 'Azul_5':  1, 'Azul_6':  1,
+  'Azul_7':  1, 'Azul_8':  1, 'Azul_9':  1,
+  'Azul_10': 1,
+  // Dame Un Grrr (no _6)
+  'DameUnGrrr_1':  1, 'DameUnGrrr_2':  1, 'DameUnGrrr_3':  1,
+  'DameUnGrrr_4':  1, 'DameUnGrrr_5':  1, 'DameUnGrrr_7':  1,
+  'DameUnGrrr_8':  1, 'DameUnGrrr_9':  1, 'DameUnGrrr_10': 1,
+  // APT.
+  'APT_1':  1, 'APT_2':  1, 'APT_3':  1,
+  'APT_4':  1, 'APT_5':  1, 'APT_6':  1,
+  'APT_7':  1, 'APT_8':  1, 'APT_9':  1,
+  'APT_10': 1,
+  // Te Quería Ver (no _8)
+  'TeQueriaVer_1':  1, 'TeQueriaVer_2':  1, 'TeQueriaVer_3':  1,
+  'TeQueriaVer_4':  1, 'TeQueriaVer_5':  1, 'TeQueriaVer_6':  1,
+  'TeQueriaVer_7':  1, 'TeQueriaVer_9':  1, 'TeQueriaVer_10': 1,
+  // Stecu Stecu
+  'StecuStecu_1':  1, 'StecuStecu_2':  1, 'StecuStecu_3':  1,
+  'StecuStecu_4':  1, 'StecuStecu_5':  1, 'StecuStecu_6':  1,
+  'StecuStecu_7':  1, 'StecuStecu_8':  1, 'StecuStecu_9':  1,
+  'StecuStecu_10': 1,
+  // Anxiety
+  'Anxiety_1':  1, 'Anxiety_2':  1, 'Anxiety_3':  1,
+  'Anxiety_4':  1, 'Anxiety_5':  1, 'Anxiety_6':  1,
+  'Anxiety_7':  1, 'Anxiety_8':  1, 'Anxiety_9':  1,
+  'Anxiety_10': 1,
+  // Sailor Song (8 clips)
+  'SailorSong_1': 1, 'SailorSong_2': 1, 'SailorSong_3': 1, 'SailorSong_4': 1,
+  'SailorSong_5': 1, 'SailorSong_6': 1, 'SailorSong_7': 1, 'SailorSong_8': 1,
+  // Shake it To The Max
+  'ShakeItToTheMax_1':  1, 'ShakeItToTheMax_2':  1, 'ShakeItToTheMax_3':  1,
+  'ShakeItToTheMax_4':  1, 'ShakeItToTheMax_5':  1, 'ShakeItToTheMax_6':  1,
+  'ShakeItToTheMax_7':  1, 'ShakeItToTheMax_8':  1, 'ShakeItToTheMax_9':  1,
+  'ShakeItToTheMax_10': 1,
+  // ocean eyes
+  'OceanEyes_1':  1, 'OceanEyes_2':  1, 'OceanEyes_3':  1,
+  'OceanEyes_4':  1, 'OceanEyes_5':  1, 'OceanEyes_6':  1,
+  'OceanEyes_7':  1, 'OceanEyes_8':  1, 'OceanEyes_9':  1,
+  'OceanEyes_10': 1,
+  // No One Noticed
+  'NoOneNoticed_1':  1, 'NoOneNoticed_2':  1, 'NoOneNoticed_3':  1,
+  'NoOneNoticed_4':  1, 'NoOneNoticed_5':  1, 'NoOneNoticed_6':  1,
+  'NoOneNoticed_7':  1, 'NoOneNoticed_8':  1, 'NoOneNoticed_9':  1,
+  'NoOneNoticed_10': 1,
+  // back to friends
+  'BackToFriends_1':  1, 'BackToFriends_2':  1, 'BackToFriends_3':  1,
+  'BackToFriends_4':  1, 'BackToFriends_5':  1, 'BackToFriends_6':  1,
+  'BackToFriends_7':  1, 'BackToFriends_8':  1, 'BackToFriends_9':  1,
+  'BackToFriends_10': 1,
+  // Sparks
+  'Sparks_1':  1, 'Sparks_2':  1, 'Sparks_3':  1,
+  'Sparks_4':  1, 'Sparks_5':  1, 'Sparks_6':  1,
+  'Sparks_7':  1, 'Sparks_8':  1, 'Sparks_9':  1,
+  'Sparks_10': 1,
+  // That's So True
+  'ThatsSoTrue_1':  1, 'ThatsSoTrue_2':  1, 'ThatsSoTrue_3':  1,
+  'ThatsSoTrue_4':  1, 'ThatsSoTrue_5':  1, 'ThatsSoTrue_6':  1,
+  'ThatsSoTrue_7':  1, 'ThatsSoTrue_8':  1, 'ThatsSoTrue_9':  1,
+  'ThatsSoTrue_10': 1,
+  // Let Down
+  'LetDown_1':  1, 'LetDown_2':  1, 'LetDown_3':  1,
+  'LetDown_4':  1, 'LetDown_5':  1, 'LetDown_6':  1,
+  'LetDown_7':  1, 'LetDown_8':  1, 'LetDown_9':  1,
+  'LetDown_10': 1,
+  // Suave
+  'Suave_1':  1, 'Suave_2':  1, 'Suave_3':  1,
+  'Suave_4':  1, 'Suave_5':  1, 'Suave_6':  1,
+  'Suave_7':  1, 'Suave_8':  1, 'Suave_9':  1,
+  'Suave_10': 1,
+  // My Darling
+  'MyDarling_1':  1, 'MyDarling_2':  1, 'MyDarling_3':  1,
+  'MyDarling_4':  1, 'MyDarling_5':  1, 'MyDarling_6':  1,
+  'MyDarling_7':  1, 'MyDarling_8':  1, 'MyDarling_9':  1,
+  'MyDarling_10': 1,
+  // We Hug Now
+  'WeHugNow_1':  1, 'WeHugNow_2':  1, 'WeHugNow_3':  1,
+  'WeHugNow_4':  1, 'WeHugNow_5':  1, 'WeHugNow_6':  1,
+  'WeHugNow_7':  1, 'WeHugNow_8':  1, 'WeHugNow_9':  1,
+  'WeHugNow_10': 1,
+};
+
 function parseClips(song) {
   return song.clips.map((c, i) => {
     const parts = c.timestamp.split(' - ');
@@ -3117,8 +3321,9 @@ function parseClips(song) {
       ...c,
       category: mapped.category,
       color: mapped.color,
-      startSec: parseTime(parts[0]),
+      startSec: parseTime(parts[0]) + (CLIP_START_OFFSETS[c.file] || 0),
       endSec: parts[1] ? parseTime(parts[1]) : parseTime(parts[0]) + 15,
+      playbackRate: CLIP_PLAYBACK_RATES[c.file] || 1,
       index: i
     };
   }).sort((a, b) => a.startSec - b.startSec);
