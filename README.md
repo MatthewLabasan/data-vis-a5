@@ -31,7 +31,3 @@ This is a static web project, primarily written in HTML (with some JavaScript), 
 ## Requirements
 
 - Any modern web browser (Chrome, Firefox, Edge, Safari)
-
-## License
-
-This project is for instructional purposes.
